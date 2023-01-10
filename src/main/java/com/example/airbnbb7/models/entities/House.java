@@ -1,8 +1,8 @@
-package com.example.airbnbb7.entities;
+package com.example.airbnbb7.models.entities;
 
-import com.example.airbnbb7.enums.HouseType;
-import com.example.airbnbb7.enums.HousesBooked;
-import com.example.airbnbb7.enums.HousesStatus;
+import com.example.airbnbb7.models.enums.HouseType;
+import com.example.airbnbb7.models.enums.HousesBooked;
+import com.example.airbnbb7.models.enums.HousesStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static jakarta.persistence.CascadeType.*;
-import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.FetchType.LAZY;
 
 
@@ -39,29 +38,32 @@ public class House {
     @Column(nullable = false)
     private Long maxOfGuests;
 
+    private Long countOfBookedUser;
+
     private HouseType houseType;
 
     private HousesStatus housesStatus;
+
     private HousesBooked housesBooked;
 
     private LocalDate dateHouseCreated;
 
 
-    @OneToOne(cascade = ALL, fetch = EAGER)
+    @OneToOne(cascade = ALL)
     private Location location;
 
-    @OneToMany(cascade = ALL, fetch = LAZY, mappedBy = "house")
+    @OneToMany(cascade = ALL, mappedBy = "house")
     private List<Booking> bookingDates;
 
-    @ManyToMany(cascade = {MERGE, PERSIST, REFRESH, DETACH}, fetch = LAZY)
+    @ManyToMany(cascade = {MERGE, PERSIST, REFRESH, DETACH})
     @JoinTable(name = "house_users",
             joinColumns = @JoinColumn(name = "house_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> guests;
 
-    @OneToMany(cascade = ALL, fetch = LAZY)
+    @OneToMany(cascade = ALL)
     private List<Feedback> feedbacks;
 
-    @OneToOne(cascade = ALL)
+    @OneToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST})
     private User owner;
 }

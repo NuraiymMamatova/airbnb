@@ -1,4 +1,4 @@
-package com.example.airbnbb7.enums;
+package com.example.airbnbb7.models.enums;
 
 public enum HousesBooked {
     BOOKED,

@@ -1,4 +1,4 @@
-package com.example.airbnbb7.entities;
+package com.example.airbnbb7.models.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,6 +23,7 @@ public class Card {
     private BigInteger cardNumber;
 
     private String cardExpiryMonth;
+
     private String cardExpiryYear;
 
     private int cvc;

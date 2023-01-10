@@ -1,15 +1,13 @@
-package com.example.airbnbb7.entities;
+package com.example.airbnbb7.models.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static jakarta.persistence.CascadeType.*;
-import static jakarta.persistence.FetchType.LAZY;
 
 
 @Entity
@@ -32,22 +30,18 @@ public class User {
 
     private String image;
 
-    private Boolean block = false;
-
     private Long countOfBookedHouse;
 
-    private LocalDate addHouseToFavoriteHouses;
-
-    @ManyToMany(cascade = ALL, fetch = LAZY, mappedBy = "guests")
+    @ManyToMany(cascade = ALL, mappedBy = "guests")
     private List<House> houses;
 
-    @ManyToMany(cascade = ALL, fetch = LAZY, mappedBy = "users")
+    @ManyToMany(cascade = ALL, mappedBy = "users")
     private List<Booking> bookings;
 
-    @ManyToMany(cascade ={REFRESH, DETACH, MERGE,PERSIST}, fetch = LAZY, mappedBy = "users")
+    @ManyToMany(targetEntity = Role.class, cascade ={REFRESH, DETACH, MERGE,PERSIST}, mappedBy = "users")
     private List<Role> roles;
 
-    @OneToMany(cascade = ALL, fetch = LAZY)
+    @OneToMany(cascade = ALL)
     private List<FavoriteHouse> favoriteHouses;
 
 

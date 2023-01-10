@@ -1,4 +1,4 @@
-package com.example.airbnbb7.entities;
+package com.example.airbnbb7.models.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static jakarta.persistence.CascadeType.*;
-import static jakarta.persistence.FetchType.EAGER;
 
 
 @Entity
@@ -29,9 +29,9 @@ public class Booking {
 
     private LocalDate checkOut;
 
-    @ManyToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST}, fetch = EAGER)
-    private User user;
+    @ManyToMany(cascade = {MERGE, REFRESH, DETACH, PERSIST})
+    private List<User> users;
 
-    @ManyToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST}, fetch = EAGER)
+    @ManyToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST})
     private House house;
 }

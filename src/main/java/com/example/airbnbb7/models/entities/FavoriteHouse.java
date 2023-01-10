@@ -1,10 +1,11 @@
-package com.example.airbnbb7.entities;
+package com.example.airbnbb7.models.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import static jakarta.persistence.CascadeType.*;
 
 
 @Entity
@@ -20,8 +21,8 @@ public class FavoriteHouse {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "favorite_houses_gen")
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {MERGE, DETACH, PERSIST, REFRESH})
     private House house;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {MERGE, DETACH, PERSIST, REFRESH})
     private User user;
 }

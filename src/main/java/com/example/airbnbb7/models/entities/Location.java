@@ -1,4 +1,4 @@
-package com.example.airbnbb7.entities;
+package com.example.airbnbb7.models.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,6 +25,6 @@ public class Location {
 
     private String region;
 
-    @OneToOne(cascade = {REFRESH, MERGE, DETACH, PERSIST}, fetch = FetchType.EAGER)
+    @OneToOne(cascade = {REFRESH, MERGE, DETACH, PERSIST})
     private House house;
 }
