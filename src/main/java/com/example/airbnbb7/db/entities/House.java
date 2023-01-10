@@ -56,9 +56,7 @@ public class House {
     private List<Booking> bookingDates;
 
     @ManyToMany(cascade = {MERGE, PERSIST, REFRESH, DETACH})
-    @JoinTable(name = "house_users",
-            joinColumns = @JoinColumn(name = "house_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JoinTable(name = "house_users", joinColumns = @JoinColumn(name = "house_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> guests;
 
     @OneToMany(cascade = ALL, mappedBy = "house")

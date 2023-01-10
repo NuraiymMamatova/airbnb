@@ -23,9 +23,7 @@ public class Role {
     private String nameOfRole;
 
     @ManyToMany(targetEntity = User.class, cascade = {MERGE, REFRESH, DETACH, PERSIST})
-    @JoinTable(name = "roles_users",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     List<User> users;
 
     public Role(String nameOfRole) {

@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import static jakarta.persistence.CascadeType.*;
 
-
 @Entity
 @Getter
 @Setter
