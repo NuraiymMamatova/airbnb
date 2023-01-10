@@ -1,4 +1,4 @@
-package com.example.airbnbb7.models.entities;
+package com.example.airbnbb7.db.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;

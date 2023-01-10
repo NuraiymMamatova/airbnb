@@ -1,4 +1,4 @@
-package com.example.airbnbb7.models.enums;
+package com.example.airbnbb7.db.enums;
 
 public enum HousesStatus {
     BLOCKED,

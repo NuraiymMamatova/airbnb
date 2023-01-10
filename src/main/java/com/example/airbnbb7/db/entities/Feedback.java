@@ -1,4 +1,4 @@
-package com.example.airbnbb7.models.entities;
+package com.example.airbnbb7.db.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -44,10 +44,10 @@ public class Feedback {
     @ElementCollection(fetch = LAZY)
     private List<Integer> ratings = new ArrayList<>();
 
-    @ManyToOne(cascade = {REFRESH, DETACH, MERGE, PERSIST}, fetch = EAGER)
+    @ManyToOne(cascade = {REFRESH, DETACH, MERGE, PERSIST})
     private User user;
 
-    @ManyToOne(cascade = {REFRESH, DETACH, MERGE, PERSIST}, fetch = EAGER)
+    @ManyToOne(cascade = {REFRESH, DETACH, MERGE, PERSIST})
     private House house;
 
 }

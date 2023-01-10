@@ -1,4 +1,4 @@
-package com.example.airbnbb7.models.entities;
+package com.example.airbnbb7.db.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,7 +13,6 @@ import java.math.BigInteger;
 @Setter
 @NoArgsConstructor
 @Table(name = "cards")
-
 public class Card {
     @Id
     @SequenceGenerator(name = "cards_gen", sequenceName = "cards_seq", allocationSize = 1)

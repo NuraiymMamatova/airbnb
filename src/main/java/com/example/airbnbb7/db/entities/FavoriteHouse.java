@@ -1,4 +1,4 @@
-package com.example.airbnbb7.models.entities;
+package com.example.airbnbb7.db.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,7 +13,6 @@ import static jakarta.persistence.CascadeType.*;
 @Setter
 @NoArgsConstructor
 @Table(name = "favorite_houses")
-
 public class FavoriteHouse {
 
     @Id

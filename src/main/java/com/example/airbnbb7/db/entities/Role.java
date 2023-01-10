@@ -1,4 +1,4 @@
-package com.example.airbnbb7.models.entities;
+package com.example.airbnbb7.db.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -22,10 +22,10 @@ public class Role {
 
     private String nameOfRole;
 
-    @ManyToMany(targetEntity = User.class, cascade = {MERGE, REFRESH, DETACH, PERSIST}, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = User.class, cascade = {MERGE, REFRESH, DETACH, PERSIST})
     @JoinTable(name = "roles_users",
-    joinColumns = @JoinColumn(name = "role_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id"))
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     List<User> users;
 
     public Role(String nameOfRole) {

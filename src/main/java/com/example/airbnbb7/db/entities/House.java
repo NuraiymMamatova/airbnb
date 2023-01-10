@@ -1,8 +1,8 @@
-package com.example.airbnbb7.models.entities;
+package com.example.airbnbb7.db.entities;
 
-import com.example.airbnbb7.models.enums.HouseType;
-import com.example.airbnbb7.models.enums.HousesBooked;
-import com.example.airbnbb7.models.enums.HousesStatus;
+import com.example.airbnbb7.db.enums.HouseType;
+import com.example.airbnbb7.db.enums.HousesBooked;
+import com.example.airbnbb7.db.enums.HousesStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -61,7 +61,7 @@ public class House {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> guests;
 
-    @OneToMany(cascade = ALL)
+    @OneToMany(cascade = ALL, mappedBy = "house")
     private List<Feedback> feedbacks;
 
     @OneToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST})
