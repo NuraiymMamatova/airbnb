@@ -1,11 +1,11 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.converter.login.LoginConverter;
-import com.example.airbnbb7.repository.UserRepository;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
 import com.example.airbnbb7.dto.response.UserResponse;
+import com.example.airbnbb7.repository.UserRepository;
 import com.example.airbnbb7.security.ValidationExceptionType;
 import com.example.airbnbb7.security.jwt.JwtTokenUtil;
 import com.example.airbnbb7.service.UserService;
@@ -14,8 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Objects;
 
 
@@ -29,7 +34,7 @@ public class AuthApi {
     private final UserRepository userRepository;
     private final LoginConverter loginConverter;
 
-    @PostMapping("login")
+    @PostMapping ("login")
     public ResponseEntity<LoginResponse> getLogin(@RequestBody UserRequest request) {
         try {
             UsernamePasswordAuthenticationToken token =
@@ -49,7 +54,7 @@ public class AuthApi {
     }
 
     @PostMapping("registration")
-    public UserResponse create(@RequestBody UserRequest request) {
+    public UserResponse create(@Valid @RequestBody UserRequest request) throws IOException {
         for (int i = 0; i < userRepository.findAll().size(); i++) {
             if (!Objects.equals(userRepository.findAll().get(i).getEmail(), request.getEmail())) {
                 return userService.saveUser(request);

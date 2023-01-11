@@ -9,11 +9,18 @@ import com.example.airbnbb7.dto.response.UserResponse;
 import com.example.airbnbb7.repository.RoleRepository;
 import com.example.airbnbb7.repository.UserRepository;
 import com.example.airbnbb7.service.UserService;
+import com.example.airbnbb7.validators.UserValidator;
 import lombok.RequiredArgsConstructor;
+import org.apache.el.util.Validation;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -30,39 +37,47 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
-    public UserResponse saveUser(UserRequest userRequest) {
-        User user = mapToEntity(userRequest);
+    public UserResponse saveUser(UserRequest userRequest) throws IOException {
+        UserValidator.validator(userRequest.getPassword(),userRequest.getName());
+        if (!UserValidator.isValidEmail(userRequest.getEmail())){
+            throw new IOException("invalid account!");
+        }
+        User user = userConverterRequest.create(userRequest);
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         Role role = roleRepository.getById(2L);
         user.addRole(role);
         userRepository.save(user);
-        return mapToResponse(user);
-    }
-
-    private User mapToEntity(UserRequest request) {
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setName(request.getName());
-        user.setPassword(request.getPassword());
-        user.setImage(request.getImage());
-        return user;
-    }
-
-    private UserResponse mapToResponse(User user) {
-        if (user == null) {
-            return null;
-        }
-        UserResponse response = new UserResponse();
-        if (user.getId() != null) {
-            response.setId(String.valueOf(user.getId()));
-        }
-        response.setEmail(user.getEmail());
-        response.setName(user.getName());
-        return response;
+        return userConverterResponse.create(user);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("not found email"));
+    }
+
+    @PostConstruct
+    public void initMethod() {
+        if (roleRepository.findAll().size() == 0 && roleRepository.findAll().size() == 0) {
+            Role role1 = new Role();
+            role1.setNameOfRole("Admin");
+
+            Role role2 = new Role();
+            role2.setNameOfRole("User");
+
+            UserRequest request = new UserRequest();
+            request.setEmail("esen@gmail.com");
+            request.setPassword(passwordEncoder.encode("1234567"));
+            request.setName("Esen");
+
+            User user2 = userConverterRequest.create(request);
+
+            user2.setRoles(Arrays.asList(role1));
+            role1.setUsers(Arrays.asList(user2));
+
+            userRepository.save(user2);
+            roleRepository.save(role1);
+            roleRepository.save(role2);
+
+        }
     }
 }
