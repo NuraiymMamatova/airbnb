@@ -25,6 +25,6 @@ public class Location {
 
     private String region;
 
-    @OneToOne(cascade = {REFRESH, MERGE, DETACH, PERSIST})
+    @OneToOne(cascade = {REFRESH, MERGE, DETACH})
     private House house;
 }

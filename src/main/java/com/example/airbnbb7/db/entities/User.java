@@ -32,16 +32,16 @@ public class User {
 
     private Long countOfBookedHouse;
 
-    @ManyToMany(cascade = ALL, mappedBy = "guests")
+    @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "guests")
     private List<House> houses;
 
-    @ManyToMany(cascade = ALL, mappedBy = "users")
+    @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "users")
     private List<Booking> bookings;
 
     @ManyToMany(targetEntity = Role.class, cascade = {REFRESH, DETACH, MERGE, PERSIST}, mappedBy = "users")
     private List<Role> roles;
 
-    @OneToMany(cascade = ALL)
+    @OneToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE})
     private List<FavoriteHouse> favoriteHouses;
 
 

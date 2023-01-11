@@ -52,16 +52,16 @@ public class House {
     @OneToOne(cascade = ALL)
     private Location location;
 
-    @OneToMany(cascade = ALL, mappedBy = "house")
+    @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")
     private List<Booking> bookingDates;
 
-    @ManyToMany(cascade = {MERGE, PERSIST, REFRESH, DETACH})
+    @ManyToMany(cascade = {MERGE, REFRESH, DETACH})
     @JoinTable(name = "house_users", joinColumns = @JoinColumn(name = "house_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> guests;
 
-    @OneToMany(cascade = ALL, mappedBy = "house")
+    @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")
     private List<Feedback> feedbacks;
 
-    @OneToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST})
+    @OneToOne(cascade = {MERGE, REFRESH, DETACH})
     private User owner;
 }

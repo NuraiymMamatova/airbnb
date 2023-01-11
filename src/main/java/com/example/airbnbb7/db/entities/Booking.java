@@ -29,9 +29,9 @@ public class Booking {
 
     private LocalDate checkOut;
 
-    @ManyToMany(cascade = {MERGE, REFRESH, DETACH, PERSIST})
+    @ManyToMany(cascade = {MERGE, REFRESH, DETACH})
     private List<User> users;
 
-    @ManyToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST})
+    @ManyToOne(cascade = {MERGE, REFRESH, DETACH})
     private House house;
 }

@@ -19,8 +19,9 @@ public class FavoriteHouse {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "favorite_houses_gen")
     private Long id;
 
-    @OneToOne(cascade = {MERGE, DETACH, PERSIST, REFRESH})
+    @OneToOne(cascade = {MERGE, DETACH, REFRESH})
     private House house;
-    @ManyToOne(cascade = {MERGE, DETACH, PERSIST, REFRESH})
+
+    @ManyToOne(cascade = {MERGE, DETACH, REFRESH})
     private User user;
 }

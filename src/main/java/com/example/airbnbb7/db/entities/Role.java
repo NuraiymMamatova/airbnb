@@ -22,7 +22,7 @@ public class Role {
 
     private String nameOfRole;
 
-    @ManyToMany(targetEntity = User.class, cascade = {MERGE, REFRESH, DETACH, PERSIST})
+    @ManyToMany(targetEntity = User.class, cascade = {MERGE, REFRESH, DETACH})
     @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     List<User> users;
 

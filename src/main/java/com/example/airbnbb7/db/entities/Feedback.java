@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static jakarta.persistence.CascadeType.*;
-import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
@@ -44,10 +43,10 @@ public class Feedback {
     @ElementCollection(fetch = LAZY)
     private List<Integer> ratings = new ArrayList<>();
 
-    @ManyToOne(cascade = {REFRESH, DETACH, MERGE, PERSIST})
+    @ManyToOne(cascade = {REFRESH, DETACH, MERGE})
     private User user;
 
-    @ManyToOne(cascade = {REFRESH, DETACH, MERGE, PERSIST})
+    @ManyToOne(cascade = {REFRESH, DETACH, MERGE})
     private House house;
 
 }
