@@ -15,27 +15,37 @@ VALUES(1,1);
 
 insert into houses(id,price,title,description_of_listing,max_of_guests,count_of_booked_user,
                    house_type,houses_status,houses_booked,date_house_created,owner_id)
-values(1,20,'Asman','The hotel will provide guests with air-conditioned rooms offering a desk, a kettle, a fridge, a minibar, a safety deposit box, a flat-screen TV and a shared bathroom with a shower. At Garden Hotel & SPA the rooms have bed linen and towels.
+values(1,20,'Asman','The hotel will provide guests with air-conditioned rooms offering a desk, a kettle,' ||
+                    ' a fridge, a minibar, a safety deposit box, a flat-screen TV and a shared bathroom with a shower.' ||
+                    ' At Garden Hotel & SPA the rooms have bed linen and towels.
 ',5,0,0,2,1,null,1);
 
 insert into houses(id,price,title,description_of_listing,max_of_guests,count_of_booked_user,
                    house_type,houses_status,houses_booked,date_house_created,owner_id)
-values(2,15,'Ihlas','The hotel will provide guests with air-conditioned rooms offering a desk, a kettle, a fridge, a minibar, a safety deposit box, a flat-screen TV and a shared bathroom with a shower. At Garden Hotel & SPA the rooms have bed linen and towels.
+values(2,15,'Ihlas','The hotel will provide guests with air-conditioned rooms offering a desk, a kettle, a fridge,' ||
+                    ' a minibar, a safety deposit box, a flat-screen TV and a shared bathroom with a shower. At Garden' ||
+                    ' Hotel & SPA the rooms have bed linen and towels.
 ',10,1,0,2,1,null,1);
 
 insert into houses(id,price,title,description_of_listing,max_of_guests,count_of_booked_user,
                    house_type,houses_status,houses_booked,date_house_created,owner_id)
-values(3,29,'Elite','The hotel will provide guests with air-conditioned rooms offering a desk, a kettle, a fridge, a minibar, a safety deposit box, a flat-screen TV and a shared bathroom with a shower. At Garden Hotel & SPA the rooms have bed linen and towels.
+values(3,29,'Elite','The hotel will provide guests with air-conditioned rooms offering a desk, a kettle, a fridge' ||
+                    ', a minibar, a safety deposit box, a flat-screen TV and a shared bathroom with a shower.' ||
+                    ' At Garden Hotel & SPA the rooms have bed linen and towels.
 ',10,1,0,2,1,null,1);
 
 insert into houses(id,price,title,description_of_listing,max_of_guests,count_of_booked_user,
                    house_type,houses_status,houses_booked,date_house_created,owner_id)
-values(4,10,'Delmar','The hotel will provide guests with air-conditioned rooms offering a desk, a kettle, a fridge, a minibar, a safety deposit box, a flat-screen TV and a shared bathroom with a shower. At Garden Hotel & SPA the rooms have bed linen and towels.
+values(4,10,'Delmar','The hotel will provide guests with air-conditioned rooms offering a desk, a kettle, a fridge,' ||
+                     ' a minibar, a safety deposit box, a flat-screen TV and a shared bathroom with a shower. At Garden ' ||
+                     'Hotel & SPA the rooms have bed linen and towels.
 ',10,1,0,2,1,null,2);
 
 insert into houses(id,price,title,description_of_listing,max_of_guests,count_of_booked_user,
                    house_type,houses_status,houses_booked,date_house_created,owner_id)
-values(5,40,'Best','The hotel will provide guests with air-conditioned rooms offering a desk, a kettle, a fridge, a minibar, a safety deposit box, a flat-screen TV and a shared bathroom with a shower. At Garden Hotel & SPA the rooms have bed linen and towels.
+values(5,40,'Best','The hotel will provide guests with air-conditioned rooms offering a desk, a kettle, a fridge,' ||
+                   ' a minibar, a safety deposit box, a flat-screen TV and a shared bathroom with a shower. At Garden ' ||
+                   'Hotel & SPA the rooms have bed linen and towels.
 ',10,1,0,2,1,null,2);
 
 
@@ -90,6 +100,32 @@ values (4,'28.01.2023','02.02.2023',10,4);
 
 insert into booking_dates(id, check_in, check_out, price, house_id)
 values (5,'12.21.2023','15.02.2023',40,5);
+
+insert into feedbacks(id, created_feedback, dislike, take_a_look, rating, text, house_id, user_id)
+values (1,now(),0,5,4,'Great location, really pleasant and clean rooms, but the thing that makes this such a good place to stay are the staff. All' ||
+                      ' of the people are incredibly helpful and generous with their time and advice. We travelled with two six year olds and lots of ' ||
+                      'luggage and despite the stairs up to the elevator this was one of the nicest places we stayed in the four weeks w...',1,2);
+
+insert into feedbacks(id, created_feedback, dislike, take_a_look, rating, text, house_id, user_id)
+values (2,now(),0,10,5,'Great location, really pleasant and clean rooms, but the thing that makes this such a good place to stay are the staff. All' ||
+                      ' of the people are incredibly helpful and generous with their time and advice. We travelled with two six year olds and lots of ' ||
+                      'luggage and despite the stairs up to the elevator this was one of the nicest places we stayed in the four weeks w...',2,2);
+
+insert into feedbacks(id, created_feedback, dislike, take_a_look, rating, text, house_id, user_id)
+values (3,now(),0,3,3,'Great location, really pleasant and clean rooms, but the thing that makes this such a good place to stay are the staff. All' ||
+                      ' of the people are incredibly helpful and generous with their time and advice. We travelled with two six year olds and lots of ' ||
+                      'luggage and despite the stairs up to the elevator this was one of the nicest places we stayed in the four weeks w...',3,2);
+
+insert into feedbacks(id, created_feedback, dislike, take_a_look, rating, text, house_id, user_id)
+values (4,now(),0,5,4,'Great location, really pleasant and clean rooms, but the thing that makes this such a good place to stay are the staff. All' ||
+                      ' of the people are incredibly helpful and generous with their time and advice. We travelled with two six year olds and lots of ' ||
+                      'luggage and despite the stairs up to the elevator this was one of the nicest places we stayed in the four weeks w...',4,2);
+
+
+insert into feedbacks(id, created_feedback, dislike, take_a_look, rating, text, house_id, user_id)
+values (5,now(),2,5,4,'Great location, really pleasant and clean rooms, but the thing that makes this such a good place to stay are the staff. All' ||
+                      ' of the people are incredibly helpful and generous with their time and advice. We travelled with two six year olds and lots of ' ||
+                      'luggage and despite the stairs up to the elevator this was one of the nicest places we stayed in the four weeks w...',5,2);
 
 
 
