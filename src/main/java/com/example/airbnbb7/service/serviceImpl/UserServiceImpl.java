@@ -1,53 +1,61 @@
 package com.example.airbnbb7.service.serviceImpl;
 
+import com.example.airbnbb7.converter.login.LoginConverter;
 import com.example.airbnbb7.converter.user.UserConverterRequest;
-import com.example.airbnbb7.converter.user.UserConverterResponse;
 import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.dto.request.UserRequest;
-import com.example.airbnbb7.dto.response.UserResponse;
+import com.example.airbnbb7.dto.response.LoginResponse;
+import com.example.airbnbb7.exceptions.InvalidCredentialException;
+import com.example.airbnbb7.exceptions.NotFoundException;
 import com.example.airbnbb7.repository.RoleRepository;
 import com.example.airbnbb7.repository.UserRepository;
+import com.example.airbnbb7.security.ValidationExceptionType;
+import com.example.airbnbb7.security.jwt.JwtTokenUtil;
 import com.example.airbnbb7.service.UserService;
-import com.example.airbnbb7.validators.UserValidator;
 import lombok.RequiredArgsConstructor;
-import org.apache.el.util.Validation;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
-
-    private final UserConverterResponse userConverterResponse;
-
     private final UserConverterRequest userConverterRequest;
-
     private final RoleRepository roleRepository;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final LoginConverter loginConverter;
 
-    @Override
-    public UserResponse saveUser(UserRequest userRequest) throws IOException {
-        UserValidator.validator(userRequest.getPassword(),userRequest.getName());
-        if (!UserValidator.isValidEmail(userRequest.getEmail())){
-            throw new IOException("invalid account!");
+
+    public ResponseEntity<LoginResponse> getLogin(@RequestBody UserRequest request) {
+        UsernamePasswordAuthenticationToken token =
+                new UsernamePasswordAuthenticationToken(request.getEmail(),
+                        request.getPassword());
+        User user = userRepository.findByEmail(token.getName()).orElseThrow(
+                () -> {
+                    throw new NotFoundException(String.format("the user with this email was not found", request.getEmail()));
+                });
+        if (request.getPassword() == null) {
+            throw new NotFoundException("Password must not be empty");
         }
-        User user = userConverterRequest.create(userRequest);
-        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-        Role role = roleRepository.getById(2L);
-        user.addRole(role);
-        userRepository.save(user);
-        return userConverterResponse.create(user);
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialException("invalid password");
+        }
+        return ResponseEntity.ok().body(loginConverter.
+                loginView(jwtTokenUtil.generateToken(user),
+                        ValidationExceptionType.SUCCESSFUL, user));
     }
 
     @Override
@@ -66,8 +74,7 @@ public class UserServiceImpl implements UserService {
 
             UserRequest request = new UserRequest();
             request.setEmail("esen@gmail.com");
-            request.setPassword(passwordEncoder.encode("1234567"));
-            request.setName("Esen");
+            request.setPassword(passwordEncoder.encode("12345678"));
 
             User user2 = userConverterRequest.create(request);
 
