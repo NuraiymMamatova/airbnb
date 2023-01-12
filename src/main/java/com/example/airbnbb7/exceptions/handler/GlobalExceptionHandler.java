@@ -1,12 +1,10 @@
 package com.example.airbnbb7.exceptions.handler;
 
-
 import com.example.airbnbb7.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,16 +21,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ExceptionResponse handlerNotFoundException(BadCredentialsException e) {
-
-        return new ExceptionResponse(
-                HttpStatus.FORBIDDEN,
-                e.getClass().getSimpleName(),
-                e.getMessage());
-    }
-
-    @ExceptionHandler(InvalidCredentialException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ExceptionResponse handlerNotFoundException(InvalidCredentialException e) {
 
         return new ExceptionResponse(
                 HttpStatus.FORBIDDEN,

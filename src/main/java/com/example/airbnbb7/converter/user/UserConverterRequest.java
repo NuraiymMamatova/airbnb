@@ -17,7 +17,6 @@ public class UserConverterRequest {
         return user;
     }
 
-
     public void update(User user, UserRequest userRequest) {
 
         if (userRequest.getPassword() != null) {

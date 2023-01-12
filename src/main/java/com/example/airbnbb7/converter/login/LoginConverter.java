@@ -2,7 +2,6 @@ package com.example.airbnbb7.converter.login;
 
 import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
-import com.example.airbnbb7.dto.response.LoginNotResponse;
 import com.example.airbnbb7.dto.response.LoginResponse;
 import org.springframework.stereotype.Component;
 
