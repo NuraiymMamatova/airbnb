@@ -1,17 +1,15 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
-import com.example.airbnbb7.converter.login.LoginConverter;
+import com.example.airbnbb7.config.jwt.JwtTokenUtil;
 import com.example.airbnbb7.db.entities.User;
+import com.example.airbnbb7.db.repository.RoleRepository;
+import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
 import com.example.airbnbb7.exceptions.NotFoundException;
-import com.example.airbnbb7.db.repository.UserRepository;
-import com.example.airbnbb7.config.ValidationExceptionType;
-import com.example.airbnbb7.config.jwt.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,10 +26,9 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final JwtTokenUtil jwtTokenUtil;
+    private final RoleRepository roleRepository;
 
-    private final LoginConverter loginConverter;
-
-    public ResponseEntity<LoginResponse> getLogin(@RequestBody UserRequest request) {
+    public LoginResponse login(@RequestBody UserRequest request) {
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(request.getEmail(),
                         request.getPassword());
@@ -45,9 +42,7 @@ public class UserServiceImpl implements UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("invalid password");
         }
-        return ResponseEntity.ok().body(loginConverter.
-                loginView(jwtTokenUtil.generateToken(user),
-                        ValidationExceptionType.SUCCESSFUL, user));
+        return new LoginResponse(jwtTokenUtil.generateToken(user), user.getEmail(), roleRepository.findById(1L).get().getNameOfRole());
     }
 
     @Override
