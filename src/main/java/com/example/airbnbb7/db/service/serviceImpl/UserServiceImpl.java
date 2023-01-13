@@ -1,15 +1,15 @@
-package com.example.airbnbb7.service.serviceImpl;
+package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.converter.login.LoginConverter;
 import com.example.airbnbb7.db.entities.User;
+import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
 import com.example.airbnbb7.exceptions.NotFoundException;
-import com.example.airbnbb7.repository.UserRepository;
-import com.example.airbnbb7.security.ValidationExceptionType;
-import com.example.airbnbb7.security.jwt.JwtTokenUtil;
-import com.example.airbnbb7.service.UserService;
+import com.example.airbnbb7.db.repository.UserRepository;
+import com.example.airbnbb7.config.ValidationExceptionType;
+import com.example.airbnbb7.config.jwt.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

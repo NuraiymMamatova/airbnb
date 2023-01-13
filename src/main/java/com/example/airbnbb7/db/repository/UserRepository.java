@@ -1,4 +1,4 @@
-package com.example.airbnbb7.repository;
+package com.example.airbnbb7.db.repository;
 
 import com.example.airbnbb7.db.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;

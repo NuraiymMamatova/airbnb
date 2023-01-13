@@ -1,4 +1,4 @@
-package com.example.airbnbb7.security;
+package com.example.airbnbb7.config;
 
 
 public class ValidationExceptionType {

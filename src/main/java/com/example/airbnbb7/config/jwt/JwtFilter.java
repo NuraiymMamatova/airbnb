@@ -1,6 +1,6 @@
-package com.example.airbnbb7.security.jwt;
+package com.example.airbnbb7.config.jwt;
 
-import com.example.airbnbb7.service.UserService;
+import com.example.airbnbb7.db.service.UserService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

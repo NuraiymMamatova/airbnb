@@ -1,4 +1,4 @@
-package com.example.airbnbb7.service;
+package com.example.airbnbb7.db.service;
 
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;

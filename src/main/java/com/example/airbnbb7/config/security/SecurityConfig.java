@@ -1,7 +1,7 @@
-package com.example.airbnbb7.security.config;
+package com.example.airbnbb7.config.security;
 
-import com.example.airbnbb7.security.jwt.JwtFilter;
-import com.example.airbnbb7.service.UserService;
+import com.example.airbnbb7.config.jwt.JwtFilter;
+import com.example.airbnbb7.db.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

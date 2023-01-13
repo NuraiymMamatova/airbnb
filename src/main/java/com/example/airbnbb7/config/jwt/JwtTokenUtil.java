@@ -1,4 +1,4 @@
-package com.example.airbnbb7.security.jwt;
+package com.example.airbnbb7.config.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
