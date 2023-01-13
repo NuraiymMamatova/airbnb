@@ -24,12 +24,6 @@ public class LoginConverter {
         return loginResponse;
     }
 
-    public LoginResponse loginNotView(String message) {
-        var  loginResponse= new LoginResponse();
-        loginResponse.setMessage(message);
-        return loginResponse;
-    }
-
     private void setAuthorite(LoginResponse loginResponse, List<Role> roles) {
         Set<String> authorities = new HashSet<>();
         for (Role role : roles) {

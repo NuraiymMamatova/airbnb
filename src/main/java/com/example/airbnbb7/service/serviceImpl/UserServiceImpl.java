@@ -1,14 +1,11 @@
 package com.example.airbnbb7.service.serviceImpl;
 
 import com.example.airbnbb7.converter.login.LoginConverter;
-import com.example.airbnbb7.converter.user.UserConverterRequest;
-import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
 import com.example.airbnbb7.exceptions.NotFoundException;
-import com.example.airbnbb7.repository.RoleRepository;
 import com.example.airbnbb7.repository.UserRepository;
 import com.example.airbnbb7.security.ValidationExceptionType;
 import com.example.airbnbb7.security.jwt.JwtTokenUtil;
@@ -22,9 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.annotation.PostConstruct;
-import java.util.Arrays;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -32,10 +26,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
-
-    private final UserConverterRequest userConverterRequest;
-
-    private final RoleRepository roleRepository;
 
     private final JwtTokenUtil jwtTokenUtil;
 
