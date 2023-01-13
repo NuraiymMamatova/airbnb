@@ -26,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final JwtTokenUtil jwtTokenUtil;
+
     private final RoleRepository roleRepository;
 
     public LoginResponse login(@RequestBody UserRequest request) {
