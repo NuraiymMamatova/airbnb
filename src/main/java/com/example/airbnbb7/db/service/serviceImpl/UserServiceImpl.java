@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
                         request.getPassword());
         User user = userRepository.findByEmail(token.getName()).orElseThrow(
                 () -> {
-                    throw new NotFoundException(String.format("the user with this email was not found", request.getEmail()));
+                    throw new NotFoundException("the user with this email was not found");
                 });
         if (request.getPassword() == null) {
             throw new NotFoundException("Password must not be empty");
