@@ -49,7 +49,7 @@ public class House {
     private LocalDate dateHouseCreated;
 
 
-    @OneToOne(cascade = ALL)
+    @OneToOne(cascade = ALL,mappedBy = "house")
     private Location location;
 
     @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")
