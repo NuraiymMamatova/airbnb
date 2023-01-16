@@ -1,6 +1,8 @@
 package com.example.airbnbb7.db.entities;
 
 import javax.persistence.*;
+
+import com.example.airbnbb7.authwithgoogle.entity.AuthInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,8 +40,11 @@ public class User {
     @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "users")
     private List<Booking> bookings;
 
-    @ManyToMany(targetEntity = Role.class, cascade = {REFRESH, DETACH, MERGE, PERSIST}, mappedBy = "users")
-    private List<Role> roles;
+//    @ManyToMany(targetEntity = Role.class, cascade = {REFRESH, DETACH, MERGE, PERSIST}, mappedBy = "users")
+//    private List<Role> roles;
+
+    @OneToOne(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "user")
+    private AuthInfo authInfo;
 
     @OneToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE})
     private List<FavoriteHouse> favoriteHouses;
