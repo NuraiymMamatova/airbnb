@@ -1,5 +1,7 @@
-package com.example.airbnbb7.db;
+package com.example.airbnbb7.api;
 
+import com.example.airbnbb7.converter.response.HouseResponseConverter;
+import com.example.airbnbb7.db.service.serviceImpl.HouseServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +18,8 @@ public class HouseApi {
 
     @GetMapping
     public HouseResponseConverter findAllInstructors(@RequestParam(name = "text", required = false) String text,
-                                                          @RequestParam int page,
-                                                          @RequestParam int size) {
+                                                     @RequestParam int page,
+                                                     @RequestParam int size) {
         return houseService.getAll(text, page, size);
     }
 }

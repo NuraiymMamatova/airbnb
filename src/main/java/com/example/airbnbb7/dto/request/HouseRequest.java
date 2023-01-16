@@ -1,4 +1,4 @@
-package com.example.airbnbb7.db;
+package com.example.airbnbb7.dto.request;
 
 import com.example.airbnbb7.db.entities.Location;
 import com.example.airbnbb7.db.enums.HouseType;

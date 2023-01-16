@@ -1,4 +1,4 @@
-package com.example.airbnbb7.db;
+package com.example.airbnbb7.dto.response;
 
 import com.example.airbnbb7.db.entities.Booking;
 import com.example.airbnbb7.db.entities.Feedback;

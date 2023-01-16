@@ -1,6 +1,10 @@
-package com.example.airbnbb7.db;
+package com.example.airbnbb7.db.service.serviceImpl;
 
+import com.example.airbnbb7.converter.request.HouseRequestConverter;
+import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.entities.House;
+import com.example.airbnbb7.db.repository.HouseRepository;
+import com.example.airbnbb7.dto.response.HouseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

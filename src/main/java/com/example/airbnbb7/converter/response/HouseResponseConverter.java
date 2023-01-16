@@ -1,6 +1,7 @@
-package com.example.airbnbb7.db;
+package com.example.airbnbb7.converter.response;
 
 import com.example.airbnbb7.db.entities.House;
+import com.example.airbnbb7.dto.response.HouseResponse;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;

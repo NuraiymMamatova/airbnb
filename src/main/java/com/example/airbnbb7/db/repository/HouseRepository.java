@@ -1,4 +1,4 @@
-package com.example.airbnbb7.db;
+package com.example.airbnbb7.db.repository;
 
 import com.example.airbnbb7.db.entities.House;
 import org.springframework.data.domain.Pageable;
