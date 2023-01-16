@@ -5,7 +5,6 @@ import com.example.airbnbb7.db.entities.Feedback;
 import com.example.airbnbb7.db.entities.Location;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HouseType;
-import com.example.airbnbb7.db.enums.HousesBooked;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +25,6 @@ public class HouseResponse {
     private List<String> images;
     private Long maxOfGuests;
     private HouseType houseType;
-    private HousesBooked housesBooked;
     private Location location;
     private List<Booking> bookingDates;
     private List<User> guests;

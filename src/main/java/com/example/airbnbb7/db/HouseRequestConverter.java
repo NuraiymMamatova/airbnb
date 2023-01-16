@@ -3,8 +3,6 @@ package com.example.airbnbb7.db;
 import com.example.airbnbb7.db.entities.House;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class HouseRequestConverter {
 

@@ -1,7 +1,6 @@
 package com.example.airbnbb7.db;
 
 import com.example.airbnbb7.db.entities.Location;
-import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HouseType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

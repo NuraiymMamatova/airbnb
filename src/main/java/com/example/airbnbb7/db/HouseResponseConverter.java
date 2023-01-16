@@ -20,7 +20,6 @@ public class HouseResponseConverter {
         HouseResponse houseResponse = new HouseResponse();
         houseResponse.setHouseType(house.getHouseType());
         houseResponse.setGuests(house.getGuests());
-        houseResponse.setHousesBooked(house.getHousesBooked());
         houseResponse.setFeedbacks(house.getFeedbacks());
         houseResponse.setImages(house.getImages());
         houseResponse.setLocation(house.getLocation());

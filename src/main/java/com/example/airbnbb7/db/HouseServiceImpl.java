@@ -36,6 +36,4 @@ public class HouseServiceImpl {
         String text = name == null ? "" : name;
         return houseRepository.searchPagination(text.toUpperCase(), pageable);
     }
-
-
 }
