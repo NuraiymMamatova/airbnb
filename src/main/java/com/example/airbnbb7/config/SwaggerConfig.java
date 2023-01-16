@@ -1,36 +1,33 @@
 package com.example.airbnbb7.config;
 
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.util.Collections;
 @Configuration
-@EnableSwagger2
 public class SwaggerConfig {
+    private static final String API_KEY = "Bearer Token";
+
     @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.example.airbnbb7"))
-                .paths(PathSelectors.any())
-                .build().apiInfo(metaData());
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .components(new Components()
+                        .addSecuritySchemes(API_KEY, apiKeySecuritySchema())) // define the apiKey SecuritySchema
+                .info(new Info().title("Airbnb"))
+                .security(Collections.singletonList(new SecurityRequirement().addList(API_KEY))); // then apply it. If you don't apply it will not be added to the header in cURL
     }
 
-    private ApiInfo metaData() {
-        return new ApiInfoBuilder()
-                .title("Tech Interface - Spring Boot Swagger Configuration")
-                .description("\"Swagger configuration for application \"")
-                .version("1.1.0")
-                .license("Apache 2.0")
-                .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0\"")
-                .contact(new Contact("Tech Interface", "https://www.youtube.com/channel/UCMpJ8m1w9t7EFcF9x8rs02A", "info@techinterface.com"))
-                .build();
+    public SecurityScheme apiKeySecuritySchema() {
+        return new SecurityScheme()
+                .name("Authorization") // authorisation-token
+                .description("Just put the token")
+                .in(SecurityScheme.In.HEADER)
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("Bearer");
     }
 }
