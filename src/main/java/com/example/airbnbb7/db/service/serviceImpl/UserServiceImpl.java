@@ -17,12 +17,14 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -53,16 +55,19 @@ public class UserServiceImpl implements UserService {
         FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
 
         User user = null;
-        if (userRepository.findByEmail(firebaseToken.getEmail()) == null) {
+        if (userRepository.findByEmail(firebaseToken.getEmail()).isEmpty()) {
             user = new User();
             user.addRole(roleRepository.findByName("USER"));
             user.setPassword(firebaseToken.getEmail());
             user.setName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
             user = userRepository.save(user);
+
+            return new LoginResponse(user.getEmail(), jwtTokenUtil.generateToken(user), userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
         }
 
-        user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException("User not found!"));
+        String email = user.getEmail();
+        user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!" , email)));
 
         String token = jwtTokenUtil.generateToken(user);
         return new LoginResponse(user.getEmail(), token, userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
