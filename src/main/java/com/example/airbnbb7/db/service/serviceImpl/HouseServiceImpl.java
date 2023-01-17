@@ -17,7 +17,6 @@ public class HouseServiceImpl {
 
     private final HouseRepository houseRepository;
     private final HouseResponseConverter houseResponseConverter;
-    private final HouseRequestConverter houseRequestConverter;
 
     public HouseResponseConverter getAll(String text, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);

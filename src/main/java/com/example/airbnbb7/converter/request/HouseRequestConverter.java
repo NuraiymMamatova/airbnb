@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class HouseRequestConverter {
 
-    public House save(HouseRequest houseRequest){
+    public House save(HouseRequest houseRequest) {
         if (houseRequest == null) {
             return null;
         }
@@ -22,7 +22,7 @@ public class HouseRequestConverter {
         return house;
     }
 
-    public void update(House house,HouseRequest houseRequest){
+    public void update(House house, HouseRequest houseRequest) {
         house.setHouseType(houseRequest.getHouseType());
         house.setDescriptionOfListing(houseRequest.getDescriptionOfListing());
         house.setPrice(houseRequest.getPrice());
