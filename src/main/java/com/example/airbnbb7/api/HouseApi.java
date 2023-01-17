@@ -14,14 +14,14 @@ public class HouseApi {
     private final HouseService houseService;
 
     @PostMapping("/save/{id}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMIN')")
     public HouseResponse save(@RequestBody HouseRequest houseRequest, @PathVariable Long id) {
 
         return houseService.saveHouse(houseRequest, id);
     }
 
     @PostMapping("/acceptHouse/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public HouseResponse acceptHouse(@PathVariable Long id) {
         return houseService.acceptHouseById(id);
     }

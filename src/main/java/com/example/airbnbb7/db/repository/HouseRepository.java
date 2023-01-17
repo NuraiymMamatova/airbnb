@@ -8,8 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface HouseRepository extends JpaRepository<House, Long> {
 
-    @Query("update House h set h.housesStatus=:housesStatus where h.id =:id")
-    HouseResponse updateHouseStatus(Long id, HousesStatus housesStatus);
+
 
 
 

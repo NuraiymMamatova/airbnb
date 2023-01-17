@@ -42,7 +42,10 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     public HouseResponse acceptHouseById(Long id) {
-        return houseRepository.updateHouseStatus(id, HousesStatus.ACCEPT);
+       House house = houseRepository.findById(id).get();
+        house.setHousesStatus(HousesStatus.ACCEPT);
+        houseRepository.save(house);
+        return houseResponseConverter.viewHouse(house);
 
     }
 }

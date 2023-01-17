@@ -4,6 +4,8 @@ import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,7 +50,7 @@ public class House {
 
     private LocalDate dateHouseCreated;
 
-
+    @JsonIgnore
     @OneToOne(cascade = ALL,mappedBy = "house")
     private Location location;
 
