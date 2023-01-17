@@ -1,6 +1,5 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
-import com.example.airbnbb7.converter.request.HouseRequestConverter;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.repository.HouseRepository;
