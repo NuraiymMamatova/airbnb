@@ -4,13 +4,11 @@ import com.example.airbnbb7.converter.request.HouseRequestConverter;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.repository.HouseRepository;
-import com.example.airbnbb7.dto.response.HouseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,20 +18,12 @@ public class HouseServiceImpl {
     private final HouseRepository houseRepository;
     private final HouseResponseConverter houseResponseConverter;
     private final HouseRequestConverter houseRequestConverter;
-    
+
     public HouseResponseConverter getAll(String text, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         HouseResponseConverter instructorConverterResponse = new HouseResponseConverter();
-        instructorConverterResponse.setHouseResponseList(viewPagination(search(text, pageable)));
+        instructorConverterResponse.setHouseResponseList(houseResponseConverter.getAll(search(text, pageable)));
         return instructorConverterResponse;
-    }
-
-    public List<HouseResponse> viewPagination(List<House> houses) {
-        List<HouseResponse> houseResponses = new ArrayList<>();
-        for (House house : houses) {
-            houseResponses.add(houseResponseConverter.create(house));
-        }
-        return houseResponses;
     }
 
     public List<House> search(String name, Pageable pageable) {
