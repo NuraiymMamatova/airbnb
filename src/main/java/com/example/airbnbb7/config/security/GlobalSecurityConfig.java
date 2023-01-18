@@ -8,12 +8,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true,
-securedEnabled = true,
-jsr250Enabled = true)
+        securedEnabled = true,
+        jsr250Enabled = true)
 public class GlobalSecurityConfig {
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
