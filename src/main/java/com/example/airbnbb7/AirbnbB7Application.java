@@ -14,7 +14,8 @@ public class AirbnbB7Application {
     }
 
     @GetMapping("/")
-    public String greetings(){
+    public String greetings() {
         return "introduction";
     }
+
 }

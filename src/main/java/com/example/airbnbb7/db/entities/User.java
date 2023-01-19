@@ -15,6 +15,7 @@ import java.util.List;
 
 import static javax.persistence.CascadeType.*;
 
+
 @Entity
 @Getter
 @Setter
@@ -63,7 +64,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
-        for(Role role : roles){
+        for (Role role : roles) {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getNameOfRole()));
         }
         return grantedAuthorities;
@@ -73,6 +74,7 @@ public class User implements UserDetails {
     public String getUsername() {
         return email;
     }
+
     @Override
     public String getPassword() {
         return password;
