@@ -3,12 +3,11 @@ package com.example.airbnbb7.db.entities;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,7 +22,7 @@ import static javax.persistence.FetchType.LAZY;
 public class House {
 
     @Id
-    @SequenceGenerator(name = "house_gen", sequenceName = "house_seq", allocationSize = 1)
+    @SequenceGenerator(name = "house_gen", sequenceName = "house_seq", allocationSize = 1, initialValue = 6)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "house_gen")
     private Long id;
 
@@ -51,7 +50,7 @@ public class House {
     private LocalDate dateHouseCreated;
 
     @JsonIgnore
-    @OneToOne(cascade = ALL,mappedBy = "house")
+    @OneToOne(cascade = ALL, mappedBy = "house")
     private Location location;
 
     @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")

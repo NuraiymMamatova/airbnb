@@ -1,12 +1,10 @@
 package com.example.airbnbb7.db.entities;
 
-import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +18,7 @@ import static javax.persistence.CascadeType.*;
 public class Role {
 
     @Id
-    @SequenceGenerator(name = "role_gen", sequenceName = "role_seq", allocationSize = 1)
+    @SequenceGenerator(name = "role_gen", sequenceName = "role_seq", allocationSize = 1, initialValue = 3)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_gen")
     private Long id;
 

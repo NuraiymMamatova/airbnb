@@ -23,7 +23,7 @@ import static javax.persistence.CascadeType.*;
 public class User implements UserDetails {
 
     @Id
-    @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 1)
+    @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 1, initialValue = 3)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_gen")
     private Long id;
 
@@ -63,7 +63,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
-        for(Role role : roles){
+        for (Role role : roles) {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getNameOfRole()));
         }
         return grantedAuthorities;
@@ -73,6 +73,7 @@ public class User implements UserDetails {
     public String getUsername() {
         return email;
     }
+
     @Override
     public String getPassword() {
         return password;

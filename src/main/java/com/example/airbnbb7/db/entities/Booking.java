@@ -1,6 +1,5 @@
 package com.example.airbnbb7.db.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +19,7 @@ import static javax.persistence.CascadeType.*;
 public class Booking {
 
     @Id
-    @SequenceGenerator(name = "booking_dates_gen", sequenceName = "booking_dates_seq", allocationSize = 1)
+    @SequenceGenerator(name = "booking_dates_gen", sequenceName = "booking_dates_seq", allocationSize = 1, initialValue = 6)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "booking_dates_gen")
     private Long id;
 

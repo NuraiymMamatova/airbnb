@@ -1,11 +1,10 @@
 package com.example.airbnbb7.db.entities;
 
-import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
 
 import static javax.persistence.CascadeType.*;
 

@@ -1,11 +1,9 @@
 package com.example.airbnbb7.db.entities;
 
-import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +19,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Feedback {
 
     @Id
-    @SequenceGenerator(name = "feedback_gen", sequenceName = "feedback_seq", allocationSize = 1)
+    @SequenceGenerator(name = "feedback_gen", sequenceName = "feedback_seq", allocationSize = 1, initialValue = 6)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "feedback_gen")
     private Long id;
 
