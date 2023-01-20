@@ -1,5 +1,6 @@
 package com.example.airbnbb7.db.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import static javax.persistence.CascadeType.*;
 @Setter
 @NoArgsConstructor
 @Table(name = "users")
+@AllArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -42,7 +44,7 @@ public class User implements UserDetails {
     @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "users")
     private List<Booking> bookings;
 
-    @ManyToMany(targetEntity = Role.class, cascade = {REFRESH, DETACH, MERGE, PERSIST}, mappedBy = "users")
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class, cascade = {REFRESH, DETACH, MERGE, PERSIST}, mappedBy = "users")
     private List<Role> roles;
 
     public void addRole(Role role) {
@@ -56,7 +58,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
-        for(Role role : roles){
+        for (Role role : roles) {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getNameOfRole()));
         }
         return grantedAuthorities;
@@ -66,6 +68,7 @@ public class User implements UserDetails {
     public String getUsername() {
         return email;
     }
+
     @Override
     public String getPassword() {
         return password;
