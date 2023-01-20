@@ -37,8 +37,8 @@ public class User implements UserDetails {
 
     private Long countOfBookedHouse;
 
-    @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "guests")
-    private List<House> houses;
+    @OneToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "owner")
+    private List<House> announcements;
 
     @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "users")
     private List<Booking> bookings;
