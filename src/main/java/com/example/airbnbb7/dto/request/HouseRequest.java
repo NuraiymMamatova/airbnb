@@ -1,7 +1,6 @@
 package com.example.airbnbb7.dto.request;
 
 import com.example.airbnbb7.db.entities.Location;
-import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HouseType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,10 +17,16 @@ import java.util.List;
 @NoArgsConstructor
 public class HouseRequest {
     private Double price;
+
     private String title;
+
     private String descriptionOfListing;
+
     private List<String> images;
+
     private Long maxOfGuests;
+
     private HouseType houseType;
+
     private Location location;
 }
