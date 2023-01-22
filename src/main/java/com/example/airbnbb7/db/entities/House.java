@@ -55,13 +55,9 @@ public class House {
     @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")
     private List<Booking> bookingDates;
 
-    @ManyToMany(cascade = {MERGE, REFRESH, DETACH})
-    @JoinTable(name = "house_users", joinColumns = @JoinColumn(name = "house_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<User> guests;
-
     @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")
     private List<Feedback> feedbacks;
 
-    @OneToOne(cascade = {MERGE, REFRESH, DETACH})
+    @ManyToOne(cascade = {MERGE, REFRESH, DETACH})
     private User owner;
 }
