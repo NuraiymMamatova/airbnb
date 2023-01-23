@@ -14,16 +14,15 @@ public class HouseApi {
     private final HouseService houseService;
 
     @PostMapping("/save/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     public HouseResponse save(@RequestBody HouseRequest houseRequest, @PathVariable Long id) {
-
-        return houseService.saveHouse(houseRequest, id);
+    return houseService.saveHouse(houseRequest, id);
     }
 
-    @PostMapping("/acceptHouse/{id}")
+    @PostMapping("/delete/{id}")
     @PreAuthorize("isAuthenticated()")
-    public HouseResponse acceptHouse(@PathVariable Long id) {
-        return houseService.acceptHouseById(id);
+    public HouseResponse deleteHouse(@PathVariable Long id) {
+        return houseService.deleteByIdHouse(id);
     }
 
 

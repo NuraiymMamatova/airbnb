@@ -8,5 +8,5 @@ public interface HouseService {
 
     HouseResponse saveHouse(HouseRequest houseRequest, Long id);
 
-    HouseResponse acceptHouseById(Long id);
+    HouseResponse deleteByIdHouse(Long houseId);
 }

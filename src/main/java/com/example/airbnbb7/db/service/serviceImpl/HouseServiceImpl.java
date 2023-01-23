@@ -41,11 +41,11 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public HouseResponse acceptHouseById(Long id) {
-       House house = houseRepository.findById(id).get();
-        house.setHousesStatus(HousesStatus.ACCEPT);
-        houseRepository.save(house);
-        return houseResponseConverter.viewHouse(house);
-
+    public HouseResponse deleteByIdHouse(Long houseId) {
+        House house = houseRepository.findById(houseId).get();
+        houseRepository.delete(house);
+        return houseResponseConverter.viewHouse(houseRepository.save(house));
     }
+
+
 }

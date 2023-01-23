@@ -49,7 +49,6 @@ public class House {
 
     private LocalDate dateHouseCreated;
 
-    @JsonIgnore
     @OneToOne(cascade = ALL, mappedBy = "house")
     private Location location;
 
