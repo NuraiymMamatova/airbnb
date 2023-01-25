@@ -28,6 +28,7 @@ public class HouseServiceImpl implements HouseService {
     private final HouseResponseConverter houseResponseConverter;
 
     private final UserRepository userRepository;
+
     private final LocationService locationService;
 
 
