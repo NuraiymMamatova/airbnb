@@ -30,7 +30,6 @@ public class Location {
 
     private String region;
 
-    @JsonIgnore
     @OneToOne(cascade = {REFRESH, MERGE, DETACH,PERSIST,REMOVE})
     private House house;
 }
