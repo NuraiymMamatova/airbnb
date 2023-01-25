@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LocationRepository extends JpaRepository<Location,Long> {
+public interface LocationRepository extends JpaRepository<Location, Long> {
 
     @Query("select new com.example.airbnbb7.dto.response.LocationResponse(l.id,l.townOrProvince,l.address,l.region) from Location l where l = :location")
-    LocationResponse convertToResponseById(Location location);
+    LocationResponse convertToResponse(Location location);
 
 }

@@ -21,7 +21,7 @@ public class HouseApi {
     @GetMapping
     public List<HouseResponse> findAllHousesPage(@RequestParam(name = "sort", required = false) String fieldToSort,
                                                  @RequestParam(name = "text", required = false) String text,
-                                                @RequestParam int page,
+                                                @RequestParam int page ,
                                                 @RequestParam int size,
                                                  @RequestParam(name = "priceSort", required = false) String priceSort,
                                                  @RequestParam(name = "region", required = false) String region,

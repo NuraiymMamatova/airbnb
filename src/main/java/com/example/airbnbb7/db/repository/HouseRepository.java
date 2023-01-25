@@ -46,21 +46,4 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.maxOfGuests," +
             "h.houseType) from House h where h.location.region = :region ")
     List<HouseResponse> regionHouses(String region);
-
-    @Query("select new com.example.airbnbb7.dto.response.HouseResponse(h.id," +
-            "h.price," +
-            "h.title," +
-            "h.descriptionOfListing," +
-            "h.maxOfGuests," +
-            "h.houseType) from House h where h.id = :id")
-    List<HouseResponse> convertToResponseById(Long id);
-
-
-    @Query("select new com.example.airbnbb7.dto.response.HouseResponse(h.id," +
-            "h.price," +
-            "h.title," +
-            "h.descriptionOfListing," +
-            "h.maxOfGuests," +
-            "h.houseType) from House h")
-    List<HouseResponse> siuu();
 }

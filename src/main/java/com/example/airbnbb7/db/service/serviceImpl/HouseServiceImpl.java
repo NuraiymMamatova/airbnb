@@ -1,7 +1,6 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.db.entities.House;
-import com.example.airbnbb7.db.entities.Location;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.LocationRepository;
@@ -11,7 +10,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,36 +23,29 @@ public class HouseServiceImpl {
 
     public List<HouseResponse> getAll(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region) {
         Pageable pageable = PageRequest.of(page - 1, countOfHouses);
-//        List<HouseResponse> houseResponses = new ArrayList<>();
-//        List<House> houses = search(text, pageable);si
-
         String text;
         if (nameOfHouse == null)
             text = "";
         else text = nameOfHouse;
         List<House> houses = houseRepository.findAll();
         List<HouseResponse> houseResponses = houseRepository.pagination(text, pageable);
-        houseResponses = sort(houseType, region, priceSort, fieldToSort, houseResponses);
-        int index = 0;
-        for (HouseResponse response : houseResponses) {
-            response.setImages(houses.get(index).getImages());
-            response.setLocationResponse(locationRepository.convertToResponseById(houses.get(index).getLocation() ));
-            index++;
+        List<HouseResponse> sortedHouseResponse = sort(houseType, region, priceSort, fieldToSort, houseResponses);
+        for (HouseResponse response : sortedHouseResponse) {
+            Long index1 = response.getId();
+            response.setImages(houses.get(Math.toIntExact(index1 - 1)).getImages());
+            response.setLocationResponse(locationRepository.convertToResponse(houses.get(Math.toIntExact(index1 - 1)).getLocation()));
         }
-//        System.out.println(houseResponses.toString());
-        return houseResponses;
+        return sortedHouseResponse;
     }
-
 
     public List<HouseResponse> sort(HouseType houseType, String region, String priceSort, String fieldToSort, List<HouseResponse> sortedHouseResponse) {
         switch (fieldToSort) {
             case "homeType":
                 switch (houseType) {
                     case HOUSE:
-                        System.out.println(getAllHouses());
+                        return houseRepository.getAllHouses();
                     case APARTMENT:
-                        System.out.println(getAllApartment());
-                        break;
+                        return houseRepository.getAllApartments();
                 }
             case "homePrice":
                 if (priceSort.equals("High to low")) {
@@ -61,35 +55,25 @@ public class HouseServiceImpl {
                 }
                 break;
             case "region":
-                switch (region){
+                switch (region) {
                     case "Bishkek":
-                        houseRepository.regionHouses("Bishkek");
+                        return houseRepository.regionHouses("Bishkek");
                     case "Osh":
-                        houseRepository.regionHouses("Osh");
+                        return houseRepository.regionHouses("Osh");
                     case "Batken":
-                        houseRepository.regionHouses("Batken");
+                        return houseRepository.regionHouses("Batken");
                     case "Talas":
-                        houseRepository.regionHouses("Talas");
+                        return houseRepository.regionHouses("Talas");
                     case "Naryn":
-                        houseRepository.regionHouses("Naryn");
+                        return houseRepository.regionHouses("Naryn");
                     case "Chui":
-                        houseRepository.regionHouses("Chui");
+                        return houseRepository.regionHouses("Chui");
                     case "Issyk-Kul":
-                        houseRepository.regionHouses("Issyk-Kul");
+                        return houseRepository.regionHouses("Issyk-Kul");
                     case "Jalal-Abat":
-                        System.out.println(houseRepository.regionHouses("Jalal-Abat"));
+                        return houseRepository.regionHouses("Jalal-Abat");
                 }
         }
         return sortedHouseResponse;
-    }
-
-    public List<HouseResponse> getAllHouses( ) {
-        List<HouseResponse> houseResponses = houseRepository.getAllHouses();
-        return houseResponses;
-    }
-
-    public List<HouseResponse> getAllApartment( ) {
-        List<HouseResponse> houseResponses = houseRepository.getAllApartments();
-        return houseResponses;
     }
 }
