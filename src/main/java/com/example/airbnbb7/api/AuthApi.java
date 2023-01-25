@@ -22,13 +22,13 @@ public class AuthApi {
     private final UserServiceImpl authService;
 
     @PostMapping("login")
-    @Operation(summary = "Sign in", description = "Authentication")
+    @Operation(summary = "Sign in", description = "Any user can authenticate")
     public LoginResponse login(@RequestBody UserRequest request) {
         return userService.login(request);
     }
 
     @PostMapping("/google")
-    @Operation(summary = "Sign up & sign in", description = "via google")
+    @Operation(summary = "Sign up & sign in", description = "Authenticate via Google")
     public LoginResponse authResponse(String tokenId) throws FirebaseAuthException {
         return authService.authWithGoogle(tokenId);
     }
