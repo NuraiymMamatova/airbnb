@@ -27,17 +27,10 @@ public class HouseApi {
                                                 @RequestParam(required = false) Long bookingForUpdate,
                                                 @RequestBody(required = false) BookingRequest bookingRequest,
                                                 @RequestParam(required = false) HousesStatus houseStatus,
-                                                @RequestParam(required = false) boolean delete,
                                                 @RequestParam(required = false) boolean addToFavorite,
                                                 @RequestParam(required = false) boolean reject,
                                                 @RequestParam(required = false) String message) {
-        return houseService.getHouseForUserBooking(houseId, userId, bookingForUpdate, bookingRequest, houseStatus, delete, addToFavorite, reject, message);
-    }
-
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Delete house", description = "Only admin or owner can delete a house")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
-        return houseService.deleteHouse(id);
+        return houseService.getHouseForUserBooking(houseId, userId, bookingForUpdate, bookingRequest, houseStatus,addToFavorite, reject, message);
     }
 
 }

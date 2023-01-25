@@ -11,14 +11,12 @@ public interface HouseService {
 
     MarkerService getHouseForUserBooking(Long houseId, Long userIdForBooking,
                                          Long bookingIdForUpdate, BookingRequest booking,
-                                         HousesStatus houseStatus, boolean delete, boolean addToFavorite,
+                                         HousesStatus houseStatus, boolean addToFavorite,
                                          boolean reject, String message);
 
     HouseResponseForVendor getHouseForVendor(Long houseId);
 
     HouseResponse getHouseForAdmin(Long houseId, HousesStatus houseStatus);
-
-    ResponseEntity<String> deleteHouse(Long houseId);
 
     ResponseEntity<String> rejectHouse(Long houseId, String message);
 

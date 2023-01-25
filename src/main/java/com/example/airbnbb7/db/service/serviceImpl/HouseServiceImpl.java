@@ -46,7 +46,7 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public MarkerService getHouseForUserBooking(Long houseId, Long userId,
                                                 Long bookingIdForUpdate, BookingRequest bookingRequest,
-                                                HousesStatus houseStatus, boolean delete, boolean addToFavorite,
+                                                HousesStatus houseStatus, boolean addToFavorite,
                                                 boolean reject, String message) {
         if (userId != null && houseId != null) {
             House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found"));
@@ -61,8 +61,6 @@ public class HouseServiceImpl implements HouseService {
                 } else {
                     return getHouseForAdmin(houseId);
                 }
-            } else if (delete && house.getOwner().equals(user) || delete && role.getNameOfRole().equals("ADMIN")) {
-                deleteHouse(houseId);
             } else if (addToFavorite && !house.getOwner().equals(user) && role.getNameOfRole().equals("USER")) {
                 favoriteHouseService.addHouseToFavorite(houseId, userId);
             } else if (reject && message != null) {
@@ -128,13 +126,6 @@ public class HouseServiceImpl implements HouseService {
         houseResponse.setOwner(userService.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!")).getOwner().getId()));
         houseResponse.setLocation(locationService.findLocationByHouseId(houseId));
         return houseResponse;
-    }
-
-    @Override
-    public ResponseEntity<String> deleteHouse(Long houseId) {
-        favoriteHouseService.deleteFavoriteHouseByHouseId(houseId);
-        houseRepository.deleteById(houseId);
-        return ResponseEntity.status(HttpStatus.OK).body("Deleted successfully");
     }
 
     @Override
