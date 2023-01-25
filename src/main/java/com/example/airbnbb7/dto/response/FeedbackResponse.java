@@ -1,6 +1,5 @@
 package com.example.airbnbb7.dto.response;
 
-import com.example.airbnbb7.dto.response.user.UserResponse;
 import com.example.airbnbb7.dto.response.user.UserResponseForFeedback;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -13,6 +13,7 @@ import com.example.airbnbb7.dto.response.BookingResponse;
 import com.example.airbnbb7.dto.response.house.HouseResponse;
 import com.example.airbnbb7.dto.response.house.HouseResponseForVendor;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
+import com.example.airbnbb7.exceptions.BadRequestException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -65,7 +66,6 @@ public class HouseServiceImpl implements HouseService {
             } else if (addToFavorite && !house.getOwner().equals(user) && role.getNameOfRole().equals("USER")) {
                 favoriteHouseService.addHouseToFavorite(houseId, userId);
             } else if (reject && message != null) {
-                System.out.println("house");
                 if (role.getNameOfRole().equals("ADMIN")) {
                     System.out.println("reject");
                     rejectHouse(houseId, message);
@@ -90,7 +90,7 @@ public class HouseServiceImpl implements HouseService {
                 return houseResponse;
             }
         }
-        return null;
+        throw new BadRequestException("House id or user id cannot be null!");
     }
 
     @Override
@@ -131,7 +131,7 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public ResponseEntity deleteHouse(Long houseId) {
+    public ResponseEntity<String> deleteHouse(Long houseId) {
         favoriteHouseService.deleteFavoriteHouseByHouseId(houseId);
         houseRepository.deleteById(houseId);
         return ResponseEntity.status(HttpStatus.OK).body("Deleted successfully");
@@ -163,7 +163,7 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public ResponseEntity rejectHouse(Long houseId, String message) {
+    public ResponseEntity<String> rejectHouse(Long houseId, String message) {
         House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
         house.setHousesStatus(HousesStatus.REJECT);
         houseRepository.save(house);

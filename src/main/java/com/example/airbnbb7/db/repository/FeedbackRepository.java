@@ -2,7 +2,6 @@ package com.example.airbnbb7.db.repository;
 
 import com.example.airbnbb7.db.entities.Feedback;
 import com.example.airbnbb7.dto.response.FeedbackResponse;
-import com.example.airbnbb7.dto.response.user.UserResponse;
 import com.example.airbnbb7.dto.response.user.UserResponseForFeedback;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

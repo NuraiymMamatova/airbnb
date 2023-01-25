@@ -1,7 +1,6 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.enums.HousesStatus;
-import com.example.airbnbb7.db.repository.RoleRepository;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.db.service.MarkerService;
 import com.example.airbnbb7.dto.request.BookingRequest;
@@ -19,7 +18,7 @@ public class HouseApi {
     private final HouseService houseService;
 
     @GetMapping("/announcements/{houseId}/{userId}")
-    public MarkerService announcementsForVendor(@PathVariable Long houseId,@PathVariable Long userId,
+    public MarkerService announcementsForVendor(@PathVariable Long houseId, @PathVariable Long userId,
                                                 @RequestParam(required = false) Long bookingForUpdate,
                                                 @RequestBody(required = false) BookingRequest bookingRequest,
                                                 @RequestParam(required = false) HousesStatus houseStatus,
@@ -36,8 +35,8 @@ public class HouseApi {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable Long id) {
-      return houseService.deleteHouse(id);
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        return houseService.deleteHouse(id);
     }
 
 }
