@@ -7,6 +7,8 @@ import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
+import com.example.airbnbb7.dto.response.user.UserResponse;
+import com.example.airbnbb7.dto.response.user.UserResponseForVendor;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +65,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
         }
 
-        user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!" , firebaseToken.getEmail())));
+        user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!", firebaseToken.getEmail())));
 
         String token = jwtTokenUtil.generateToken(user);
         return new LoginResponse(user.getEmail(), token, userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
@@ -88,5 +91,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("not found email"));
+    }
+
+    @Override
+    public UserResponse findUserById(Long userId) {
+        return userRepository.findUserById(userId);
+    }
+
+    @Override
+    public List<UserResponseForVendor> inFavorite(Long houseId) {
+        return userRepository.inFavorite(houseId);
     }
 }

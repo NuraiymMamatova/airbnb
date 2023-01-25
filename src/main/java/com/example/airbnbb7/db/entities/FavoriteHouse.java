@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 import static javax.persistence.CascadeType.*;
 
 
@@ -19,6 +21,8 @@ public class FavoriteHouse {
     @SequenceGenerator(name = "favorite_houses_gen", sequenceName = "favorite_houses_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "favorite_houses_gen")
     private Long id;
+
+    private LocalDate addedHouseToFavorites;
 
     @OneToOne(cascade = {MERGE, DETACH, REFRESH})
     private House house;

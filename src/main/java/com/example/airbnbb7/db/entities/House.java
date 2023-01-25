@@ -5,9 +5,11 @@ import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import javax.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.*;
@@ -18,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @Table(name = "houses")
+@NoArgsConstructor
 public class House {
 
     @Id
@@ -64,4 +67,10 @@ public class House {
 
     @OneToOne(cascade = {MERGE, REFRESH, DETACH})
     private User owner;
+
+    public void addBooking(Booking booking) {
+        if (bookingDates == null) bookingDates = new ArrayList<>();
+        bookingDates.add(booking);
+    }
+
 }
