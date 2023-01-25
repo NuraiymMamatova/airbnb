@@ -38,10 +38,6 @@ public class User implements UserDetails {
 
     private Long countOfBookedHouse;
 
-    @JsonIgnore
-    @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "guests")
-    private List<House> houses;
-
     @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "users")
     private List<Booking> bookings;
 
