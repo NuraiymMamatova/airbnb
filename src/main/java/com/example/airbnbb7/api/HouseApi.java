@@ -4,12 +4,9 @@ import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.db.service.MarkerService;
 import com.example.airbnbb7.dto.request.BookingRequest;
-import com.example.airbnbb7.dto.request.HouseRequest;
-import com.example.airbnbb7.dto.response.house.HouseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

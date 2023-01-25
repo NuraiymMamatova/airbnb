@@ -4,11 +4,11 @@ import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HousesStatus;
+import com.example.airbnbb7.db.repository.BookingRepository;
 import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.*;
 import com.example.airbnbb7.dto.request.BookingRequest;
-import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.BookingResponse;
 import com.example.airbnbb7.dto.response.house.HouseResponse;
 import com.example.airbnbb7.dto.response.house.HouseResponseForVendor;
@@ -42,6 +42,7 @@ public class HouseServiceImpl implements HouseService {
     private final EmailService emailService;
 
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
 
     @Override
     public MarkerService getHouseForUserBooking(Long houseId, Long userId,
@@ -56,7 +57,7 @@ public class HouseServiceImpl implements HouseService {
                 role = position;
             }
             if (role.getNameOfRole().equals("ADMIN")) {
-                if (houseStatus != null) {
+                if (houseStatus != null && !houseStatus.equals(HousesStatus.REJECT)) {
                     return getHouseForAdmin(houseId, houseStatus);
                 } else {
                     return getHouseForAdmin(houseId);
@@ -65,7 +66,6 @@ public class HouseServiceImpl implements HouseService {
                 favoriteHouseService.addHouseToFavorite(houseId, userId);
             } else if (reject && message != null) {
                 if (role.getNameOfRole().equals("ADMIN")) {
-                    System.out.println("reject");
                     rejectHouse(houseId, message);
                 } else {
                     throw new BadCredentialsException("Request denied. You do not have permission to access this page.");
@@ -76,10 +76,22 @@ public class HouseServiceImpl implements HouseService {
                 HouseResponse houseResponse = houseRepository.findHouseById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
                 houseResponse.setImages(houseRepository.findImagesByHouseId(houseId));
                 if (bookingRequest != null) {
-                    if (bookingIdForUpdate == null) {
+                    if (bookingIdForUpdate == null && house.getMaxOfGuests() != null && bookingRepository.getHouseIdByUserId(userId) != houseId) {
                         bookingService.saveBooking(houseId, userId, bookingRequest);
+                        house.setMaxOfGuests(house.getMaxOfGuests() - 1);
+                        if (house.getOwner().getCountOfBookedHouse() == null) {
+                            house.getOwner().setCountOfBookedHouse(1L);
+                        } else {
+                            house.getOwner().setCountOfBookedHouse(house.getOwner().getCountOfBookedHouse() + 1);
+                        }
+                        houseRepository.save(house);
                     } else {
-                        bookingService.updateBooking(bookingIdForUpdate, bookingRequest);
+                        if (bookingIdForUpdate == null) {
+                            bookingIdForUpdate = bookingRepository.getBookingIdByUserId(userId);
+                            bookingService.updateBooking(bookingIdForUpdate, bookingRequest);
+                        } else {
+                            bookingService.updateBooking(bookingIdForUpdate, bookingRequest);
+                        }
                     }
                 }
                 houseResponse.setOwner(userService.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!")).getOwner().getId()));
