@@ -4,7 +4,6 @@ import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.HouseResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,19 +13,20 @@ public class HouseApi {
     private final HouseService houseService;
 
     @PostMapping("/save/{id}")
-    @PreAuthorize("hasRole('USER')")
-    public HouseResponse save(@RequestBody HouseRequest houseRequest, @PathVariable Long id) {
-    return houseService.saveHouse(houseRequest, id);
+    public HouseResponse save(@PathVariable Long id, @RequestBody HouseRequest houseRequest) {
+        return houseService.saveHouse(id, houseRequest);
     }
 
-    @PostMapping("/delete/{id}")
-    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/delete/{id}")
     public HouseResponse deleteHouse(@PathVariable Long id) {
         return houseService.deleteByIdHouse(id);
     }
 
-
-
+    @PutMapping("/update/{id}")
+    public HouseResponse update(@PathVariable Long id,
+                                @RequestBody HouseRequest houseRequest) {
+        return houseService.updateHouse(id, houseRequest);
+    }
 
 
 }

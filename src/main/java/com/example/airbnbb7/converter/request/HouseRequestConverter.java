@@ -1,11 +1,18 @@
 package com.example.airbnbb7.converter.request;
 
 import com.example.airbnbb7.db.entities.House;
+import com.example.airbnbb7.db.entities.Location;
+import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import org.springframework.stereotype.Component;
 
 @Component
 public class HouseRequestConverter {
+    private final LocationRepository locationRepository;
+
+    public HouseRequestConverter(LocationRepository locationRepository) {
+        this.locationRepository = locationRepository;
+    }
 
     public House saveHouse(HouseRequest houseRequest) {
         if (houseRequest == null) {
@@ -20,6 +27,7 @@ public class HouseRequestConverter {
         house.setMaxOfGuests(houseRequest.getMaxOfGuests());
         house.setHouseType(houseRequest.getHouseType());
         house.setLocation(house.getLocation());
+        System.out.println(house.getLocation());
         return house;
     }
 
@@ -43,8 +51,21 @@ public class HouseRequestConverter {
             house.setHouseType(houseRequest.getHouseType());
         }
         if (houseRequest.getLocation() != null) {
-            house.setLocation(houseRequest.getLocation());
+            Location location = new Location();
+
+            if (houseRequest.getLocation().getAddress() != null) {
+                location.setAddress(houseRequest.getLocation().getAddress());
+            }
+            if (houseRequest.getLocation().getRegion() != null) {
+                location.setRegion(houseRequest.getLocation().getRegion());
+            }
+            if (houseRequest.getLocation().getTownOrProvince() != null) {
+                location.setTownOrProvince(houseRequest.getLocation().getTownOrProvince());
+            }
+            house.setLocation(location);
         }
 
     }
+
 }
+

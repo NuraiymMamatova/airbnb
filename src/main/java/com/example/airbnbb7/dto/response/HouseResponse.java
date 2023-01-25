@@ -1,7 +1,5 @@
 package com.example.airbnbb7.dto.response;
 
-import com.example.airbnbb7.db.entities.Location;
-import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HouseType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +30,7 @@ public class HouseResponse {
 
     private HouseType houseType;
 
-    private Location location;
+    private LocationResponse location;
 
-    private User owner;
+    private UserResponse owner;
 }
