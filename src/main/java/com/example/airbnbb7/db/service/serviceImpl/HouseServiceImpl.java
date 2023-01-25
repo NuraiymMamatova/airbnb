@@ -138,31 +138,6 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public HouseResponse updateHouse(Long houseId, HouseRequest houseRequest) {
-        House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException(String.format("House not found! %d", houseId)));
-        if (houseRequest.getHouseType() != null) {
-            house.setHouseType(houseRequest.getHouseType());
-        }
-        if (houseRequest.getImages() != null) {
-            house.setImages(houseRequest.getImages());
-        }
-        if (houseRequest.getLocation() != null) {
-            locationService.updateLocation(house.getLocation().getId(), houseRequest.getLocation());
-        }
-        if (houseRequest.getTitle() != null) {
-            house.setTitle(houseRequest.getTitle());
-        }
-        if (houseRequest.getDescriptionOfListing() != null) {
-            house.setDescriptionOfListing(houseRequest.getDescriptionOfListing());
-        }
-        if (houseRequest.getMaxOfGuests() != null) {
-            house.setMaxOfGuests(houseRequest.getMaxOfGuests());
-        }
-        houseRepository.save(house);
-        return houseRepository.findHouseById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
-    }
-
-    @Override
     public ResponseEntity<String> rejectHouse(Long houseId, String message) {
         House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
         house.setHousesStatus(HousesStatus.REJECT);

@@ -20,8 +20,6 @@ public interface HouseService {
 
     ResponseEntity<String> deleteHouse(Long houseId);
 
-    HouseResponse updateHouse(Long houseId, HouseRequest houseRequest);
-
     ResponseEntity<String> rejectHouse(Long houseId, String message);
 
     HouseResponse getHouseForAdmin(Long houseId);
