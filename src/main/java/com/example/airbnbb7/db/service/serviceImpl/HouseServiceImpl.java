@@ -1,8 +1,10 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
+import com.example.airbnbb7.db.entities.Feedback;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Location;
 import com.example.airbnbb7.db.enums.HouseType;
+import com.example.airbnbb7.db.repository.FeedbackRepository;
 import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -21,6 +24,8 @@ public class HouseServiceImpl {
     private final HouseRepository houseRepository;
 
     private final LocationRepository locationRepository;
+
+    private final FeedbackRepository feedbackRepository;
 
     public List<HouseResponseSortedPagination> getAll(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region) {
         Pageable pageable = PageRequest.of(page - 1, countOfHouses);
@@ -37,10 +42,12 @@ public class HouseServiceImpl {
 
                 response.setImages(houses.get(Math.toIntExact(index)).getImages());
                 response.setLocationResponse(locationRepository.convertToResponse(houses.get(Math.toIntExact(index)).getLocation()));
+                response.setHouseRating(getRating(response.getId()));
             } else {
                 Location location = locationRepository.findById(response.getId()).get();
                 response.setImages(houses.get(Math.toIntExact(index)).getImages());
                 response.setLocationResponse(locationRepository.convertToResponse(location));
+                response.setHouseRating(getRating(response.getId()));
             }
         }
         return sortedHouseResponse;
@@ -81,5 +88,20 @@ public class HouseServiceImpl {
                 }
         }
         return sortedHouseResponse;
+    }
+
+    public double getRating(Long houseId) {
+        List<Feedback> feedbacks = feedbackRepository.getAllFeedbackByHouseId(houseId);
+        List<Integer> ratings = new ArrayList<>();
+        for (Feedback feedback : feedbacks) {
+            ratings.add(feedback.getRating());
+        }
+        double sum = 0;
+        for (Integer rating : ratings) {
+            sum += rating;
+        }
+        sum = sum / ratings.size();
+        String.format("%.1f", sum);
+        return sum;
     }
 }

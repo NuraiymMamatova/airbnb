@@ -20,14 +20,4 @@ public class LocationResponse {
     private String address;
 
     private String region;
-
-    @Override
-    public String toString() {
-        return "LocationResponse{" +
-                "id=" + id +
-                ", townOrProvince='" + townOrProvince + '\'' +
-                ", address='" + address + '\'' +
-                ", region='" + region + '\'' +
-                '}';
-    }
 }

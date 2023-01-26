@@ -32,6 +32,8 @@ public class HouseResponseSortedPagination {
 
     private LocationResponse locationResponse;
 
+    private double houseRating;
+
     private Boolean isFavorite = false;
 
     public HouseResponseSortedPagination(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {

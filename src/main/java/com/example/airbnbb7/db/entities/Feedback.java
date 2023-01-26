@@ -41,9 +41,6 @@ public class Feedback {
     @Column(name = "dislike")
     private Long dislike;
 
-    @ElementCollection(fetch = LAZY)
-    private List<Integer> ratings = new ArrayList<>();
-
     @ManyToOne(cascade = {REFRESH, DETACH, MERGE})
     private User user;
 
