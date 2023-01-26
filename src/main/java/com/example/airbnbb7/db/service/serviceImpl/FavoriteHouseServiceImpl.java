@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,14 +20,6 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
     private final HouseRepository houseRepository;
 
     private final UserRepository userRepository;
-
-    @Override
-    public void deleteFavoriteHouseByHouseId(Long houseId) {
-        List<Long> favoriteHouses = favoriteHouseRepository.findFavoriteHouseIdByHouseId(houseId);
-        for (Long favoriteHouseId : favoriteHouses) {
-            favoriteHouseRepository.deleteById(favoriteHouseId);
-        }
-    }
 
     @Override
     public void addHouseToFavorite(Long houseId, Long userId) {

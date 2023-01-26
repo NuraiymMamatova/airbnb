@@ -10,7 +10,4 @@ import java.util.List;
 @Repository
 public interface FavoriteHouseRepository extends JpaRepository<FavoriteHouse, Long> {
 
-    @Query("select f.id from FavoriteHouse f where f.house.id = :houseId")
-    List<Long> findFavoriteHouseIdByHouseId(Long houseId);
-
 }

@@ -9,7 +9,6 @@ import java.time.LocalDate;
 
 import static javax.persistence.CascadeType.*;
 
-
 @Entity
 @Getter
 @Setter

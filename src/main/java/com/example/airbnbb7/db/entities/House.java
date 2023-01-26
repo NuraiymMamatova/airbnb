@@ -15,7 +15,6 @@ import java.util.List;
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.LAZY;
 
-
 @Entity
 @Getter
 @Setter
@@ -50,7 +49,6 @@ public class House {
     private HousesBooked housesBooked;
 
     private LocalDate dateHouseCreated;
-
 
     @OneToOne(cascade = ALL,mappedBy = "house")
     private Location location;
