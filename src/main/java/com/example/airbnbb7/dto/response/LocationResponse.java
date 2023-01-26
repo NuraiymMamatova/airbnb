@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Component
 @Getter
@@ -13,9 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LocationResponse {
+
     private Long id;
+
     private String townOrProvince;
+
     private String address;
+
     private String region;
 
     @Override

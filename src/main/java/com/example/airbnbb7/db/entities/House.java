@@ -45,7 +45,6 @@ public class House {
 
     private Long countOfBookedUser;
 
-//    @Enumerated(EnumType.STRING)
     private HouseType houseType;
 
     private HousesStatus housesStatus;
