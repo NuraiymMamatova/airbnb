@@ -1,19 +1,17 @@
-package com.example.airbnbb7.dto.response.house;
+package com.example.airbnbb7.dto.response;
 
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.MarkerService;
-import com.example.airbnbb7.dto.response.BookingResponse;
-import com.example.airbnbb7.dto.response.FeedbackResponse;
-import com.example.airbnbb7.dto.response.LocationResponse;
-import com.example.airbnbb7.dto.response.user.UserResponseForVendor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Getter
 @Setter
+@Component
 @NoArgsConstructor
 public class HouseResponseForVendor implements MarkerService {
 

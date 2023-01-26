@@ -3,7 +3,7 @@ package com.example.airbnbb7.db.service.serviceImpl;
 import com.example.airbnbb7.db.repository.FeedbackRepository;
 import com.example.airbnbb7.db.service.FeedbackService;
 import com.example.airbnbb7.dto.response.FeedbackResponse;
-import com.example.airbnbb7.dto.response.user.UserResponseForFeedback;
+import com.example.airbnbb7.dto.response.UserResponseForFeedback;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,4 +29,5 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
         return feedbackResponses;
     }
+
 }

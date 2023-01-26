@@ -2,8 +2,8 @@ package com.example.airbnbb7.db.repository;
 
 import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
-import com.example.airbnbb7.dto.response.user.UserResponse;
-import com.example.airbnbb7.dto.response.user.UserResponseForVendor;
+import com.example.airbnbb7.dto.response.UserResponse;
+import com.example.airbnbb7.dto.response.UserResponseForVendor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

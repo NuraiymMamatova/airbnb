@@ -1,16 +1,17 @@
 package com.example.airbnbb7.dto.response;
 
-import com.example.airbnbb7.dto.response.user.UserResponseForFeedback;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @Setter
+@Component
 @NoArgsConstructor
 @AllArgsConstructor
 public class FeedbackResponse {
