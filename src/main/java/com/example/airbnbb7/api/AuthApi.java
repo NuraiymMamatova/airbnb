@@ -29,7 +29,7 @@ public class AuthApi {
 
     @PostMapping("/google")
     @Operation(summary = "Sign up & sign in", description = "Authenticate via Google")
-    public LoginResponse authResponse(String tokenId) throws FirebaseAuthException {
+    public LoginResponse authResponse(@RequestParam String tokenId) throws FirebaseAuthException {
         return authService.authWithGoogle(tokenId);
     }
 }
