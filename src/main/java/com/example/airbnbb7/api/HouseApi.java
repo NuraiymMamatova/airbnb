@@ -16,20 +16,20 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/houses")
-@Tag(name = "House Api",description = "House Api")
+@Tag(name = "House Api", description = "House Api")
 public class HouseApi {
 
     private final HouseServiceImpl houseService;
 
     @GetMapping("/pagination")
-    @Operation(summary = "House get all pagination",description = "This is get all pagination for houses")
+    @Operation(summary = "House get all pagination", description = "This is get all pagination for houses")
     public List<HouseResponseSortedPagination> findAllHousesPage(@RequestParam(name = "sortOrFilter", required = false) String fieldToSort,
                                                                  @RequestParam(name = "text", required = false) String text,
-                                                                 @RequestParam int page ,
+                                                                 @RequestParam int page,
                                                                  @RequestParam int size,
                                                                  @RequestParam(name = "priceSort", required = false) String priceSort,
                                                                  @RequestParam(name = "region", required = false) String region,
                                                                  @RequestParam(name = "houseType", required = false) HouseType houseType) {
-        return houseService.getAll(houseType,fieldToSort,text, page, size,priceSort,region);
+        return houseService.getAll(houseType, fieldToSort, text, page, size, priceSort, region);
     }
 }

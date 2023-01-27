@@ -53,7 +53,7 @@ public class House {
 
     private LocalDate dateHouseCreated;
 
-    @OneToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST}, fetch = EAGER,mappedBy = "house")
+    @OneToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST}, fetch = EAGER, mappedBy = "house")
     private Location location;
 
     @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")
