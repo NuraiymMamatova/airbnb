@@ -42,6 +42,7 @@ public class HouseServiceImpl implements HouseService {
     private final EmailService emailService;
 
     private final UserRepository userRepository;
+
     private final BookingRepository bookingRepository;
 
     @Override
