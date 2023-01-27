@@ -1,6 +1,7 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.enums.HousesStatus;
+import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.db.service.MarkerService;
 import com.example.airbnbb7.dto.request.BookingRequest;
