@@ -21,14 +21,8 @@ public class HouseApi {
 
     @GetMapping("/announcements/{houseId}/{userId}")
     @Operation(summary = "House inner page", description = "Any user can go through to view the house")
-    public MarkerService announcementsForVendor(@PathVariable Long houseId, @PathVariable Long userId,
-                                                @RequestParam(required = false) Long bookingForUpdate,
-                                                @RequestBody(required = false) BookingRequest bookingRequest,
-                                                @RequestParam(required = false) HousesStatus houseStatus,
-                                                @RequestParam(required = false) boolean addToFavorite,
-                                                @RequestParam(required = false) boolean reject,
-                                                @RequestParam(required = false) String message) {
-        return houseService.getHouseForUserBooking(houseId, userId, bookingForUpdate, bookingRequest, houseStatus,addToFavorite, reject, message);
+    public MarkerService announcementsForVendor(@PathVariable Long houseId, @PathVariable Long userId) {
+        return houseService.getHouse(houseId, userId);
     }
 
 }
