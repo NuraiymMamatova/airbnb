@@ -8,6 +8,6 @@ public interface BookingService {
 
     List<BookingResponse> getBookingsByHouseId(Long houseId);
 
-    List<Long> getUserIdByBookingId(Long bookingId);
+    Long getUserIdByBookingId(Long bookingId);
 
 }

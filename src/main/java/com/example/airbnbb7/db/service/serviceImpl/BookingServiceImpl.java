@@ -20,7 +20,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Long> getUserIdByBookingId(Long bookingId) {
+    public Long getUserIdByBookingId(Long bookingId) {
         return bookingRepository.getUserIdByBookingId(bookingId);
     }
 }

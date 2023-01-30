@@ -42,9 +42,8 @@ public class HouseServiceImpl implements HouseService {
         for (Booking booking : bookings) {
             if (booking.getHouse().getId() == houseId) {
                 house.setBookingResponse(bookingRepository.findBookingById(booking.getId()).get());
-            } else {
-                house.setBookingResponse(null);
             }
+
         }
         if (user.getId() == userId) {
             return getHouseForVendor(houseId);
@@ -67,11 +66,8 @@ public class HouseServiceImpl implements HouseService {
         houseResponseForVendor.setImages(houseRepository.findImagesByHouseId(houseId));
         List<BookingResponse> bookingResponses = new ArrayList<>();
         for (BookingResponse booking : bookingService.getBookingsByHouseId(houseId)) {
-            List<Long> usersId = new ArrayList<>(bookingService.getUserIdByBookingId(booking.getId()));
-            for (Long userId : usersId) {
-                booking.setOwner(userService.findUserById(userId));
+                booking.setOwner(userService.findUserById(bookingService.getUserIdByBookingId(booking.getId())));
                 bookingResponses.add(booking);
-            }
         }
         houseResponseForVendor.setBookingResponses(bookingResponses);
         houseResponseForVendor.setFeedbacks(feedbackService.getFeedbacksByHouseId(houseId));
