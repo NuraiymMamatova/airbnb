@@ -1,7 +1,7 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.service.HouseService;
-import com.example.airbnbb7.db.service.MarkerService;
+import com.example.airbnbb7.db.service.AnnouncementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class HouseApi {
 
     @GetMapping("/announcements/{houseId}/{userId}")
     @Operation(summary = "House inner page", description = "Any user can go through to view the house")
-    public MarkerService announcementsForVendor(@PathVariable Long houseId, @PathVariable Long userId) {
+    public AnnouncementService announcementsForVendor(@PathVariable Long houseId, @PathVariable Long userId) {
         return houseService.getHouse(houseId, userId);
     }
 

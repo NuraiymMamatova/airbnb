@@ -1,7 +1,7 @@
 package com.example.airbnbb7.dto.response;
 
 import com.example.airbnbb7.db.enums.HouseType;
-import com.example.airbnbb7.db.service.MarkerService;
+import com.example.airbnbb7.db.service.AnnouncementService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @Component
 @NoArgsConstructor
-public class HouseResponseForVendor implements MarkerService {
+public class AnnouncementResponseForVendor implements AnnouncementService {
 
     private Long id;
 
@@ -35,7 +35,7 @@ public class HouseResponseForVendor implements MarkerService {
 
     private List<FeedbackResponse> feedbacks;
 
-    public HouseResponseForVendor(Long id, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
+    public AnnouncementResponseForVendor(Long id, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
         this.id = id;
         this.title = title;
         this.descriptionOfListing = descriptionOfListing;

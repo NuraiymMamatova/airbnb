@@ -32,8 +32,8 @@ public class HouseServiceImpl implements HouseService {
     private final RoleRepository roleRepository;
 
     @Override
-    public MarkerService getHouse(Long houseId, Long userId) {
-        HouseResponseForUser house = houseRepository.findHouseByIdForUser(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+    public AnnouncementService getHouse(Long houseId, Long userId) {
+        AnnouncementResponseForUser house = houseRepository.findHouseByIdForUser(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
         UserResponse user = userService.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!")).getOwner().getId());
         house.setImages(houseRepository.findImagesByHouseId(houseId));
         house.setLocation(locationService.findLocationByHouseId(houseId));
@@ -47,27 +47,26 @@ public class HouseServiceImpl implements HouseService {
         }
         if (user.getId() == userId) {
             return getHouseForVendor(houseId);
-        }
-        else if (roleRepository.findRoleByUserId(userId).getNameOfRole().equals("ADMIN")) {
-            HouseResponseForAdmin houseResponseForAdmin = houseRepository.findHouseByIdForAdmin(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
-            houseResponseForAdmin.setImages(houseRepository.findImagesByHouseId(houseId));
-            houseResponseForAdmin.setLocation(locationService.findLocationByHouseId(houseId));
-            houseResponseForAdmin.setFeedbacks(feedbackService.getFeedbacksByHouseId(houseId));
-            houseResponseForAdmin.setOwner(user);
-            return houseResponseForAdmin;
+        } else if (roleRepository.findRoleByUserId(userId).getNameOfRole().equals("ADMIN")) {
+            AnnouncementResponseForAdmin announcementResponseForAdmin = houseRepository.findHouseByIdForAdmin(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+            announcementResponseForAdmin.setImages(houseRepository.findImagesByHouseId(houseId));
+            announcementResponseForAdmin.setLocation(locationService.findLocationByHouseId(houseId));
+            announcementResponseForAdmin.setFeedbacks(feedbackService.getFeedbacksByHouseId(houseId));
+            announcementResponseForAdmin.setOwner(user);
+            return announcementResponseForAdmin;
         }
         house.setOwner(user);
         return house;
     }
 
     @Override
-    public HouseResponseForVendor getHouseForVendor(Long houseId) {
-        HouseResponseForVendor houseResponseForVendor = houseRepository.findHouseByIdForVendor(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+    public AnnouncementResponseForVendor getHouseForVendor(Long houseId) {
+        AnnouncementResponseForVendor houseResponseForVendor = houseRepository.findHouseByIdForVendor(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
         houseResponseForVendor.setImages(houseRepository.findImagesByHouseId(houseId));
         List<BookingResponse> bookingResponses = new ArrayList<>();
         for (BookingResponse booking : bookingService.getBookingsByHouseId(houseId)) {
-                booking.setOwner(userService.findUserById(bookingService.getUserIdByBookingId(booking.getId())));
-                bookingResponses.add(booking);
+            booking.setOwner(userService.findUserById(bookingService.getUserIdByBookingId(booking.getId())));
+            bookingResponses.add(booking);
         }
         houseResponseForVendor.setBookingResponses(bookingResponses);
         houseResponseForVendor.setFeedbacks(feedbackService.getFeedbacksByHouseId(houseId));

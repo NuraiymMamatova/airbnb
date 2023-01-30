@@ -1,11 +1,11 @@
 package com.example.airbnbb7.db.service;
 
-import com.example.airbnbb7.dto.response.HouseResponseForVendor;
+import com.example.airbnbb7.dto.response.AnnouncementResponseForVendor;
 
 public interface HouseService {
 
-    MarkerService getHouse(Long houseId, Long userId);
+    AnnouncementService getHouse(Long houseId, Long userId);
 
-    HouseResponseForVendor getHouseForVendor(Long houseId);
+    AnnouncementResponseForVendor getHouseForVendor(Long houseId);
 
 }
