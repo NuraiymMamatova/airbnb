@@ -30,6 +30,6 @@ public class HouseApi {
                                                                  @RequestParam(name = "priceSort", required = false) String priceSort,
                                                                  @RequestParam(name = "region", required = false) String region,
                                                                  @RequestParam(name = "houseType", required = false) HouseType houseType) {
-        return houseService.getAll(houseType, fieldToSort, text, page, size, priceSort, region);
+        return houseService.getAllPagination(houseType, fieldToSort, text, page, size, priceSort, region);
     }
 }
