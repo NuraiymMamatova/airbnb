@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("invalid password");
         }
-        return new LoginResponse(jwtTokenUtil.generateToken(user), user.getEmail(), roleRepository.findById(1L).get().getNameOfRole());
+        return new LoginResponse(jwtTokenUtil.generateToken(user), user.getEmail(), roleRepository.findRoleByUserId(user.getId()).getNameOfRole());
     }
 
     @Override
