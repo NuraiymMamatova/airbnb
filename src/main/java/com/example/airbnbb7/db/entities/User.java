@@ -1,6 +1,5 @@
 package com.example.airbnbb7.db.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,6 +37,9 @@ public class User implements UserDetails {
 
     private Long countOfBookedHouse;
 
+    @OneToMany(cascade = {DETACH, REFRESH, DETACH, MERGE}, mappedBy = "owner")
+    private List<House> announcements;
+
     @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "users")
     private List<Booking> bookings;
 
@@ -53,8 +55,8 @@ public class User implements UserDetails {
     }
 
     public void addHouse(House house) {
-        if (house == null) houses = new ArrayList<>();
-        houses.add(house);
+        if (house == null) announcements = new ArrayList<>();
+        announcements.add(house);
     }
 
     @Override

@@ -5,9 +5,12 @@ import com.example.airbnbb7.dto.response.HouseResponse;
 
 public interface HouseService {
 
-    HouseResponse saveHouse(Long id, HouseRequest houseRequest);
+    HouseResponse saveHouse(HouseRequest houseRequest);
 
     HouseResponse deleteByIdHouse(Long houseId);
 
     HouseResponse updateHouse(Long id, HouseRequest houseRequest);
+
+     void save(HouseRequest houseRequest);
+
 }

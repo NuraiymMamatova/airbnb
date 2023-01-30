@@ -1,18 +1,20 @@
 package com.example.airbnbb7.converter.request;
 
 import com.example.airbnbb7.db.entities.House;
-import com.example.airbnbb7.db.entities.Location;
 import com.example.airbnbb7.db.repository.LocationRepository;
+import com.example.airbnbb7.db.service.LocationService;
 import com.example.airbnbb7.dto.request.HouseRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class HouseRequestConverter {
+
     private final LocationRepository locationRepository;
 
-    public HouseRequestConverter(LocationRepository locationRepository) {
-        this.locationRepository = locationRepository;
-    }
+    private final LocationService locationService;
+
 
     public House saveHouse(HouseRequest houseRequest) {
         if (houseRequest == null) {
@@ -32,6 +34,7 @@ public class HouseRequestConverter {
     }
 
     public void update(House house, HouseRequest houseRequest) {
+
         if (houseRequest.getPrice() != null) {
             house.setPrice(houseRequest.getPrice());
         }
@@ -51,21 +54,12 @@ public class HouseRequestConverter {
             house.setHouseType(houseRequest.getHouseType());
         }
         if (houseRequest.getLocation() != null) {
-            Location location = new Location();
-
-            if (houseRequest.getLocation().getAddress() != null) {
-                location.setAddress(houseRequest.getLocation().getAddress());
-            }
-            if (houseRequest.getLocation().getRegion() != null) {
-                location.setRegion(houseRequest.getLocation().getRegion());
-            }
-            if (houseRequest.getLocation().getTownOrProvince() != null) {
-                location.setTownOrProvince(houseRequest.getLocation().getTownOrProvince());
-            }
-            house.setLocation(location);
+            locationService.updateLocation(house.getLocation(), houseRequest.getLocation());
         }
 
     }
 
 }
+
+
 

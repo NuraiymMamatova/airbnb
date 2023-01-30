@@ -13,6 +13,7 @@ import static javax.persistence.CascadeType.*;
 @Setter
 @Getter
 @NoArgsConstructor
+@Table(name = "locations")
 public class Location {
 
     @Id

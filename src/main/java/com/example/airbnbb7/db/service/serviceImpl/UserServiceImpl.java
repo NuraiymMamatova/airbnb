@@ -39,6 +39,16 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
+    private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @PostConstruct
     void init() throws IOException {
         GoogleCredentials googleCredentials =
@@ -51,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
     public LoginResponse authWithGoogle(String tokenId) throws FirebaseAuthException {
         FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
-
+        setEmail(firebaseToken.getEmail());
         User user;
         if (userRepository.findByEmail(firebaseToken.getEmail()).isEmpty()) {
             user = new User();
@@ -60,9 +70,10 @@ public class UserServiceImpl implements UserService {
             user.setName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
             userRepository.save(user);
+
         }
 
-        user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!" , firebaseToken.getEmail())));
+        user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!", firebaseToken.getEmail())));
 
         String token = jwtTokenUtil.generateToken(user);
         return new LoginResponse(user.getEmail(), token, userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
@@ -76,12 +87,14 @@ public class UserServiceImpl implements UserService {
                 () -> {
                     throw new NotFoundException("the user with this email was not found");
                 });
+
         if (request.getPassword() == null) {
             throw new NotFoundException("Password must not be empty");
         }
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("invalid password");
         }
+        setEmail(request.getEmail());
         return new LoginResponse(jwtTokenUtil.generateToken(user), user.getEmail(), roleRepository.findById(1L).get().getNameOfRole());
     }
 
@@ -89,4 +102,6 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("not found email"));
     }
+
+
 }
