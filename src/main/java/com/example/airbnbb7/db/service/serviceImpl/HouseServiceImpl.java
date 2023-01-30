@@ -7,6 +7,7 @@ import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.repository.FeedbackRepository;
 import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.LocationRepository;
+import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class HouseServiceImpl {
+public class HouseServiceImpl implements HouseService {
 
     private final HouseRepository houseRepository;
 
@@ -27,7 +28,8 @@ public class HouseServiceImpl {
 
     private final FeedbackRepository feedbackRepository;
 
-    public List<HouseResponseSortedPagination> getAll(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region) {
+    @Override
+    public List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region) {
         Pageable pageable = PageRequest.of(page - 1, countOfHouses);
         String text;
         if (nameOfHouse == null)
