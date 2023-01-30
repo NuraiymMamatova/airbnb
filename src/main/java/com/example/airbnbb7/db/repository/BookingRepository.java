@@ -21,12 +21,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = "select users_id from booking_dates_users where bookings_id = :bookingId", nativeQuery = true)
     List<Long> getUserIdByBookingId(Long bookingId);
 
-    @Query(value = "select b.house_id from booking_dates b where b.id =" +
+    @Query(value = "select * from booking_dates b where b.id =" +
             " (select bookings_id from booking_dates_users where users_id = :userId)", nativeQuery = true)
-    Long getHouseIdByUserId(Long userId);
-
-    @Query(value = "select b.id from booking_dates b where b.id =" +
-            " (select bookings_id from booking_dates_users where users_id = :userId)", nativeQuery = true)
-    Long getBookingIdByUserId(Long userId);
+    List<Booking> getBookingsByUserId(Long userId);
 
 }

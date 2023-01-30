@@ -2,6 +2,7 @@ package com.example.airbnbb7.db.repository;
 
 import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
+import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.UserResponse;
 import com.example.airbnbb7.dto.response.UserResponseForVendor;
 import org.springframework.data.jpa.repository.JpaRepository;

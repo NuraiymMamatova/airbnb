@@ -1,12 +1,11 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
+import com.example.airbnbb7.db.entities.Booking;
+import com.example.airbnbb7.db.repository.BookingRepository;
 import com.example.airbnbb7.db.repository.HouseRepository;
-import com.example.airbnbb7.db.repository.UserRepository;
+import com.example.airbnbb7.db.repository.RoleRepository;
 import com.example.airbnbb7.db.service.*;
-import com.example.airbnbb7.dto.response.BookingResponse;
-import com.example.airbnbb7.dto.response.HouseResponse;
-import com.example.airbnbb7.dto.response.HouseResponseForVendor;
-import com.example.airbnbb7.dto.response.UserResponse;
+import com.example.airbnbb7.dto.response.*;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,18 +27,38 @@ public class HouseServiceImpl implements HouseService {
 
     private final BookingService bookingService;
 
+    private final BookingRepository bookingRepository;
+
+    private final RoleRepository roleRepository;
+
     @Override
-    public HouseResponse getHouse(Long houseId, Long userId) {
-        HouseResponse houseResponse = houseRepository.findHouseById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
-        UserResponse user = userService.findUserById(userId);
-        if (houseResponse.getOwner().equals(user)) {
-            getHouseForVendor(houseId);
-        } else {
-            houseResponse.setImages(houseRepository.findImagesByHouseId(houseId));
-            houseResponse.setOwner(userService.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!")).getOwner().getId()));
-            houseResponse.setLocation(locationService.findLocationByHouseId(houseId));
+    public MarkerService getHouse(Long houseId, Long userId) {
+        HouseResponseForUser house = houseRepository.findHouseByIdForUser(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+        UserResponse user = userService.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!")).getOwner().getId());
+        house.setImages(houseRepository.findImagesByHouseId(houseId));
+        house.setLocation(locationService.findLocationByHouseId(houseId));
+        house.setFeedbacks(feedbackService.getFeedbacksByHouseId(houseId));
+        List<Booking> bookings = bookingRepository.getBookingsByUserId(userId);
+        for (Booking booking : bookings) {
+            if (booking.getHouse().getId() == houseId) {
+                house.setBookingResponse(bookingRepository.findBookingById(booking.getId()).get());
+            } else {
+                house.setBookingResponse(null);
+            }
         }
-        return houseResponse;
+        if (user.getId() == userId) {
+            return getHouseForVendor(houseId);
+        }
+        else if (roleRepository.findRoleByUserId(userId).getNameOfRole().equals("ADMIN")) {
+            HouseResponseForAdmin houseResponseForAdmin = houseRepository.findHouseByIdForAdmin(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+            houseResponseForAdmin.setImages(houseRepository.findImagesByHouseId(houseId));
+            houseResponseForAdmin.setLocation(locationService.findLocationByHouseId(houseId));
+            houseResponseForAdmin.setFeedbacks(feedbackService.getFeedbacksByHouseId(houseId));
+            houseResponseForAdmin.setOwner(user);
+            return houseResponseForAdmin;
+        }
+        house.setOwner(user);
+        return house;
     }
 
     @Override

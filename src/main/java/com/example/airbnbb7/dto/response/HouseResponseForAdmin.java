@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @Component
 @NoArgsConstructor
-public class HouseResponse implements MarkerService {
+public class HouseResponseForAdmin implements MarkerService {
 
     private Long id;
 
@@ -33,12 +33,11 @@ public class HouseResponse implements MarkerService {
 
     private List<FeedbackResponse> feedbacks;
 
-    public HouseResponse(Long id, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
+    public HouseResponseForAdmin(Long id, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
         this.id = id;
         this.title = title;
         this.descriptionOfListing = descriptionOfListing;
         this.maxOfGuests = maxOfGuests;
         this.houseType = houseType;
     }
-
 }

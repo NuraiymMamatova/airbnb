@@ -64,7 +64,6 @@ public class UserServiceImpl implements UserService {
             user.setEmail(firebaseToken.getEmail());
             userRepository.save(user);
         }
-
         user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!", firebaseToken.getEmail())));
 
         String token = jwtTokenUtil.generateToken(user);
@@ -102,4 +101,5 @@ public class UserServiceImpl implements UserService {
     public List<UserResponseForVendor> inFavorite(Long houseId) {
         return userRepository.inFavorite(houseId);
     }
+
 }

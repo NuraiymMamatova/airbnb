@@ -1,10 +1,7 @@
 package com.example.airbnbb7.api;
 
-import com.example.airbnbb7.db.enums.HousesStatus;
-import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.db.service.MarkerService;
-import com.example.airbnbb7.dto.request.BookingRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/house")
 @RequiredArgsConstructor
 @Tag(name = "House API", description = "House API")
-@CrossOrigin(origins = "*",maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class HouseApi {
 
     private final HouseService houseService;
