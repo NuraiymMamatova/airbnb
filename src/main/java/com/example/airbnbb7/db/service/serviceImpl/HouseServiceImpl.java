@@ -9,6 +9,7 @@ import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
+import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,12 +42,11 @@ public class HouseServiceImpl implements HouseService {
         for (HouseResponseSortedPagination response : sortedHouseResponse) {
             Long index = response.getId() - 1;
             if (index == houses.get(Math.toIntExact(index)).getLocation().getId()) {
-
                 response.setImages(houses.get(Math.toIntExact(index)).getImages());
                 response.setLocationResponse(locationRepository.convertToResponse(houses.get(Math.toIntExact(index)).getLocation()));
                 response.setHouseRating(getRating(response.getId()));
             } else {
-                Location location = locationRepository.findById(response.getId()).get();
+                Location location = locationRepository.findById(response.getId()).orElseThrow(() -> new NotFoundException("location not found!"));
                 response.setImages(houses.get(Math.toIntExact(index)).getImages());
                 response.setLocationResponse(locationRepository.convertToResponse(location));
                 response.setHouseRating(getRating(response.getId()));
