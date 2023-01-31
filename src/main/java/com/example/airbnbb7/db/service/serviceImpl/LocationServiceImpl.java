@@ -43,7 +43,7 @@ public class LocationServiceImpl implements LocationService {
 
     public void saveLocation(LocationRequest locationRequest) {
         House house = new House();
-        User user  = userRepository.findByEmail(userService.getEmail()).orElseThrow(()-> new NotFoundException("Email not found"));
+        User user = userRepository.findByEmail(userService.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
         locationRepository.saveLocation(locationRequest.getAddress(), locationRequest.getRegion(), locationRequest.getTownOrProvince(), user.getId().intValue());
 
     }

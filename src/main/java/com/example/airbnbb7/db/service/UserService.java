@@ -13,7 +13,7 @@ public interface UserService extends UserDetailsService {
     @Override
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 
-     String getEmail();
+    String getEmail();
 
 
-    }
+}

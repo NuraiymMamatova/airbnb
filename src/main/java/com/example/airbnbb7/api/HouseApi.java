@@ -1,12 +1,5 @@
 package com.example.airbnbb7.api;
 
-import com.example.airbnbb7.db.service.HouseService;
-import com.example.airbnbb7.db.service.LocationService;
-import com.example.airbnbb7.dto.request.HouseRequest;
-import com.example.airbnbb7.dto.response.HouseResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.serviceImpl.HouseServiceImpl;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
