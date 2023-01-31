@@ -1,9 +1,11 @@
 package com.example.airbnbb7.db.entities;
 
-import javax.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
 
 import static javax.persistence.CascadeType.*;
 
@@ -11,6 +13,7 @@ import static javax.persistence.CascadeType.*;
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Location {
 
     @Id
@@ -25,6 +28,6 @@ public class Location {
 
     private String region;
 
-    @OneToOne(cascade = {REFRESH, MERGE, DETACH})
+    @OneToOne(cascade = {REFRESH, MERGE, DETACH, PERSIST, REMOVE})
     private House house;
 }

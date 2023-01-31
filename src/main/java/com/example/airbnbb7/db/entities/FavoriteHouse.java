@@ -1,6 +1,7 @@
 package com.example.airbnbb7.db.entities;
 
 import javax.persistence.*;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

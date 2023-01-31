@@ -3,6 +3,7 @@ package com.example.airbnbb7.db.entities;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,12 +13,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static javax.persistence.CascadeType.*;
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "houses")
+@AllArgsConstructor
 @NoArgsConstructor
 public class House {
 
@@ -49,7 +52,7 @@ public class House {
 
     private LocalDate dateHouseCreated;
 
-    @OneToOne(cascade = ALL,mappedBy = "house")
+    @OneToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST}, fetch = EAGER, mappedBy = "house")
     private Location location;
 
     @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")
