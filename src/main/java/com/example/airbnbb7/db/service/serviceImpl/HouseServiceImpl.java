@@ -1,14 +1,13 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
+import com.example.airbnbb7.db.entities.Booking;
 import com.example.airbnbb7.db.entities.Feedback;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Location;
 import com.example.airbnbb7.db.enums.HouseType;
-import com.example.airbnbb7.db.repository.FeedbackRepository;
-import com.example.airbnbb7.db.repository.HouseRepository;
-import com.example.airbnbb7.db.repository.LocationRepository;
-import com.example.airbnbb7.db.service.HouseService;
-import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
+import com.example.airbnbb7.db.repository.*;
+import com.example.airbnbb7.db.service.*;
+import com.example.airbnbb7.dto.response.*;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -17,12 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import com.example.airbnbb7.db.entities.Booking;
-import com.example.airbnbb7.db.repository.BookingRepository;
-import com.example.airbnbb7.db.repository.RoleRepository;
-import com.example.airbnbb7.db.service.*;
-import com.example.airbnbb7.dto.response.*;
-
 import java.util.List;
 
 @Service
