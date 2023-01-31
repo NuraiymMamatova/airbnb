@@ -53,7 +53,7 @@ public class User implements UserDetails {
         roles.add(role);
     }
 
-    @OneToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE})
+    @OneToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE},mappedBy = "user")
     private List<FavoriteHouse> favoriteHouses;
 
     @Override

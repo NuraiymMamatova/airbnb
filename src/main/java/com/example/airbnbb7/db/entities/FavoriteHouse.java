@@ -26,4 +26,9 @@ public class FavoriteHouse {
 
     @ManyToOne(cascade = {MERGE, DETACH, REFRESH})
     private User user;
+
+    public FavoriteHouse(House house, User user) {
+        this.house = house;
+        this.user = user;
+    }
 }
