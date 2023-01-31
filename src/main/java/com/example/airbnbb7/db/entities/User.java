@@ -1,5 +1,6 @@
 package com.example.airbnbb7.db.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import static javax.persistence.CascadeType.*;
 @Setter
 @NoArgsConstructor
 @Table(name = "users")
+@AllArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -43,7 +45,7 @@ public class User implements UserDetails {
     @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "users")
     private List<Booking> bookings;
 
-    @ManyToMany(targetEntity = Role.class, cascade = {REFRESH, DETACH, MERGE, PERSIST}, mappedBy = "users", fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class, cascade = {REFRESH, DETACH, MERGE, PERSIST}, mappedBy = "users")
     private List<Role> roles;
 
     @OneToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE})
@@ -53,6 +55,7 @@ public class User implements UserDetails {
         if (roles == null) roles = new ArrayList<>();
         roles.add(role);
     }
+
 
     public void addHouse(House house) {
         if (house == null) announcements = new ArrayList<>();

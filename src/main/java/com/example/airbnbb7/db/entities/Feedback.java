@@ -5,7 +5,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.*;
@@ -40,9 +39,6 @@ public class Feedback {
 
     @Column(name = "dislike")
     private Long dislike;
-
-    @ElementCollection(fetch = LAZY)
-    private List<Integer> ratings = new ArrayList<>();
 
     @ManyToOne(cascade = {REFRESH, DETACH, MERGE})
     private User user;
