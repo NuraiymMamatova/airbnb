@@ -1,5 +1,6 @@
 package com.example.airbnbb7.dto.response;
 
+import com.example.airbnbb7.db.customclass.Rating;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -24,6 +26,8 @@ public class AnnouncementResponseForAdmin implements AnnouncementService {
     private List<String> images;
 
     private Long maxOfGuests;
+
+    private Rating rating;
 
     private HouseType houseType;
 
