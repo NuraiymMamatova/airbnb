@@ -1,15 +1,5 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
-import com.example.airbnbb7.db.entities.House;
-import com.example.airbnbb7.db.repository.HouseRepository;
-import com.example.airbnbb7.db.service.HouseService;
-import com.example.airbnbb7.dto.response.HouseResponse;
-import com.example.airbnbb7.dto.response.LocationResponse;
-import com.example.airbnbb7.dto.response.UserResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
 import com.example.airbnbb7.db.entities.Feedback;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Location;
@@ -18,7 +8,10 @@ import com.example.airbnbb7.db.repository.FeedbackRepository;
 import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.db.service.HouseService;
+import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
+import com.example.airbnbb7.dto.response.LocationResponse;
+import com.example.airbnbb7.dto.response.UserResponse;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -115,6 +108,8 @@ public class HouseServiceImpl implements HouseService {
         sum = sum / ratings.size();
         String.format("%.1f", sum);
         return sum;
+    }
+
     @Override
     public List<HouseResponse> globalSearch(String searchEngine) {
         String[] searchEngines = searchEngine.toUpperCase().split(" ");

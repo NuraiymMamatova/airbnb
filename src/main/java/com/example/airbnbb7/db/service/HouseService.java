@@ -1,9 +1,8 @@
 package com.example.airbnbb7.db.service;
 
 import com.example.airbnbb7.db.enums.HouseType;
-import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import com.example.airbnbb7.dto.response.HouseResponse;
-import org.springframework.data.repository.query.Param;
+import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 
 import java.util.List;
 

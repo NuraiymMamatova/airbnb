@@ -9,7 +9,6 @@ import javax.persistence.*;
 
 import static javax.persistence.CascadeType.*;
 
-
 @Entity
 @Setter
 @Getter

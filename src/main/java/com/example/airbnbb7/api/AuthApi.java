@@ -40,7 +40,7 @@ public class AuthApi {
     }
 
     @GetMapping("/{searchEngine}")
-    public List<HouseResponse> globalSearch(@PathVariable String searchEngine){
+    public List<HouseResponse> globalSearch(@PathVariable String searchEngine) {
         return houseService.globalSearch(searchEngine);
     }
 }
