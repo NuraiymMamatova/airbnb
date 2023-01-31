@@ -11,9 +11,14 @@ import org.springframework.stereotype.Component;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApartmentResponse {
+public class AccommodationResponse {
     private String name;
     private String description;
-    private String address;
+    private LocationResponse address;
     private String image;
+
+    public AccommodationResponse(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }
