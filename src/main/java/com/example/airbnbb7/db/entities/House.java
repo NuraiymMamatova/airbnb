@@ -3,13 +3,12 @@ package com.example.airbnbb7.db.entities;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
-import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.*;
@@ -61,10 +60,5 @@ public class House {
 
     @ManyToOne(cascade = {MERGE, REFRESH, DETACH})
     private User owner;
-
-    public void addBooking(Booking booking) {
-        if (bookingDates == null) bookingDates = new ArrayList<>();
-        bookingDates.add(booking);
-    }
 
 }

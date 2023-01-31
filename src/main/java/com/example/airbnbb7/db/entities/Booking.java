@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.*;
@@ -34,10 +33,5 @@ public class Booking {
 
     @ManyToOne(cascade = {MERGE, REFRESH, DETACH})
     private House house;
-
-    public void addUser(User user) {
-        if (users == null) users = new ArrayList<>();
-        users.add(user);
-    }
 
 }

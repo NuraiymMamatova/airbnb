@@ -53,11 +53,6 @@ public class User implements UserDetails {
         roles.add(role);
     }
 
-    public void addBooking(Booking booking) {
-        if (bookings == null) bookings = new ArrayList<>();
-        bookings.add(booking);
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();

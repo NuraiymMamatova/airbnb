@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.*;
@@ -26,14 +25,5 @@ public class Role {
     @ManyToMany(targetEntity = User.class, cascade = {MERGE, REFRESH, DETACH})
     @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     List<User> users;
-
-    public void addRole(User user) {
-        if (user == null) users = new ArrayList<>();
-        users.add(user);
-    }
-
-    public Role(String nameOfRole) {
-        this.nameOfRole = nameOfRole;
-    }
 
 }
