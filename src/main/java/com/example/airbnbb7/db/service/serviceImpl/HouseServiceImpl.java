@@ -41,7 +41,7 @@ public class HouseServiceImpl implements HouseService {
         List<HouseResponseSortedPagination> sortedHouseResponse = sort(pageable, houseType, region, priceSort, fieldToSort, houseResponses);
         for (HouseResponseSortedPagination response : sortedHouseResponse) {
             Long index = response.getId() - 1;
-            if (index == houses.get(Math.toIntExact(index)).getLocation().getId()) {
+            if (index.equals(houses.get(Math.toIntExact(index)).getLocation().getId())) {
                 response.setImages(houses.get(Math.toIntExact(index)).getImages());
                 response.setLocationResponse(locationRepository.convertToResponse(houses.get(Math.toIntExact(index)).getLocation()));
                 response.setHouseRating(getRating(response.getId()));
