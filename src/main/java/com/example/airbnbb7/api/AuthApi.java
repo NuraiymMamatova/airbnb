@@ -8,15 +8,13 @@ import com.google.firebase.auth.FirebaseAuthException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth/" )
-@Tag(name = "Auth Api",description = "Authentication API")
+@RequestMapping("/api/auth/")
+@Tag(name = "Auth API", description = "Authentication API")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthApi {
 
     private final UserService userService;
@@ -24,15 +22,14 @@ public class AuthApi {
     private final UserServiceImpl authService;
 
     @PostMapping("login")
-    @Operation(summary = "Sing in",description = "Sign in")
+    @Operation(summary = "Sign in", description = "Any user can authenticate")
     public LoginResponse login(@RequestBody UserRequest request) {
         return userService.login(request);
     }
 
     @PostMapping("/google")
-    @Operation(summary = "Sign up & sign in",description = "via google")
-    public LoginResponse authResponse(String tokenId) throws FirebaseAuthException {
+    @Operation(summary = "Sign up & sign in", description = "Authenticate via Google")
+    public LoginResponse authResponse(@RequestParam String tokenId) throws FirebaseAuthException {
         return authService.authWithGoogle(tokenId);
-
     }
 }

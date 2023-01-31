@@ -9,6 +9,8 @@ import java.util.List;
 
 @Repository
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
+
     @Query("select f from Feedback f where f.house.id = :houseId")
     List<Feedback> getAllFeedbackByHouseId(Long houseId);
+
 }

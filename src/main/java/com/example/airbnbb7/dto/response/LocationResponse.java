@@ -20,4 +20,8 @@ public class LocationResponse {
     private String address;
 
     private String region;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> f80b5ac2e15977e6d61b619bfb03be351ac8318b
