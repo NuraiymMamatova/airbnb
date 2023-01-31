@@ -43,7 +43,7 @@ public class User implements UserDetails {
     @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "users")
     private List<Booking> bookings;
 
-    @ManyToMany(targetEntity = Role.class, cascade = {REFRESH, DETACH, MERGE, PERSIST}, mappedBy = "users")
+    @ManyToMany(fetch = FetchType.EAGER,targetEntity = Role.class, cascade = {REFRESH, DETACH, MERGE, PERSIST}, mappedBy = "users")
     private List<Role> roles;
 
     public void addRole(Role role) {
