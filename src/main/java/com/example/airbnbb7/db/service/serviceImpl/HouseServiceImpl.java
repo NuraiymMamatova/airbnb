@@ -18,6 +18,8 @@ import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
+import com.example.airbnbb7.dto.response.LocationResponse;
+import com.example.airbnbb7.dto.response.UserResponse;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -49,20 +51,6 @@ public class HouseServiceImpl implements HouseService {
 
     private final FeedbackRepository feedbackRepository;
 
-
-    @Override
-    public HouseResponse saveHouse(HouseRequest houseRequest) {
-        House house = houseRequestConverter.saveHouse(houseRequest);
-        house.setDateHouseCreated(LocalDate.now());
-        User user = userRepository.findByEmail(userService.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
-        user.addHouse(house);
-        house.setOwner(user);
-        house.setHousesStatus(HousesStatus.ON_MODERATION);
-        houseRepository.save(house);
-        locationService.saveLocation(house, houseRequest.getLocation());
-        return houseResponseConverter.viewHouse(house);
-    }
-
     @Override
     public HouseResponse deleteByIdHouse(Long houseId) {
         House house = houseRepository.findById(houseId).get();
@@ -77,11 +65,9 @@ public class HouseServiceImpl implements HouseService {
         return houseResponseConverter.viewHouse(houseRepository.save(house));
     }
 
-    public void save(HouseRequest houseRequest) {
-
+    public HouseResponse save(HouseRequest houseRequest) {
         User user = userRepository.findByEmail(userService.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
         houseRepository.saveHouse(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getMaxOfGuests(), LocalDate.now(), HousesStatus.ON_MODERATION.ordinal(), user.getId().intValue());
-
         locationService.saveLocation(houseRequest.getLocation());
         Location location = locationRepository.findById(locationRepository.locationMaxId()).get();
         House house = houseRepository.findById(houseRepository.houseMaxId()).get();
@@ -90,6 +76,14 @@ public class HouseServiceImpl implements HouseService {
         house.setOwner(user);
         houseRepository.save(house);
 
+        HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(), house.getTitle(),
+                house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType());
+        houseResponse.setOwner(new UserResponse(house.getOwner().getId(), house.getOwner().getName(),
+                house.getOwner().getEmail(), house.getOwner().getImage()));
+        houseResponse.setLocation(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(),
+                house.getLocation().getAddress(), house.getLocation().getRegion()));
+        houseResponse.setImages(house.getImages());
+        return houseResponse;
     }
 
     @Override

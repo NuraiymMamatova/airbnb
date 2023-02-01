@@ -9,13 +9,11 @@ import java.util.List;
 
 public interface HouseService {
 
-    HouseResponse saveHouse(HouseRequest houseRequest);
-
     HouseResponse deleteByIdHouse(Long houseId);
 
     HouseResponse updateHouse(Long id, HouseRequest houseRequest);
 
-    void save(HouseRequest houseRequest);
+    HouseResponse save(HouseRequest houseRequest);
 
     List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region);
 

@@ -33,4 +33,13 @@ public class HouseResponse {
     private LocationResponse location;
 
     private UserResponse owner;
+
+    public HouseResponse(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
+        this.id = id;
+        this.price = price;
+        this.title = title;
+        this.descriptionOfListing = descriptionOfListing;
+        this.maxOfGuests = maxOfGuests;
+        this.houseType = houseType;
+    }
 }
