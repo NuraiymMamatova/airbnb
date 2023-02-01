@@ -32,7 +32,7 @@ public class HouseApi {
         return houseService.getAllPagination(houseType, fieldToSort, text, page, size, priceSort, region);
     }
 
-    @GetMapping("/announcements/{houseId}/{userId}")
+    @GetMapping("/announcement/{houseId}/{userId}")
     @Operation(summary = "House inner page", description = "Any user can go through to view the house")
     public AnnouncementService announcementsForVendor(@PathVariable Long houseId, @PathVariable Long userId) {
         return houseService.getHouse(houseId, userId);

@@ -15,7 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -119,7 +121,6 @@ public class HouseServiceImpl implements HouseService {
 
     public Rating getRatingCount(Long houseId) {
         List<Feedback> feedbacks = feedbackRepository.getAllFeedbackByHouseId(houseId);
-//        int one = 0, two = 0, three = 0, four = 0, five = 0;
         Rating rating = new Rating();
         for (Feedback feedback : feedbacks) {
             switch (feedback.getRating()) {
@@ -128,15 +129,15 @@ public class HouseServiceImpl implements HouseService {
                 case 3 -> rating.setThree(rating.getThree() + 1);
                 case 4 -> rating.setFour(rating.getFour() + 1);
                 case 5 -> rating.setFive(rating.getFive() + 1);
-
-//                case 1 -> one++;
-//                case 2 -> two++;
-//                case 3 -> three++;
-//                case 4 -> four++;
-//                case 5 -> five++;
             }
         }
-        rating.setSumOfRating(getRating(houseId));
+        int sumOfRating = Math.toIntExact(Math.round(getRating(houseId)));
+        rating.setFive(rating.getFive() * 100 / sumOfRating);
+        rating.setFour(rating.getFour() * 100 / sumOfRating);
+        rating.setThree(rating.getThree() * 100 / sumOfRating);
+        rating.setTwo(rating.getTwo() * 100 / sumOfRating);
+        rating.setOne(rating.getOne() * 100 / sumOfRating);
+        rating.setSumOfRating(sumOfRating);
         return rating;
     }
 
