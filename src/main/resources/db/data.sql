@@ -1,5 +1,5 @@
 insert into users(id, name, email, password, image, count_of_booked_house)
-values (1, 'Airbnb', 'airbnbhomesweethome1@gmail.com', '$2a$12$hgydb8b9VTCc8PTlwPN.ROMUDLOI.GzZvChcVQ3wwOgrTMzPUNH32', null,
+values (1, 'Airbnb', 'airbnbhomesweethome1@gmail.com', '$2a$12$HJmsalvo/0.5G2oh1QapuugtYCMHHpFgf27H/02PwYTtKU4FXTfre', null,
         null);
 
 insert into users(id, name, email, password, image, count_of_booked_house)
