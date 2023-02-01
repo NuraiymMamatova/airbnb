@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.CascadeType.*;
 
 
@@ -15,6 +18,8 @@ import static javax.persistence.CascadeType.*;
 @NoArgsConstructor
 @Table(name = "favorite_houses")
 public class FavoriteHouse {
+
+    private static List<FavoriteHouse> favoriteHouses = new ArrayList<>();
 
     @Id
     @SequenceGenerator(name = "favorite_houses_gen", sequenceName = "favorite_houses_seq", allocationSize = 1)
