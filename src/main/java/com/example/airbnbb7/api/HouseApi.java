@@ -2,6 +2,7 @@ package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.serviceImpl.HouseServiceImpl;
+import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,8 +40,18 @@ public class HouseApi {
                                                                  @RequestParam(name = "houseType", required = false) HouseType houseType) {
         return houseService.getAllPagination(houseType, fieldToSort, text, page, size, priceSort, region);
 
-        @GetMapping()
-        public List<HouseResponse> getPopularHouses (Pageable pageable){
-            return houseService.getPopularHouses(pageable);
-        }
     }
+
+    @GetMapping("/pagination")
+    @Operation(summary = "Get popular houses")
+    public List<HouseResponse> getPopularHouses(Pageable pageable) {
+        return houseService.getPopularHouses(pageable);
+    }
+
+    @GetMapping("/latest_accommodation")
+    @Operation(summary = "Get latest accommodation")
+    public AccommodationResponse getLatestAccommodation() {
+        return houseService.getLatestAccommodation();
+    }
+
+}

@@ -1,14 +1,6 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.db.entities.Feedback;
-<<<<<<< HEAD
-import com.example.airbnbb7.db.repository.FeedbackRepository;
-import com.example.airbnbb7.db.repository.HouseRepository;
-import com.example.airbnbb7.db.service.HouseService;
-import com.example.airbnbb7.dto.response.AccommodationResponse;
-import com.example.airbnbb7.dto.response.HouseResponse;
-import lombok.RequiredArgsConstructor;
-=======
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Location;
 import com.example.airbnbb7.db.enums.HouseType;
@@ -16,55 +8,21 @@ import com.example.airbnbb7.db.repository.FeedbackRepository;
 import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.db.service.HouseService;
+import com.example.airbnbb7.dto.response.AccommodationResponse;
+import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
->>>>>>> f80b5ac2e15977e6d61b619bfb03be351ac8318b
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-<<<<<<< HEAD
-=======
 import java.util.Comparator;
->>>>>>> f80b5ac2e15977e6d61b619bfb03be351ac8318b
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-<<<<<<< HEAD
-public class HouseServiceImpl {
-
-    private final HouseRepository houseRepository;
-    private final FeedbackRepository feedbackRepository;
-
-    public List<HouseResponse> getPopularHouses(Pageable pageable) {
-        List<HouseResponse> houseResponses = houseRepository.getPopularHouse(pageable);
-        List<HouseResponse> h = new ArrayList<>();
-        double rating = 0;
-        Long booked = 0l;
-        for (HouseResponse houseResponse:houseResponses) {
-            double r = getRating(houseResponse.getId());
-            if (r>rating && houseResponse.getCountOfBookedUser() > booked) {
-                rating = houseResponse.getRating();
-                booked = houseResponse.getCountOfBookedUser();
-            }
-            h.add(houseResponse);
-            houseResponses.remove(houseResponse);
-        }
-        return h;
-    }
-    public List<HouseResponse> getAllPopularHouse(Pageable pageable){
-        return houseRepository.getPopularHouse(pageable);
-    }
-    public List<AccommodationResponse> getAllPopularApartments(Pageable pageable){
-        return houseRepository.getPopularApartment(pageable);
-    }
-
-    public List<AccommodationResponse> getAllLatestHouses(Pageable pageable){
-        return houseRepository.getLatestAccommodation(pageable);
-=======
 public class HouseServiceImpl implements HouseService {
 
     private final HouseRepository houseRepository;
@@ -74,7 +32,42 @@ public class HouseServiceImpl implements HouseService {
     private final FeedbackRepository feedbackRepository;
 
     @Override
-    public List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region) {
+    public List<HouseResponse> getPopularHouses(Pageable pageable) {
+        List<HouseResponse> houseResponses = houseRepository.getPopularHouse(pageable);
+        List<HouseResponse> h = new ArrayList<>();
+        double rating = 0;
+        Long booked = 0L;
+        for (HouseResponse houseResponse : houseResponses) {
+            double r = getRating(houseResponse.getId());
+            if (r > rating && houseResponse.getCountOfBookedUser() > booked) {
+                rating = houseResponse.getRating();
+                booked = houseResponse.getCountOfBookedUser();
+            }
+            h.add(houseResponse);
+            houseResponses.remove(houseResponse);
+        }
+        return h;
+    }
+
+    @Override
+    public List<HouseResponse> getAllPopularHouse(Pageable pageable) {
+        return houseRepository.getPopularHouse(pageable);
+    }
+
+    @Override
+    public List<AccommodationResponse> getAllPopularApartments(Pageable pageable) {
+        return houseRepository.getPopularApartment(pageable);
+    }
+
+    @Override
+    public AccommodationResponse getLatestAccommodation() {
+        return houseRepository.getLatestAccommodation();
+
+    }
+
+    @Override
+    public List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String
+            nameOfHouse, int page, int countOfHouses, String priceSort, String region) {
         Pageable pageable = PageRequest.of(page - 1, countOfHouses);
         String text;
         if (nameOfHouse == null)
@@ -99,7 +92,9 @@ public class HouseServiceImpl implements HouseService {
         return sortedHouseResponse;
     }
 
-    public List<HouseResponseSortedPagination> sort(Pageable pageable, HouseType houseType, String region, String priceSort, String fieldToSort, List<HouseResponseSortedPagination> sortedHouseResponse) {
+    @Override
+    public List<HouseResponseSortedPagination> sort(Pageable pageable, HouseType houseType, String region, String
+            priceSort, String fieldToSort, List<HouseResponseSortedPagination> sortedHouseResponse) {
         switch (fieldToSort) {
             case "homeType":
                 return switch (houseType) {
@@ -134,29 +129,24 @@ public class HouseServiceImpl implements HouseService {
                 }
         }
         return sortedHouseResponse;
->>>>>>> f80b5ac2e15977e6d61b619bfb03be351ac8318b
     }
 
+    @Override
     public double getRating(Long houseId) {
         List<Feedback> feedbacks = feedbackRepository.getAllFeedbackByHouseId(houseId);
         List<Integer> ratings = new ArrayList<>();
-<<<<<<< HEAD
-        for (Feedback feedback :  feedbacks) {
-=======
+
         for (Feedback feedback : feedbacks) {
->>>>>>> f80b5ac2e15977e6d61b619bfb03be351ac8318b
             ratings.add(feedback.getRating());
         }
         double sum = 0;
         for (Integer rating : ratings) {
-<<<<<<< HEAD
-            sum +=rating;
-=======
             sum += rating;
->>>>>>> f80b5ac2e15977e6d61b619bfb03be351ac8318b
+            sum += rating;
         }
         sum = sum / ratings.size();
         String.format("%.1f", sum);
         return sum;
     }
+
 }
