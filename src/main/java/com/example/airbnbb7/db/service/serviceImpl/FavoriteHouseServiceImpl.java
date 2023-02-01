@@ -27,6 +27,7 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
         House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("user not found!"));
         if (house.isFavorite()) {
+            house.setFavorite(false);
             favoriteHouseRepository.deleteById(favoriteHouseRepository.getIdFavoriteHouseByHouseIdByUserId(houseId, userId));
         } else {
             house.setFavorite(true);

@@ -17,8 +17,8 @@ public class FavoriteHouseApi {
         favoriteHouseService.saveFavoriteHouse(houseId,userId);
     }
 
-    @GetMapping("/{favoriteHouseId}")
-    public void deleteFavorite(@PathVariable Long favoriteHouseId){
-        favoriteHouseService.deleteFavoriteHouse(favoriteHouseId);
+//    @GetMapping("/{favoriteHouseId}")
+//    public void deleteFavorite(@PathVariable Long favoriteHouseId){
+//        favoriteHouseService.deleteFavoriteHouse(favoriteHouseId);
     }
-}
+//}
