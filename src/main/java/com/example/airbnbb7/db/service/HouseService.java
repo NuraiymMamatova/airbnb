@@ -11,9 +11,9 @@ public interface HouseService {
 
     HouseResponse deleteByIdHouse(Long houseId);
 
-    HouseResponse updateHouse(Long id, HouseRequest houseRequest);
-
     HouseResponse save(HouseRequest houseRequest);
+
+    HouseResponse updateHouse(Long id, HouseRequest houseRequest);
 
     List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region);
 

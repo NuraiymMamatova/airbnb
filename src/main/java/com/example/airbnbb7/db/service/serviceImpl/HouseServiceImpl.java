@@ -62,7 +62,8 @@ public class HouseServiceImpl implements HouseService {
     public HouseResponse updateHouse(Long id, HouseRequest houseRequest) {
         House house = houseRepository.findById(id).get();
         houseRequestConverter.update(house, houseRequest);
-        return houseResponseConverter.viewHouse(houseRepository.save(house));
+        return  houseResponseConverter.viewHouse(houseRepository.save(house));
+
     }
 
     public HouseResponse save(HouseRequest houseRequest) {

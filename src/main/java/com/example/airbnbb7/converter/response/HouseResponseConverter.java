@@ -34,7 +34,6 @@ public class HouseResponseConverter {
         houseResponse.setImages(house.getImages());
         houseResponse.setMaxOfGuests(house.getMaxOfGuests());
         houseResponse.setHouseType(house.getHouseType());
-        System.out.println(locationRepository.findLocationByHouseId(house.getId()));
         houseResponse.setLocation(locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("House not found")));
         houseResponse.setOwner(userRepository.findUserById(house.getOwner().getId()));
 

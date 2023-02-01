@@ -28,6 +28,17 @@ public class HouseApi {
        return houseService.save(houseRequest);
     }
 
+    @PutMapping("/update/{id}")
+    public HouseResponse updateHouse(@PathVariable Long id,
+                                     @RequestBody HouseRequest houseRequest) {
+        return houseService.updateHouse(id, houseRequest);
+
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public HouseResponse deleteHouseById(@PathVariable Long id) {
+        return houseService.deleteByIdHouse(id);
+    }
     @GetMapping("/pagination")
     @Operation(summary = "House get all pagination", description = "This is get all pagination for houses")
     public List<HouseResponseSortedPagination> findAllHousesPage(@RequestParam(name = "sortOrFilter", required = false) String fieldToSort,
