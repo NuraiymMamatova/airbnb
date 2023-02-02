@@ -53,14 +53,14 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     public HouseResponse deleteByIdHouse(Long houseId) {
-        House house = houseRepository.findById(houseId).get();
+        House house = houseRepository.findById(houseId).orElseThrow(()-> new NotFoundException("House id not found"));
         houseRepository.delete(house);
         return houseResponseConverter.viewHouse(house);
     }
 
     @Override
     public HouseResponse updateHouse(Long id, HouseRequest houseRequest) {
-        House house = houseRepository.findById(id).get();
+        House house = houseRepository.findById(id).orElseThrow(()-> new NotFoundException("House id not found"));
         houseRequestConverter.update(house, houseRequest);
         return  houseResponseConverter.viewHouse(houseRepository.save(house));
 
@@ -68,13 +68,12 @@ public class HouseServiceImpl implements HouseService {
 
     public HouseResponse save(HouseRequest houseRequest) {
         User user = userRepository.findByEmail(userService.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
-        houseRepository.saveHouse(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getMaxOfGuests(), LocalDate.now(), HousesStatus.ON_MODERATION.ordinal(), user.getId().intValue());
-        locationService.saveLocation(houseRequest.getLocation());
-        Location location = locationRepository.findById(locationRepository.locationMaxId()).get();
-        House house = houseRepository.findById(houseRepository.houseMaxId()).get();
-        location.setHouse(house);
-        house.setLocation(location);
+        House house = new House(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getDescriptionOfListing(), houseRequest.getMaxOfGuests(), houseRequest.getImages(), houseRequest.getHouseType());
         house.setOwner(user);
+        Location location = locationRepository.findById(locationRepository.locationMaxId()).orElseThrow(()-> new NotFoundException("Location id not found"));
+        locationService.saveLocation(houseRequest.getLocation());
+        house.setLocation(location);
+        location.setHouse(house);
         houseRepository.save(house);
 
         HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(), house.getTitle(),

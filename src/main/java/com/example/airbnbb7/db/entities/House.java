@@ -3,7 +3,6 @@ package com.example.airbnbb7.db.entities;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static javax.persistence.CascadeType.*;
-import static javax.persistence.FetchType.*;
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 
 @Entity
@@ -64,4 +64,14 @@ public class House {
 
     @ManyToOne(cascade = {MERGE, REFRESH, DETACH})
     private User owner;
+
+    public House(Double price, String title, String descriptionOfListing, Long maxOfGuests, List<String> images, HouseType houseType) {
+        this.price = price;
+        this.title = title;
+        this.descriptionOfListing = descriptionOfListing;
+        this.images = images;
+        this.maxOfGuests = maxOfGuests;
+        this.houseType = houseType;
+
+    }
 }
