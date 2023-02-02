@@ -23,8 +23,6 @@ public class HouseApi {
 
     private final HouseServiceImpl houseService;
 
-    private final HouseRepository houseRepository;
-
     @GetMapping("/pagination")
     @Operation(summary = "House get all pagination", description = "This is get all pagination for houses")
     public List<HouseResponseSortedPagination> findAllHousesPage(@RequestParam(name = "sortOrFilter", required = false) String fieldToSort,
