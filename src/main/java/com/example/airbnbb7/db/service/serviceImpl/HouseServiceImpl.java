@@ -13,7 +13,6 @@ import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.HouseService;
-import com.example.airbnbb7.db.service.LocationService;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.HouseResponse;
@@ -43,8 +42,6 @@ public class HouseServiceImpl implements HouseService {
 
     private final UserRepository userRepository;
 
-    private final LocationService locationService;
-
     private final UserService userService;
 
     private final LocationRepository locationRepository;
@@ -53,27 +50,28 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     public HouseResponse deleteByIdHouse(Long houseId) {
-        House house = houseRepository.findById(houseId).orElseThrow(()-> new NotFoundException("House id not found"));
+        House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House id not found"));
         houseRepository.delete(house);
         return houseResponseConverter.viewHouse(house);
     }
 
     @Override
     public HouseResponse updateHouse(Long id, HouseRequest houseRequest) {
-        House house = houseRepository.findById(id).orElseThrow(()-> new NotFoundException("House id not found"));
+        House house = houseRepository.findById(id).orElseThrow(() -> new NotFoundException("House id not found"));
         houseRequestConverter.update(house, houseRequest);
-        return  houseResponseConverter.viewHouse(houseRepository.save(house));
+        return houseResponseConverter.viewHouse(houseRepository.save(house));
 
     }
 
     public HouseResponse save(HouseRequest houseRequest) {
         User user = userRepository.findByEmail(userService.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
         House house = new House(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getDescriptionOfListing(), houseRequest.getMaxOfGuests(), houseRequest.getImages(), houseRequest.getHouseType());
-        house.setOwner(user);
-        Location location = locationRepository.findById(locationRepository.locationMaxId()).orElseThrow(()-> new NotFoundException("Location id not found"));
-        locationService.saveLocation(houseRequest.getLocation());
+        Location location = locationRepository.findById(locationRepository.locationMaxId()).orElseThrow(() -> new NotFoundException("Location id not found"));
         house.setLocation(location);
         location.setHouse(house);
+        house.setDateHouseCreated(LocalDate.now());
+        house.setHousesStatus(HousesStatus.ON_MODERATION);
+        house.setOwner(user);
         houseRepository.save(house);
 
         HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(), house.getTitle(),

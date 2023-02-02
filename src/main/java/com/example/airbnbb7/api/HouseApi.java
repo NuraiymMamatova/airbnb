@@ -3,7 +3,6 @@ package com.example.airbnbb7.api;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.db.service.LocationService;
-import com.example.airbnbb7.db.service.serviceImpl.HouseServiceImpl;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
@@ -24,21 +23,25 @@ public class HouseApi {
     private final LocationService locationService;
 
     @PostMapping
+    @Operation(summary = "Save house", description = "Save house and location")
     public HouseResponse saveHouse(@RequestBody HouseRequest houseRequest) {
-       return houseService.save(houseRequest);
+        return houseService.save(houseRequest);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
+    @Operation(summary = "Update House", description = "Update house by id")
     public HouseResponse updateHouse(@PathVariable Long id,
                                      @RequestBody HouseRequest houseRequest) {
         return houseService.updateHouse(id, houseRequest);
 
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete House", description = "Delete house by id")
     public HouseResponse deleteHouseById(@PathVariable Long id) {
         return houseService.deleteByIdHouse(id);
     }
+
     @GetMapping("/pagination")
     @Operation(summary = "House get all pagination", description = "This is get all pagination for houses")
     public List<HouseResponseSortedPagination> findAllHousesPage(@RequestParam(name = "sortOrFilter", required = false) String fieldToSort,

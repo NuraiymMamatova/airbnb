@@ -1,41 +1,15 @@
 package com.example.airbnbb7.db.repository;
 
 import com.example.airbnbb7.db.entities.House;
-import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.util.List;
 
 public interface HouseRepository extends JpaRepository<House, Long> {
-
-
-    @Transactional
-    @Modifying
-    @Query(value = "insert into houses(id, price, title, max_of_guests, date_House_Created, houses_status, owner_id)" +
-            "values (nextval('house_seq'), ?, ?, ?, ?, ?, ?)", nativeQuery = true)
-    void saveHouse(Double price, String title, Long maxOfGuests, LocalDate date_House_Created, int houses_status, int owner_id);
-//
-//
-//    @Transactional
-//    @Modifying
-//    @Query("DELETE from House WHERE id = :id")
-//
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE House h SET h.price =:price, h.title =:title, h.maxOfGuests =:maxOfGuests WHERE h.id = :id")
-    int updateHouse(@Param("price") Double price, @Param("title") String title, @Param("maxOfGuests") Long maxOfGuests, @Param("id") int id);
-
-
-    @Query("select max(h.id) from House h")
-    Long houseMaxId();
 
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
             "h.price," +
