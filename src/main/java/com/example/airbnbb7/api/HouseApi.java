@@ -1,7 +1,9 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.enums.HouseType;
+import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.service.serviceImpl.HouseServiceImpl;
+import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,6 +23,8 @@ public class HouseApi {
 
     private final HouseServiceImpl houseService;
 
+    private final HouseRepository houseRepository;
+
     @GetMapping("/pagination")
     @Operation(summary = "House get all pagination", description = "This is get all pagination for houses")
     public List<HouseResponseSortedPagination> findAllHousesPage(@RequestParam(name = "sortOrFilter", required = false) String fieldToSort,
@@ -31,5 +35,11 @@ public class HouseApi {
                                                                  @RequestParam(name = "region", required = false) String region,
                                                                  @RequestParam(name = "houseType", required = false) HouseType houseType) {
         return houseService.getAllPagination(houseType, fieldToSort, text, page, size, priceSort, region);
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Global search", description = "Global Home Search")
+    public List<HouseResponse> search(@RequestParam("search") String search) {
+        return houseService.globalSearch(search);
     }
 }

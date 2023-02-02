@@ -36,8 +36,7 @@ public class HouseServiceImpl implements HouseService {
     public List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region) {
         Pageable pageable = PageRequest.of(page - 1, countOfHouses);
         String text;
-        if (nameOfHouse == null)
-            text = "";
+        if (nameOfHouse == null) text = "";
         else text = nameOfHouse;
         List<House> houses = houseRepository.findAll();
         List<HouseResponseSortedPagination> houseResponses = houseRepository.pagination(text, pageable);
@@ -117,8 +116,7 @@ public class HouseServiceImpl implements HouseService {
         List<House> houses = new ArrayList<>();
         for (House house : houseRepository.findAll()) {
             for (String search : searchEngines) {
-                if (house.getTitle().toUpperCase().contains(search) || house.getLocation().getRegion().toUpperCase().contains(search) ||
-                        house.getLocation().getAddress().toUpperCase().contains(search) || house.getHouseType().toString().toUpperCase().contains(search)) {
+                if (house.getTitle().toUpperCase().contains(search) || house.getLocation().getRegion().toUpperCase().contains(search) || house.getLocation().getAddress().toUpperCase().contains(search) || house.getHouseType().toString().toUpperCase().contains(search)) {
                     if (!houses.contains(house)) {
                         houses.add(house);
                     }
@@ -127,12 +125,12 @@ public class HouseServiceImpl implements HouseService {
         }
 
         for (House house : houses) {
-            HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(), house.getTitle(),
-                    house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType());
-            houseResponse.setOwner(new UserResponse(house.getOwner().getId(), house.getOwner().getName(),
-                    house.getOwner().getEmail(), house.getOwner().getImage()));
-            houseResponse.setLocation(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(),
-                    house.getLocation().getAddress(), house.getLocation().getRegion()));
+            HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(),
+                    house.getTitle(), house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType());
+            houseResponse.setOwner(new UserResponse(house.getOwner().getId(),
+                    house.getOwner().getName(), house.getOwner().getEmail(), house.getOwner().getImage()));
+            houseResponse.setLocation(new LocationResponse(house.getLocation().getId(),
+                    house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
             houseResponse.setImages(house.getImages());
             globalHouses.add(houseResponse);
         }
