@@ -28,11 +28,11 @@ public class AnnouncementResponseForVendor implements AnnouncementService {
 
     private Rating rating;
 
-    private List<UserResponseForVendor> inFavorites;
-
     private HouseType houseType;
 
     private LocationResponse location;
+
+    private List<UserResponseForVendor> inFavorites;
 
     private List<BookingResponse> bookingResponses;
 

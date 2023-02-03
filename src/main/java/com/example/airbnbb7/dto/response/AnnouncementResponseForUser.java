@@ -26,9 +26,9 @@ public class AnnouncementResponseForUser implements AnnouncementService {
 
     private Long maxOfGuests;
 
-    private HouseType houseType;
-
     private Rating rating;
+
+    private HouseType houseType;
 
     private LocationResponse location;
 
