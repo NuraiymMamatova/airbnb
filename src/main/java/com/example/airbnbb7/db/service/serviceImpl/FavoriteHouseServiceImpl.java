@@ -5,6 +5,7 @@ import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.repository.FavoriteHouseRepository;
 import com.example.airbnbb7.db.repository.HouseRepository;
+import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.FavoriteHouseService;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
@@ -12,6 +13,7 @@ import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,23 +22,48 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
 
     private final FavoriteHouseRepository favoriteHouseRepository;
     private final HouseRepository houseRepository;
+    private final HouseServiceImpl houseService;
     private final UserRepository userRepository;
+    private final LocationRepository locationRepository;
 
     @Override
-    public void saveFavoriteHouse(Long houseId,Long userId) {
-        House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("user not found!"));
-        if (house.isFavorite()) {
-            house.setFavorite(false);
-            favoriteHouseRepository.deleteById(favoriteHouseRepository.getIdFavoriteHouseByHouseIdByUserId(houseId, userId));
-        } else {
+    public void saveFavoriteHouse(Long houseId, Long userId) {
+        House house = houseRepository.findById(houseId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
+        FavoriteHouse findFavoriteHouse = favoriteHouseRepository.getFavoriteHouseByHouseIdByUserId(house.getId(), user.getId());
+        if (findFavoriteHouse == null) {
+            FavoriteHouse favoriteHouse = new FavoriteHouse();
             house.setFavorite(true);
-            favoriteHouseRepository.save(new FavoriteHouse(house, user));
+            favoriteHouse.setHouse(house);
+            favoriteHouse.setUser(user);
+            favoriteHouseRepository.save(favoriteHouse);
+        } else {
+            house.setFavorite(false);
+            favoriteHouseRepository.delete(findFavoriteHouse);
         }
     }
 
     @Override
-    public List<HouseResponseSortedPagination> getAllFavoriteHouse() {
-        return null;
+    public List<HouseResponseSortedPagination> getAllFavoriteHouseByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("user not found!"));
+        List<FavoriteHouse> favoriteHouses = user.getFavoriteHouses();
+        List<House> houses = new ArrayList<>();
+        for (FavoriteHouse f : favoriteHouses) {
+            House house = f.getHouse();
+            if (!houses.contains(house)) {
+                houses.add(house);
+            }
+        }
+        List<HouseResponseSortedPagination> houseResponseSortedPaginationList = new ArrayList<>();
+        for (House house : houses) {
+            HouseResponseSortedPagination houseResponseSortedPagination =
+                    new HouseResponseSortedPagination(house.getId(), house.getPrice(), house.getTitle(),
+                            house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType(), house.isFavorite());
+            houseResponseSortedPagination.setImages(house.getImages());
+            houseResponseSortedPagination.setLocationResponse(locationRepository.convertToResponse(house.getLocation()));
+            houseResponseSortedPagination.setHouseRating(houseService.getRating(houseResponseSortedPagination.getId()));
+            houseResponseSortedPaginationList.add(houseResponseSortedPagination);
+        }
+        return houseResponseSortedPaginationList;
     }
 }

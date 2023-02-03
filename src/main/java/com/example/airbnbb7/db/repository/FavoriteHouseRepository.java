@@ -6,11 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FavoriteHouseRepository extends JpaRepository<FavoriteHouse,Long> {
+public interface FavoriteHouseRepository extends JpaRepository<FavoriteHouse, Long> {
 
-//    @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id,h.price,h.title,h.descriptionOfListing,h.maxOfGuests,h.houseType) from House h where ")
-//    List<HouseResponseSortedPagination> getAllFavoriteHouse();
-
-    @Query("select f.id from FavoriteHouse f where f.house.id = :houseId and f.user.id = :userId")
-    Long getIdFavoriteHouseByHouseIdByUserId(Long houseId, Long userId);
+    @Query("select f from FavoriteHouse f where f.house.id = :houseId and f.user.id = :userId")
+    FavoriteHouse getFavoriteHouseByHouseIdByUserId(Long houseId, Long userId);
 }
