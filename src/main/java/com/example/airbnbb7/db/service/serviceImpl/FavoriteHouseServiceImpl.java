@@ -1,5 +1,6 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
+import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.entities.FavoriteHouse;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.User;
@@ -23,7 +24,7 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
 
     private final FavoriteHouseRepository favoriteHouseRepository;
     private final HouseRepository houseRepository;
-    private final HouseServiceImpl houseService;
+    private final Rating rating;
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
 
@@ -64,7 +65,7 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
                             house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType(), house.isFavorite());
             houseResponseSortedPagination.setImages(house.getImages());
             houseResponseSortedPagination.setLocationResponse(locationRepository.convertToResponse(house.getLocation()));
-            houseResponseSortedPagination.setHouseRating(houseService.getRating(houseResponseSortedPagination.getId()));
+            houseResponseSortedPagination.setHouseRating(rating.getRating(houseResponseSortedPagination.getId()));
             houseResponseSortedPaginationList.add(houseResponseSortedPagination);
         }
         return houseResponseSortedPaginationList;
