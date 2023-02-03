@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface FavoriteHouseService {
 
-    void saveFavoriteHouse(Long houseId, Long userId);
+    void saveFavoriteHouse(Long houseId);
 
     List<HouseResponseSortedPagination> getAllFavoriteHouseByUserId(Long userId);
 }

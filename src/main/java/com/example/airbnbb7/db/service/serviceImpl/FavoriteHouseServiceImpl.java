@@ -8,9 +8,11 @@ import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.FavoriteHouseService;
+import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,10 +28,12 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
 
+    private final UserService userService;
+
     @Override
-    public void saveFavoriteHouse(Long houseId, Long userId) {
+    public void saveFavoriteHouse(Long houseId) {
         House house = houseRepository.findById(houseId).orElseThrow();
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userService.getUserId()).orElseThrow();
         FavoriteHouse findFavoriteHouse = favoriteHouseRepository.getFavoriteHouseByHouseIdByUserId(house.getId(), user.getId());
         if (findFavoriteHouse == null) {
             FavoriteHouse favoriteHouse = new FavoriteHouse();

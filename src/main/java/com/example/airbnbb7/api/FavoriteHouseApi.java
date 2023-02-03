@@ -17,10 +17,9 @@ public class FavoriteHouseApi {
 
     private final FavoriteHouseService favoriteHouseService;
 
-    @PostMapping("/{houseId}/{userId}")
-    public void saveFavorite(@PathVariable Long houseId,
-                             @PathVariable Long userId) {
-        favoriteHouseService.saveFavoriteHouse(houseId, userId);
+    @PostMapping("/{houseId}")
+    public void saveFavorite(@PathVariable Long houseId) {
+        favoriteHouseService.saveFavoriteHouse(houseId);
     }
 
     @GetMapping("/{userId}")
