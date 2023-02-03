@@ -1,27 +1,20 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
+import com.example.airbnbb7.converter.request.HouseRequestConverter;
+import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.customclass.Rating;
 import com.example.airbnbb7.db.entities.Booking;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Location;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HouseType;
+import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.*;
 import com.example.airbnbb7.db.service.AnnouncementService;
-import com.example.airbnbb7.db.enums.HousesStatus;
-import com.example.airbnbb7.db.repository.FeedbackRepository;
-import com.example.airbnbb7.db.repository.HouseRepository;
-import com.example.airbnbb7.db.repository.LocationRepository;
-import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.HouseService;
-import com.example.airbnbb7.dto.response.*;
-import com.example.airbnbb7.db.service.LocationService;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.HouseRequest;
-import com.example.airbnbb7.dto.response.HouseResponse;
-import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
-import com.example.airbnbb7.dto.response.LocationResponse;
-import com.example.airbnbb7.dto.response.UserResponse;
+import com.example.airbnbb7.dto.response.*;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -53,11 +46,7 @@ public class HouseServiceImpl implements HouseService {
 
     private final LocationRepository locationRepository;
 
-    private final LocationService locationService;
-
     private final FeedbackRepository feedbackRepository;
-
-    private final UserRepository userRepository;
 
     private final Rating rating;
 
@@ -79,7 +68,7 @@ public class HouseServiceImpl implements HouseService {
     public HouseResponse save(HouseRequest houseRequest) {
         User user = userRepository.findByEmail(userService.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
         House house = new House(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getDescriptionOfListing(), houseRequest.getMaxOfGuests(), houseRequest.getImages(), houseRequest.getHouseType());
-        Location location = new Location(houseRequest.getLocation().getAddress(), houseRequest.getLocation().getTownOrProvince(),houseRequest.getLocation().getRegion());
+        Location location = new Location(houseRequest.getLocation().getAddress(), houseRequest.getLocation().getTownOrProvince(), houseRequest.getLocation().getRegion());
         location.setHouse(house);
         house.setLocation(location);
         house.setDateHouseCreated(LocalDate.now());
@@ -166,7 +155,7 @@ public class HouseServiceImpl implements HouseService {
         AnnouncementResponseForUser house = houseRepository.findHouseByIdForUser(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
         UserResponse user = userRepository.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("User not found!")).getOwner().getId());
         house.setImages(houseRepository.findImagesByHouseId(houseId));
-        house.setLocation(locationRepository.findLocationByHouseId(houseId));
+        house.setLocation(locationRepository.findLocationByHouseId(houseId).get());
         house.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
         List<Booking> bookings = bookingRepository.getBookingsByUserId(userId);
         house.setRating(rating.getRatingCount(houseId));
@@ -181,7 +170,7 @@ public class HouseServiceImpl implements HouseService {
         } else if (roleRepository.findRoleByUserId(userId).getNameOfRole().equals("ADMIN")) {
             AnnouncementResponseForAdmin announcementResponseForAdmin = houseRepository.findHouseByIdForAdmin(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
             announcementResponseForAdmin.setImages(houseRepository.findImagesByHouseId(houseId));
-            announcementResponseForAdmin.setLocation(locationRepository.findLocationByHouseId(houseId));
+            announcementResponseForAdmin.setLocation(locationRepository.findLocationByHouseId(houseId).get());
             announcementResponseForAdmin.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
             announcementResponseForAdmin.setOwner(user);
             announcementResponseForAdmin.setRating(rating.getRatingCount(houseId));
@@ -204,7 +193,7 @@ public class HouseServiceImpl implements HouseService {
         houseResponseForVendor.setBookingResponses(bookingResponses);
         houseResponseForVendor.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
         houseResponseForVendor.setInFavorites(userRepository.inFavorite(houseId));
-        houseResponseForVendor.setLocation(locationRepository.findLocationByHouseId(houseId));
+        houseResponseForVendor.setLocation(locationRepository.findLocationByHouseId(houseId).get());
         return houseResponseForVendor;
     }
 

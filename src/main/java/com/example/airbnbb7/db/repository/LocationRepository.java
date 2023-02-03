@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface LocationRepository extends JpaRepository<Location, Long> {
 
     @Query("select new com.example.airbnbb7.dto.response.LocationResponse(l.id, l.townOrProvince, l.address, l.region) from Location l where l.house.id = :houseId")
-    LocationResponse findLocationByHouseId(Long houseId);
+    Optional<LocationResponse> findLocationByHouseId(Long houseId);
 
     @Query("select new com.example.airbnbb7.dto.response.LocationResponse(l.id, l.townOrProvince, l.address, l.region) from Location l where l.id = :locationId")
     Optional<LocationResponse> findLocationById(Long locationId);

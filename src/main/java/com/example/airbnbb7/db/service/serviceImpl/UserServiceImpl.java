@@ -42,7 +42,6 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
-
     private String email;
 
     public String getEmail() {
