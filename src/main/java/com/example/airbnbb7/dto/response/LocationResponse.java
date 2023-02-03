@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class LocationResponse {
 
     private Long id;

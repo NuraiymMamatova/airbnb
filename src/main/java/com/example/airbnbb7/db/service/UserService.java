@@ -16,4 +16,7 @@ public interface UserService extends UserDetailsService {
 
     LoginResponse authWithGoogle(String tokenId) throws FirebaseAuthException;
 
+    String getEmail();
+
+
 }

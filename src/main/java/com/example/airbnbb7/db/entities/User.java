@@ -24,7 +24,7 @@ import static javax.persistence.CascadeType.*;
 public class User implements UserDetails {
 
     @Id
-    @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 1)
+    @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 1, initialValue = 3)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_gen")
     private Long id;
 
@@ -53,6 +53,12 @@ public class User implements UserDetails {
     public void addRole(Role role) {
         if (roles == null) roles = new ArrayList<>();
         roles.add(role);
+    }
+
+
+    public void addHouse(House house) {
+        if (house == null) announcements = new ArrayList<>();
+        announcements.add(house);
     }
 
     @Override

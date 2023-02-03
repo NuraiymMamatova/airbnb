@@ -1,12 +1,12 @@
 package com.example.airbnbb7.db.entities;
 
+import javax.persistence.*;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDate;
-
 import static javax.persistence.CascadeType.*;
 
 @Entity

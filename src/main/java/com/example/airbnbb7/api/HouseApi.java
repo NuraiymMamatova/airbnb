@@ -3,6 +3,9 @@ package com.example.airbnbb7.api;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.serviceImpl.HouseServiceImpl;
+import com.example.airbnbb7.db.service.HouseService;
+import com.example.airbnbb7.dto.request.HouseRequest;
+import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +21,27 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class HouseApi {
 
-    private final HouseServiceImpl houseService;
+    private final HouseService houseService;
+
+    @PostMapping
+    @Operation(summary = "Save house", description = "Save house and location")
+    public HouseResponse saveHouse(@RequestBody HouseRequest houseRequest) {
+        return houseService.save(houseRequest);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update House", description = "Update house by id")
+    public HouseResponse updateHouse(@PathVariable Long id,
+                                     @RequestBody HouseRequest houseRequest) {
+        return houseService.updateHouse(id, houseRequest);
+
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete House", description = "Delete house by id")
+    public HouseResponse deleteHouseById(@PathVariable Long id) {
+        return houseService.deleteByIdHouse(id);
+    }
 
     @GetMapping("/pagination")
     @Operation(summary = "House get all pagination", description = "This is get all pagination for houses")

@@ -18,3 +18,5 @@ public class LocationRequest {
     private String region;
 
 }
+
+

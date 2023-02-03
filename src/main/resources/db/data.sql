@@ -44,20 +44,20 @@ insert into houses(id, price, title, description_of_listing, max_of_guests, coun
                    house_type, houses_status, houses_booked, date_house_created, owner_id)
 values (5, 40, 'Best', 'e bed linen and towels.', 10, 1, 0, 2, 1, null, 2);
 
-insert into location(id, address, region, town_or_province, house_id)
-values (1, 'Toktogul 12', 'Bishkek', 'Goin', 1);
+insert into locations(id, address, region, town_or_province, house_id)
+values (1,'Toktogul 12','Bishkek','Goin',1);
 
-insert into location(id, address, region, town_or_province, house_id)
-values (2, 'Kurmanjan 36', 'Osh', 'Samsa', 2);
+insert into locations(id, address, region, town_or_province, house_id)
+values (2,'Kurmanjan 36','Osh','Samsa',2);
 
-insert into location(id, address, region, town_or_province, house_id)
-values (3, 'Saburov 19', 'Bishkek', 'Vefa', 3);
+insert into locations(id, address, region, town_or_province, house_id)
+values (3,'Saburov 19','Bishkek','Vefa',3);
 
-insert into location(id, address, region, town_or_province, house_id)
-values (4, 'Pushkin 12', 'Bishkek', 'Red', 4);
+insert into locations(id, address, region, town_or_province, house_id)
+values (4,'Pushkin 12','Bishkek','Red',4);
 
-insert into location(id, address, region, town_or_province, house_id)
-values (5, 'Rasulov 12', 'Bishkek', 'Gum', 5);
+insert into locations(id, address, region, town_or_province, house_id)
+values (5,'Rasulov 12','Bishkek','Gum',5);
 
 
 insert into house_images(house_id, images)
