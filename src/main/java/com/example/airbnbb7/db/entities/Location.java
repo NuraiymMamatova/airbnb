@@ -33,4 +33,9 @@ public class Location {
     @OneToOne(cascade = {REFRESH, MERGE, DETACH, PERSIST, REMOVE})
     private House house;
 
+    public Location(String townOrProvince, String address, String region) {
+        this.townOrProvince = townOrProvince;
+        this.address = address;
+        this.region = region;
+    }
 }

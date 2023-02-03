@@ -13,6 +13,7 @@ import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.HouseService;
+import com.example.airbnbb7.db.service.LocationService;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.HouseResponse;
@@ -46,6 +47,8 @@ public class HouseServiceImpl implements HouseService {
 
     private final LocationRepository locationRepository;
 
+    private final LocationService locationService;
+
     private final FeedbackRepository feedbackRepository;
 
     @Override
@@ -66,9 +69,9 @@ public class HouseServiceImpl implements HouseService {
     public HouseResponse save(HouseRequest houseRequest) {
         User user = userRepository.findByEmail(userService.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
         House house = new House(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getDescriptionOfListing(), houseRequest.getMaxOfGuests(), houseRequest.getImages(), houseRequest.getHouseType());
-        Location location = locationRepository.findById(locationRepository.locationMaxId()).orElseThrow(() -> new NotFoundException("Location id not found"));
-        house.setLocation(location);
+        Location location = new Location(houseRequest.getLocation().getAddress(), houseRequest.getLocation().getTownOrProvince(),houseRequest.getLocation().getRegion());
         location.setHouse(house);
+        house.setLocation(location);
         house.setDateHouseCreated(LocalDate.now());
         house.setHousesStatus(HousesStatus.ON_MODERATION);
         house.setOwner(user);
