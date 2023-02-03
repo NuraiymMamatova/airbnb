@@ -115,14 +115,39 @@ public class HouseServiceImpl implements HouseService {
         List<HouseResponse> globalHouses = new ArrayList<>();
         List<House> houses = new ArrayList<>();
         for (House house : houseRepository.findAll()) {
-            for (String search : searchEngines) {
-                if (house.getTitle().toUpperCase().contains(search) || house.getLocation().getRegion().toUpperCase().contains(search)
-                        || house.getLocation().getAddress().toUpperCase().contains(search) || house.getHouseType().toString().toUpperCase().contains(search)
-                || house.getMaxOfGuests().toString().toUpperCase().contains(search)) {
+            if (searchEngines.length == 1) {
+                if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0])) {
+                    if (!houses.contains(house)) {
+                        houses.add(house);
+                    }
+                } else if (house.getHouseType().toString().toUpperCase().contains(searchEngines[0])
+                        || house.getTitle().toUpperCase().contains(searchEngines[0]) || house.getMaxOfGuests().toString().toUpperCase().contains(searchEngines[0])) {
                     if (!houses.contains(house)) {
                         houses.add(house);
                     }
                 }
+            } else if (searchEngines.length == 2) {
+                if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0]) && house.getHouseType().toString().toUpperCase().contains(searchEngines[1])) {
+                    if (!houses.contains(house)) {
+                        houses.add(house);
+                    }
+                }
+            } else if (searchEngines.length == 3) {
+                if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0]) && house.getHouseType().toString().toUpperCase().contains(searchEngines[1])
+                        && house.getTitle().toUpperCase().contains(searchEngines[2])) {
+                    if (!houses.contains(house)) {
+                        houses.add(house);
+                    }
+                }
+            } else if (searchEngines.length == 4) {
+                if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0]) && house.getHouseType().toString().toUpperCase().contains(searchEngines[1])
+                        && house.getTitle().toUpperCase().contains(searchEngines[2]) && house.getMaxOfGuests().toString().toUpperCase().contains(searchEngines[3])) {
+                    if (!houses.contains(house)) {
+                        houses.add(house);
+                    }
+                }
+            } else if (searchEngines.length > 4) {
+                throw new NotFoundException("Тo such house or apartment exists!!!");
             }
         }
 
