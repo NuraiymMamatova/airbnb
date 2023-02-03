@@ -1,11 +1,10 @@
 package com.example.airbnbb7.db.entities;
 
+import javax.persistence.*;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
-
-import javax.persistence.*;
 
 import static javax.persistence.CascadeType.*;
 
@@ -14,7 +13,6 @@ import static javax.persistence.CascadeType.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 @Table(name = "favorite_houses")
 public class FavoriteHouse {
 
@@ -28,9 +26,4 @@ public class FavoriteHouse {
 
     @ManyToOne(cascade = {MERGE, DETACH, REFRESH})
     private User user;
-
-    public FavoriteHouse(House house, User user) {
-        this.house = house;
-        this.user = user;
-    }
 }
