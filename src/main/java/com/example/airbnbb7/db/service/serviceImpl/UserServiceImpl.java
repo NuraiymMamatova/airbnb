@@ -39,6 +39,7 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
+
     private String email;
 
     public String getEmail() {
@@ -66,7 +67,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(firebaseToken.getEmail()).isEmpty()) {
             user = new User();
             user.addRole(roleRepository.findByName("USER"));
-            user.setPassword(firebaseToken.getEmail());
+            user.setPassword(passwordEncoder.encode(firebaseToken.getEmail()));
             user.setName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
             userRepository.save(user);
