@@ -26,7 +26,7 @@ import static javax.persistence.FetchType.LAZY;
 public class House {
 
     @Id
-    @SequenceGenerator(name = "house_gen", sequenceName = "house_seq", allocationSize = 1)
+    @SequenceGenerator(name = "house_gen", sequenceName = "house_seq", allocationSize = 1, initialValue = 6)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "house_gen")
     private Long id;
 
@@ -53,7 +53,7 @@ public class House {
 
     private LocalDate dateHouseCreated;
 
-    @OneToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST}, fetch = EAGER, mappedBy = "house")
+    @OneToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST, REMOVE}, fetch = EAGER, mappedBy = "house")
     private Location location;
 
     @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")
@@ -64,4 +64,14 @@ public class House {
 
     @ManyToOne(cascade = {MERGE, REFRESH, DETACH})
     private User owner;
+
+    public House(Double price, String title, String descriptionOfListing, Long maxOfGuests, List<String> images, HouseType houseType) {
+        this.price = price;
+        this.title = title;
+        this.descriptionOfListing = descriptionOfListing;
+        this.images = images;
+        this.maxOfGuests = maxOfGuests;
+        this.houseType = houseType;
+
+    }
 }

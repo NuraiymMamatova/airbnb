@@ -39,6 +39,16 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
+    private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @PostConstruct
     void init() throws IOException {
         GoogleCredentials googleCredentials =
@@ -82,6 +92,7 @@ public class UserServiceImpl implements UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("invalid password");
         }
+        setEmail(user.getEmail());
         return new LoginResponse(jwtTokenUtil.generateToken(user), user.getEmail(), roleRepository.findRoleByUserId(user.getId()).getNameOfRole());
     }
 

@@ -4,20 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.stereotype.Component;
 
-@Component
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class LocationResponse {
+@NoArgsConstructor
+public class UserResponse {
 
     private Long id;
 
-    private String townOrProvince;
+    private String name;
 
-    private String address;
+    private String email;
 
-    private String region;
+    private String image;
+
 }
