@@ -44,14 +44,6 @@ public class UserServiceImpl implements UserService {
 
     private String email;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     @PostConstruct
     void init() throws IOException {
         GoogleCredentials googleCredentials =
@@ -111,6 +103,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponseForVendor> inFavorite(Long houseId) {
         return userRepository.inFavorite(houseId);
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
 }
