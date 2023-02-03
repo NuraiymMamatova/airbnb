@@ -9,7 +9,6 @@ import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.FavoriteHouseService;
-import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +27,10 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
 
-    private final UserService userService;
-
     @Override
     public void saveFavoriteHouse(Long houseId) {
-        House house = houseRepository.findById(houseId).orElseThrow(()-> new NotFoundException("House not found!"));
-        User user = userRepository.findById(userService.getUserId()).orElseThrow(()-> new NotFoundException("User not found!"));
+        House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+        User user = userRepository.findById(UserRepository.getUserId()).orElseThrow(() -> new NotFoundException("User not found!"));
         FavoriteHouse findFavoriteHouse = favoriteHouseRepository.getFavoriteHouseByHouseIdByUserId(house.getId(), user.getId());
         if (findFavoriteHouse == null) {
             FavoriteHouse favoriteHouse = new FavoriteHouse();
@@ -49,7 +46,7 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
 
     @Override
     public List<HouseResponseSortedPagination> getAllFavoriteHouseByUserId() {
-        User user = userRepository.findById(userService.getUserId()).orElseThrow(() -> new NotFoundException("User not found!"));
+        User user = userRepository.findById(UserRepository.getUserId()).orElseThrow(() -> new NotFoundException("User not found!"));
         List<FavoriteHouse> favoriteHouses = user.getFavoriteHouses();
         List<House> houses = new ArrayList<>();
         for (FavoriteHouse f : favoriteHouses) {

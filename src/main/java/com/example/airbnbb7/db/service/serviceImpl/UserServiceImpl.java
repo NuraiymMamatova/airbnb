@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
-    private Long userId;
+    private static Long userId;
 
     @PostConstruct
     void init() throws IOException {
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("not found email"));
     }
 
-    public Long getUserId() {
+    public static Long getUserId() {
         return userId;
     }
 

@@ -12,7 +12,4 @@ public interface UserService extends UserDetailsService {
 
     @Override
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
-
-    Long getUserId();
-
 }
