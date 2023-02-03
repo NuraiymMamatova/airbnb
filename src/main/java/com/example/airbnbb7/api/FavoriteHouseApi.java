@@ -22,9 +22,9 @@ public class FavoriteHouseApi {
         favoriteHouseService.saveFavoriteHouse(houseId);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping
     @Operation(summary = "get all favorite house", description = " this is get all favorite by userId")
-    public List<HouseResponseSortedPagination> getAllFavoriteByUserId(@PathVariable Long userId) {
-        return favoriteHouseService.getAllFavoriteHouseByUserId(userId);
+    public List<HouseResponseSortedPagination> getAllFavoriteByUserId() {
+        return favoriteHouseService.getAllFavoriteHouseByUserId();
     }
 }

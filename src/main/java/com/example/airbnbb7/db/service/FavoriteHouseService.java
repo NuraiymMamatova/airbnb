@@ -8,5 +8,5 @@ public interface FavoriteHouseService {
 
     void saveFavoriteHouse(Long houseId);
 
-    List<HouseResponseSortedPagination> getAllFavoriteHouseByUserId(Long userId);
+    List<HouseResponseSortedPagination> getAllFavoriteHouseByUserId();
 }

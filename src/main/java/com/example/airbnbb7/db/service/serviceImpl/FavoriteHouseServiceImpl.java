@@ -48,8 +48,8 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
     }
 
     @Override
-    public List<HouseResponseSortedPagination> getAllFavoriteHouseByUserId(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("user not found!"));
+    public List<HouseResponseSortedPagination> getAllFavoriteHouseByUserId() {
+        User user = userRepository.findById(userService.getUserId()).orElseThrow(() -> new NotFoundException("user not found!"));
         List<FavoriteHouse> favoriteHouses = user.getFavoriteHouses();
         List<House> houses = new ArrayList<>();
         for (FavoriteHouse f : favoriteHouses) {
