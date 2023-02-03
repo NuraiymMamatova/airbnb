@@ -1,14 +1,11 @@
 package com.example.airbnbb7.db.entities;
 
-import javax.persistence.*;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.*;
 
 import static javax.persistence.CascadeType.*;
 
@@ -26,7 +23,7 @@ public class FavoriteHouse {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "favorite_houses_gen")
     private Long id;
 
-    @ManyToOne(cascade = {MERGE, DETACH, REFRESH})
+    @OneToOne(cascade = {MERGE, DETACH, REFRESH})
     private House house;
 
     @ManyToOne(cascade = {MERGE, DETACH, REFRESH})
