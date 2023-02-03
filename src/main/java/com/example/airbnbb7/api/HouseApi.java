@@ -20,7 +20,6 @@ import java.util.List;
 public class HouseApi {
 
     private final HouseService houseService;
-    private final LocationService locationService;
 
     @PostMapping
     @Operation(summary = "Save house", description = "Save house and location")
