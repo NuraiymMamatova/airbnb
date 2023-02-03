@@ -116,7 +116,9 @@ public class HouseServiceImpl implements HouseService {
         List<House> houses = new ArrayList<>();
         for (House house : houseRepository.findAll()) {
             for (String search : searchEngines) {
-                if (house.getTitle().toUpperCase().contains(search) || house.getLocation().getRegion().toUpperCase().contains(search) || house.getLocation().getAddress().toUpperCase().contains(search) || house.getHouseType().toString().toUpperCase().contains(search)) {
+                if (house.getTitle().toUpperCase().contains(search) || house.getLocation().getRegion().toUpperCase().contains(search)
+                        || house.getLocation().getAddress().toUpperCase().contains(search) || house.getHouseType().toString().toUpperCase().contains(search)
+                || house.getMaxOfGuests().toString().toUpperCase().contains(search)) {
                     if (!houses.contains(house)) {
                         houses.add(house);
                     }
