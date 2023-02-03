@@ -122,22 +122,37 @@ public class HouseServiceImpl implements HouseService {
     public Rating getRatingCount(Long houseId) {
         List<Feedback> feedbacks = feedbackRepository.getAllFeedbackByHouseId(houseId);
         Rating rating = new Rating();
+        int countOfPeople = 0;
         for (Feedback feedback : feedbacks) {
             switch (feedback.getRating()) {
-                case 1 -> rating.setOne(rating.getOne() + 1);
-                case 2 -> rating.setTwo(rating.getTwo() + 1);
-                case 3 -> rating.setThree(rating.getThree() + 1);
-                case 4 -> rating.setFour(rating.getFour() + 1);
-                case 5 -> rating.setFive(rating.getFive() + 1);
+                case 1 -> {
+                    rating.setOne(rating.getOne() + 1);
+                    countOfPeople++;
+                }
+                case 2 -> {
+                    rating.setTwo(rating.getTwo() + 1);
+                    countOfPeople++;
+                }
+                case 3 -> {
+                    rating.setThree(rating.getThree() + 1);
+                    countOfPeople++;
+                }
+                case 4 -> {
+                    rating.setFour(rating.getFour() + 1);
+                    countOfPeople++;
+                }
+                case 5 -> {
+                    rating.setFive(rating.getFive() + 1);
+                    countOfPeople++;
+                }
             }
         }
-        int sumOfRating = Math.toIntExact(Math.round(getRating(houseId)));
-        rating.setFive(rating.getFive() * 100 / sumOfRating);
-        rating.setFour(rating.getFour() * 100 / sumOfRating);
-        rating.setThree(rating.getThree() * 100 / sumOfRating);
-        rating.setTwo(rating.getTwo() * 100 / sumOfRating);
-        rating.setOne(rating.getOne() * 100 / sumOfRating);
-        rating.setSumOfRating(sumOfRating);
+        rating.setFive((rating.getFive() * 100) / countOfPeople);
+        rating.setFour((rating.getFour() * 100) / countOfPeople);
+        rating.setThree((rating.getThree() * 100) / countOfPeople);
+        rating.setTwo((rating.getTwo() * 100) / countOfPeople);
+        rating.setOne((rating.getOne() * 100) / countOfPeople);
+        rating.setSumOfRating(getRating(houseId));
         return rating;
     }
 
