@@ -12,7 +12,6 @@ import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
