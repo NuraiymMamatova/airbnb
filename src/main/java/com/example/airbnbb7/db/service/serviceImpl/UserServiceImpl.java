@@ -7,8 +7,6 @@ import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
-import com.example.airbnbb7.dto.response.UserResponse;
-import com.example.airbnbb7.dto.response.UserResponseForVendor;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,10 +39,16 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
-    private static Long userId;
-
 
     private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     @PostConstruct
     void init() throws IOException {
@@ -67,11 +70,11 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(firebaseToken.getEmail()));
             user.setName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
-            setUserId(user.getId());
             userRepository.save(user);
         }
+
         user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!", firebaseToken.getEmail())));
-        setUserId(user.getId());
+
         String token = jwtTokenUtil.generateToken(user);
         return new LoginResponse(user.getEmail(), token, userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
     }
@@ -91,7 +94,6 @@ public class UserServiceImpl implements UserService {
             throw new BadCredentialsException("invalid password");
         }
         setEmail(user.getEmail());
-        setUserId(user.getId());
         return new LoginResponse(jwtTokenUtil.generateToken(user), user.getEmail(), roleRepository.findRoleByUserId(user.getId()).getNameOfRole());
     }
 
@@ -99,31 +101,4 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("not found email"));
     }
-
-    public static Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    @Override
-    public UserResponse findUserById(Long userId) {
-        return userRepository.findUserById(userId);
-    }
-
-    @Override
-    public List<UserResponseForVendor> inFavorite(Long houseId) {
-        return userRepository.inFavorite(houseId);
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
 }

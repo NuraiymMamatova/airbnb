@@ -46,8 +46,6 @@ public class HouseServiceImpl implements HouseService {
 
     private final LocationRepository locationRepository;
 
-    private final LocationService locationService;
-
     private final FeedbackRepository feedbackRepository;
 
     private final Rating rating;
@@ -103,12 +101,12 @@ public class HouseServiceImpl implements HouseService {
             if (index.equals(houses.get(Math.toIntExact(index)).getLocation().getId())) {
                 response.setImages(houses.get(Math.toIntExact(index)).getImages());
                 response.setLocationResponse(locationRepository.convertToResponse(houses.get(Math.toIntExact(index)).getLocation()));
-                response.setHouseRating(rating.getRating(response.getId()));
+                response.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(response.getId())));
             } else {
                 Location location = locationRepository.findById(response.getId()).orElseThrow(() -> new NotFoundException("location not found!"));
                 response.setImages(houses.get(Math.toIntExact(index)).getImages());
                 response.setLocationResponse(locationRepository.convertToResponse(location));
-                response.setHouseRating(rating.getRating(response.getId()));
+                response.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(response.getId())));
             }
         }
         return sortedHouseResponse;
@@ -153,14 +151,15 @@ public class HouseServiceImpl implements HouseService {
 
 
     @Override
-    public AnnouncementService getHouse(Long houseId, Long userId) {
+    public AnnouncementService getHouse(Long houseId) {
         AnnouncementResponseForUser house = houseRepository.findHouseByIdForUser(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
         UserResponse user = userRepository.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("User not found!")).getOwner().getId());
+        Long userId = UserRepository.getUserId();
         house.setImages(houseRepository.findImagesByHouseId(houseId));
         house.setLocation(locationRepository.findLocationByHouseId(houseId).get());
         house.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
         List<Booking> bookings = bookingRepository.getBookingsByUserId(userId);
-        house.setRating(rating.getRatingCount(houseId));
+        house.setRating(rating.getRatingCount(feedbackRepository.getAllFeedbackByHouseId(houseId)));
         for (Booking booking : bookings) {
             if (booking.getHouse().getId() == houseId) {
                 house.setBookingResponse(bookingRepository.findBookingById(booking.getId()).get());
@@ -175,7 +174,7 @@ public class HouseServiceImpl implements HouseService {
             announcementResponseForAdmin.setLocation(locationRepository.findLocationByHouseId(houseId).get());
             announcementResponseForAdmin.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
             announcementResponseForAdmin.setOwner(user);
-            announcementResponseForAdmin.setRating(rating.getRatingCount(houseId));
+            announcementResponseForAdmin.setRating(rating.getRatingCount(feedbackRepository.getAllFeedbackByHouseId(houseId)));
             return announcementResponseForAdmin;
         }
         house.setOwner(user);
@@ -191,7 +190,7 @@ public class HouseServiceImpl implements HouseService {
             booking.setOwner(userRepository.findUserById(bookingRepository.getUserIdByBookingId(booking.getId())));
             bookingResponses.add(booking);
         }
-        houseResponseForVendor.setRating(rating.getRatingCount(houseId));
+        houseResponseForVendor.setRating(rating.getRatingCount(feedbackRepository.getAllFeedbackByHouseId(houseId)));
         houseResponseForVendor.setBookingResponses(bookingResponses);
         houseResponseForVendor.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
         houseResponseForVendor.setInFavorites(userRepository.inFavorite(houseId));

@@ -1,6 +1,5 @@
 package com.example.airbnbb7.db.repository;
 
-import com.example.airbnbb7.db.entities.FavoriteHouse;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.dto.response.AnnouncementResponseForAdmin;
 import com.example.airbnbb7.dto.response.AnnouncementResponseForUser;

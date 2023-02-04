@@ -2,16 +2,16 @@ package com.example.airbnbb7.db.customclass;
 
 import com.example.airbnbb7.db.entities.Feedback;
 import com.example.airbnbb7.db.repository.FeedbackRepository;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 @Getter
 @Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class Rating {
 
     private double sumOfRating;
@@ -26,10 +26,7 @@ public class Rating {
 
     private int five;
 
-    private final FeedbackRepository feedbackRepository;
-
-    public double getRating(Long houseId) {
-        List<Feedback> feedbacks = feedbackRepository.getAllFeedbackByHouseId(houseId);
+    public double getRating(List<Feedback> feedbacks) {
         List<Integer> ratings = new ArrayList<>();
         for (Feedback feedback : feedbacks) {
             ratings.add(feedback.getRating());
@@ -43,9 +40,8 @@ public class Rating {
         return sum;
     }
 
-    public Rating getRatingCount(Long houseId) {
-        List<Feedback> feedbacks = feedbackRepository.getAllFeedbackByHouseId(houseId);
-        Rating rating = new Rating(getFeedbackRepository());
+    public Rating getRatingCount(List<Feedback> feedbacks) {
+        Rating rating = new Rating();
         int countOfPeople = 0;
         for (Feedback feedback : feedbacks) {
             switch (feedback.getRating()) {
@@ -76,8 +72,7 @@ public class Rating {
         rating.setThree((rating.getThree() * 100) / countOfPeople);
         rating.setTwo((rating.getTwo() * 100) / countOfPeople);
         rating.setOne((rating.getOne() * 100) / countOfPeople);
-        rating.setSumOfRating(getRating(houseId));
+        rating.setSumOfRating(getRating(feedbacks));
         return rating;
     }
-
 }

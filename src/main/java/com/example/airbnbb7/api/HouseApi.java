@@ -2,7 +2,6 @@ package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.AnnouncementService;
-import com.example.airbnbb7.db.service.serviceImpl.HouseServiceImpl;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.HouseResponse;
@@ -55,10 +54,10 @@ public class HouseApi {
         return houseService.getAllPagination(houseType, fieldToSort, text, page, size, priceSort, region);
     }
 
-    @GetMapping("/announcement/{houseId}/{userId}")
+    @GetMapping("/announcement/{houseId}")
     @Operation(summary = "House inner page", description = "Any user can go through to view the house")
-    public AnnouncementService announcementsForVendor(@PathVariable Long houseId, @PathVariable Long userId) {
-        return houseService.getHouse(houseId, userId);
+    public AnnouncementService announcementsForVendor(@PathVariable Long houseId) {
+        return houseService.getHouse(houseId);
     }
 
 }

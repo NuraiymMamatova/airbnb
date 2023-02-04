@@ -18,7 +18,7 @@ public interface HouseService {
 
     List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region);
 
-    AnnouncementService getHouse(Long houseId, Long userId);
+    AnnouncementService getHouse(Long houseId);
 
     AnnouncementResponseForVendor getHouseForVendor(Long houseId);
 
