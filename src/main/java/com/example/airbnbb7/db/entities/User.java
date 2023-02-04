@@ -55,7 +55,6 @@ public class User implements UserDetails {
         roles.add(role);
     }
 
-
     public void addHouse(House house) {
         if (house == null) announcements = new ArrayList<>();
         announcements.add(house);

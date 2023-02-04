@@ -1,5 +1,6 @@
 package com.example.airbnbb7.db.repository;
 
+import com.example.airbnbb7.db.entities.FavoriteHouse;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.dto.response.AnnouncementResponseForAdmin;
 import com.example.airbnbb7.dto.response.AnnouncementResponseForUser;
@@ -32,7 +33,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.title," +
             "h.descriptionOfListing," +
             "h.maxOfGuests," +
-            "h.houseType) from House h where upper(h.title) like concat('%',:pagination, '%')")
+            "h.houseType,h.isFavorite) from House h where upper(h.title) like concat('%',:pagination, '%')")
     List<HouseResponseSortedPagination> pagination(@Param("pagination") String pagination, Pageable pageable);
 
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
@@ -40,7 +41,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.title," +
             "h.descriptionOfListing," +
             "h.maxOfGuests," +
-            "h.houseType) from House h where h.houseType = 1 ")
+            "h.houseType,h.isFavorite) from House h where h.houseType = 1 ")
     List<HouseResponseSortedPagination> getAllHouses(Pageable pageable);
 
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
@@ -48,7 +49,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.title," +
             "h.descriptionOfListing," +
             "h.maxOfGuests," +
-            "h.houseType) from House h where h.houseType = 0 ")
+            "h.houseType,h.isFavorite) from House h where h.houseType = 0 ")
     List<HouseResponseSortedPagination> getAllApartments(Pageable pageable);
 
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(" +
@@ -57,6 +58,6 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.title," +
             "h.descriptionOfListing," +
             "h.maxOfGuests," +
-            "h.houseType) from House h where h.location.region = :region ")
+            "h.houseType,h.isFavorite) from House h where h.location.region = :region ")
     List<HouseResponseSortedPagination> regionHouses(String region, Pageable pageable);
 }

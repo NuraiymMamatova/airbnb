@@ -46,6 +46,8 @@ public class HouseServiceImpl implements HouseService {
 
     private final LocationRepository locationRepository;
 
+    private final LocationService locationService;
+
     private final FeedbackRepository feedbackRepository;
 
     private final Rating rating;
