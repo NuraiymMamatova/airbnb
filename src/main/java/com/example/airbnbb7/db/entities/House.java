@@ -53,7 +53,9 @@ public class House {
 
     private LocalDate dateHouseCreated;
 
-    @OneToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST, REMOVE}, fetch = EAGER, mappedBy = "house")
+    private boolean isFavorite = false;
+
+    @OneToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST}, fetch = EAGER, mappedBy = "house")
     private Location location;
 
     @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")
@@ -64,6 +66,14 @@ public class House {
 
     @ManyToOne(cascade = {MERGE, REFRESH, DETACH})
     private User owner;
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
 
     public House(Double price, String title, String descriptionOfListing, Long maxOfGuests, List<String> images, HouseType houseType) {
         this.price = price;

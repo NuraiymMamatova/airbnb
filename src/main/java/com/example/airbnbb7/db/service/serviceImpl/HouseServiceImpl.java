@@ -1,5 +1,6 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
+import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.converter.request.HouseRequestConverter;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.entities.Feedback;
@@ -47,6 +48,7 @@ public class HouseServiceImpl implements HouseService {
 
     private final LocationRepository locationRepository;
 
+    private final Rating rating;
     private final LocationService locationService;
 
     private final FeedbackRepository feedbackRepository;
@@ -102,12 +104,12 @@ public class HouseServiceImpl implements HouseService {
             if (index.equals(houses.get(Math.toIntExact(index)).getLocation().getId())) {
                 response.setImages(houses.get(Math.toIntExact(index)).getImages());
                 response.setLocationResponse(locationRepository.convertToResponse(houses.get(Math.toIntExact(index)).getLocation()));
-                response.setHouseRating(getRating(response.getId()));
+                response.setHouseRating(rating.getRating(response.getId()));
             } else {
                 Location location = locationRepository.findById(response.getId()).orElseThrow(() -> new NotFoundException("location not found!"));
                 response.setImages(houses.get(Math.toIntExact(index)).getImages());
                 response.setLocationResponse(locationRepository.convertToResponse(location));
-                response.setHouseRating(getRating(response.getId()));
+                response.setHouseRating(rating.getRating(response.getId()));
             }
         }
         return sortedHouseResponse;
@@ -148,20 +150,5 @@ public class HouseServiceImpl implements HouseService {
                 }
         }
         return sortedHouseResponse;
-    }
-
-    public double getRating(Long houseId) {
-        List<Feedback> feedbacks = feedbackRepository.getAllFeedbackByHouseId(houseId);
-        List<Integer> ratings = new ArrayList<>();
-        for (Feedback feedback : feedbacks) {
-            ratings.add(feedback.getRating());
-        }
-        double sum = 0;
-        for (Integer rating : ratings) {
-            sum += rating;
-        }
-        sum = sum / ratings.size();
-        String.format("%.1f", sum);
-        return sum;
     }
 }

@@ -39,7 +39,7 @@ public class User implements UserDetails {
 
     private Long countOfBookedHouse;
 
-    @OneToMany(cascade = {DETACH, REFRESH, DETACH, MERGE}, mappedBy = "owner")
+    @OneToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "owner")
     private List<House> announcements;
 
     @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "users")
@@ -55,7 +55,6 @@ public class User implements UserDetails {
         if (roles == null) roles = new ArrayList<>();
         roles.add(role);
     }
-
 
     public void addHouse(House house) {
         if (house == null) announcements = new ArrayList<>();
