@@ -178,23 +178,17 @@ public class HouseServiceImpl implements HouseService {
                 if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0])) {
                     if (!houses.contains(house)) {
                         houses.add(house);
-                    } else {
-                        throw new NotFoundException("Тo such house or apartment exists!!!");
                     }
                 } else if (house.getHouseType().toString().toUpperCase().contains(searchEngines[0])
                         || house.getTitle().toUpperCase().contains(searchEngines[0]) || house.getMaxOfGuests().toString().toUpperCase().contains(searchEngines[0])) {
                     if (!houses.contains(house)) {
                         houses.add(house);
-                    } else {
-                        throw new NotFoundException("Тo such house or apartment exists!!!");
                     }
                 }
             } else if (searchEngines.length == 2) {
                 if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0]) && house.getHouseType().toString().toUpperCase().contains(searchEngines[1])) {
                     if (!houses.contains(house)) {
                         houses.add(house);
-                    } else {
-                        throw new NotFoundException("Тo such house or apartment exists!!!");
                     }
                 }
             } else if (searchEngines.length == 3) {
@@ -202,8 +196,6 @@ public class HouseServiceImpl implements HouseService {
                         && house.getTitle().toUpperCase().contains(searchEngines[2])) {
                     if (!houses.contains(house)) {
                         houses.add(house);
-                    } else {
-                        throw new NotFoundException("Тo such house or apartment exists!!!");
                     }
                 }
             } else if (searchEngines.length == 4) {
@@ -211,8 +203,6 @@ public class HouseServiceImpl implements HouseService {
                         && house.getTitle().toUpperCase().contains(searchEngines[2]) && house.getMaxOfGuests().toString().toUpperCase().contains(searchEngines[3])) {
                     if (!houses.contains(house)) {
                         houses.add(house);
-                    } else {
-                        throw new NotFoundException("Тo such house or apartment exists!!!");
                     }
                 }
             } else if (searchEngines.length > 4) {
