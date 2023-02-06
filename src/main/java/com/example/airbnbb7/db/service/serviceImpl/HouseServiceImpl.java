@@ -4,7 +4,6 @@ import com.example.airbnbb7.converter.request.HouseRequestConverter;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.customclass.Rating;
 import com.example.airbnbb7.db.entities.Booking;
-import com.example.airbnbb7.db.entities.Feedback;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Location;
 import com.example.airbnbb7.db.entities.User;

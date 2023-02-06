@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Role findRoleByUserEmail(String email);
 
     static Long getUserId() {
-        return UserServiceImpl.getUserId();
+        return UserServiceImpl.getId();
     }
 
     @Query("select new com.example.airbnbb7.dto.response.UserResponse(u.id, u.name, u.email, u.image) from User u where u.id = :userId")

@@ -1,8 +1,9 @@
 package com.example.airbnbb7.db.customclass;
 
 import com.example.airbnbb7.db.entities.Feedback;
-import com.example.airbnbb7.db.repository.FeedbackRepository;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
