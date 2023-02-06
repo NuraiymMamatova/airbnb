@@ -51,4 +51,10 @@ public class HouseApi {
                                                                  @RequestParam(name = "houseType", required = false) HouseType houseType) {
         return houseService.getAllPagination(houseType, fieldToSort, text, page, size, priceSort, region);
     }
+
+    @GetMapping("/search")
+    @Operation(summary = "Global search", description = "Global Home Search")
+    public List<HouseResponse> search(@RequestParam("search") String search) {
+        return houseService.globalSearch(search);
+    }
 }

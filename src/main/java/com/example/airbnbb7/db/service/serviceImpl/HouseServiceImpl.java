@@ -1,8 +1,8 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
-import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.converter.request.HouseRequestConverter;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
+import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.entities.Feedback;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Location;
@@ -49,6 +49,7 @@ public class HouseServiceImpl implements HouseService {
     private final LocationRepository locationRepository;
 
     private final Rating rating;
+
     private final LocationService locationService;
 
     private final FeedbackRepository feedbackRepository;
@@ -71,7 +72,7 @@ public class HouseServiceImpl implements HouseService {
     public HouseResponse save(HouseRequest houseRequest) {
         User user = userRepository.findByEmail(userService.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
         House house = new House(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getDescriptionOfListing(), houseRequest.getMaxOfGuests(), houseRequest.getImages(), houseRequest.getHouseType());
-        Location location = new Location(houseRequest.getLocation().getAddress(), houseRequest.getLocation().getTownOrProvince(),houseRequest.getLocation().getRegion());
+        Location location = new Location(houseRequest.getLocation().getAddress(), houseRequest.getLocation().getTownOrProvince(), houseRequest.getLocation().getRegion());
         location.setHouse(house);
         house.setLocation(location);
         house.setDateHouseCreated(LocalDate.now());
@@ -104,12 +105,12 @@ public class HouseServiceImpl implements HouseService {
             if (index.equals(houses.get(Math.toIntExact(index)).getLocation().getId())) {
                 response.setImages(houses.get(Math.toIntExact(index)).getImages());
                 response.setLocationResponse(locationRepository.convertToResponse(houses.get(Math.toIntExact(index)).getLocation()));
-                response.setHouseRating(rating.getRating(response.getId()));
+                response.setHouseRating(getRating(response.getId()));
             } else {
                 Location location = locationRepository.findById(response.getId()).orElseThrow(() -> new NotFoundException("location not found!"));
                 response.setImages(houses.get(Math.toIntExact(index)).getImages());
                 response.setLocationResponse(locationRepository.convertToResponse(location));
-                response.setHouseRating(rating.getRating(response.getId()));
+                response.setHouseRating(getRating(response.getId()));
             }
         }
         return sortedHouseResponse;
@@ -150,5 +151,75 @@ public class HouseServiceImpl implements HouseService {
                 }
         }
         return sortedHouseResponse;
+    }
+
+    public double getRating(Long houseId) {
+        List<Feedback> feedbacks = feedbackRepository.getAllFeedbackByHouseId(houseId);
+        List<Integer> ratings = new ArrayList<>();
+        for (Feedback feedback : feedbacks) {
+            ratings.add(feedback.getRating());
+        }
+        double sum = 0;
+        for (Integer rating : ratings) {
+            sum += rating;
+        }
+        sum = sum / ratings.size();
+        String.format("%.1f", sum);
+        return sum;
+    }
+
+    @Override
+    public List<HouseResponse> globalSearch(String searchEngine) {
+        String[] searchEngines = searchEngine.toUpperCase().split(" ");
+        List<HouseResponse> globalHouses = new ArrayList<>();
+        List<House> houses = new ArrayList<>();
+        for (House house : houseRepository.findAll()) {
+            if (searchEngines.length == 1) {
+                if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0])) {
+                    if (!houses.contains(house)) {
+                        houses.add(house);
+                    }
+                } else if (house.getHouseType().toString().toUpperCase().contains(searchEngines[0])
+                        || house.getTitle().toUpperCase().contains(searchEngines[0]) || house.getMaxOfGuests().toString().toUpperCase().contains(searchEngines[0])) {
+                    if (!houses.contains(house)) {
+                        houses.add(house);
+                    }
+                }
+            } else if (searchEngines.length == 2) {
+                if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0]) && house.getHouseType().toString().toUpperCase().contains(searchEngines[1])) {
+                    if (!houses.contains(house)) {
+                        houses.add(house);
+                    }
+                }
+            } else if (searchEngines.length == 3) {
+                if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0]) && house.getHouseType().toString().toUpperCase().contains(searchEngines[1])
+                        && house.getTitle().toUpperCase().contains(searchEngines[2])) {
+                    if (!houses.contains(house)) {
+                        houses.add(house);
+                    }
+                }
+            } else if (searchEngines.length == 4) {
+                if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0]) && house.getHouseType().toString().toUpperCase().contains(searchEngines[1])
+                        && house.getTitle().toUpperCase().contains(searchEngines[2]) && house.getMaxOfGuests().toString().toUpperCase().contains(searchEngines[3])) {
+                    if (!houses.contains(house)) {
+                        houses.add(house);
+                    }
+                }
+            } else if (searchEngines.length > 4) {
+                throw new NotFoundException("Тo such house or apartment exists!!!");
+            }
+        }
+
+        for (House house : houses) {
+            HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(),
+                    house.getTitle(), house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType());
+            houseResponse.setOwner(new UserResponse(house.getOwner().getId(),
+                    house.getOwner().getName(), house.getOwner().getEmail(), house.getOwner().getImage()));
+            houseResponse.setLocation(new LocationResponse(house.getLocation().getId(),
+                    house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
+            houseResponse.setImages(house.getImages());
+            globalHouses.add(houseResponse);
+        }
+        return globalHouses;
     }
 }

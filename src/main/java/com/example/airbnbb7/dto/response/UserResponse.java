@@ -7,8 +7,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserResponse {
 
     private Long id;
@@ -18,5 +18,4 @@ public class UserResponse {
     private String email;
 
     private String image;
-
 }
