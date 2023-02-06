@@ -1,6 +1,7 @@
 package com.example.airbnbb7.db.entities;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @Table(name = "feedbacks")
+@NoArgsConstructor
 public class Feedback {
 
     @Id
@@ -45,4 +47,14 @@ public class Feedback {
     @ManyToOne(cascade = {REFRESH, DETACH, MERGE})
     private House house;
 
+    public Feedback(String text, int rating, LocalDate createdFeedback, List<String> image, Long like, Long dislike, User user, House house) {
+        this.text = text;
+        this.rating = rating;
+        this.createdFeedback = createdFeedback;
+        this.image = image;
+        this.like = like;
+        this.dislike = dislike;
+        this.user = user;
+        this.house = house;
+    }
 }
