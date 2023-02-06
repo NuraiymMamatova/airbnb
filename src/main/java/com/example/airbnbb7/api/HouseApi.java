@@ -60,4 +60,10 @@ public class HouseApi {
         return houseService.getHouse(houseId);
     }
 
+
+    @GetMapping("/search")
+    @Operation(summary = "Global search", description = "Global Home Search")
+    public List<HouseResponse> search(@RequestParam("search") String search) {
+        return houseService.globalSearch(search);
+    }
 }

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth/")
+@RequestMapping("/api/auth")
 @Tag(name = "Auth API", description = "Authentication API")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthApi {
@@ -21,7 +21,7 @@ public class AuthApi {
 
     private final UserServiceImpl authService;
 
-    @PostMapping("login")
+    @PostMapping("/login")
     @Operation(summary = "Sign in", description = "Any user can authenticate")
     public LoginResponse login(@RequestBody UserRequest request) {
         return userService.login(request);
