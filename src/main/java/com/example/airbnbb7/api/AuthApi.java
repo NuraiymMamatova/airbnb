@@ -1,6 +1,5 @@
 package com.example.airbnbb7.api;
 
-import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.db.service.serviceImpl.UserServiceImpl;
 import com.example.airbnbb7.dto.request.UserRequest;

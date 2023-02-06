@@ -1,8 +1,8 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
-import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.converter.request.HouseRequestConverter;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
+import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.entities.Feedback;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Location;
@@ -14,7 +14,6 @@ import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.HouseService;
-import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.db.service.LocationService;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.HouseRequest;
@@ -50,6 +49,7 @@ public class HouseServiceImpl implements HouseService {
     private final LocationRepository locationRepository;
 
     private final Rating rating;
+
     private final LocationService locationService;
 
     private final FeedbackRepository feedbackRepository;
@@ -72,7 +72,7 @@ public class HouseServiceImpl implements HouseService {
     public HouseResponse save(HouseRequest houseRequest) {
         User user = userRepository.findByEmail(userService.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
         House house = new House(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getDescriptionOfListing(), houseRequest.getMaxOfGuests(), houseRequest.getImages(), houseRequest.getHouseType());
-        Location location = new Location(houseRequest.getLocation().getAddress(), houseRequest.getLocation().getTownOrProvince(),houseRequest.getLocation().getRegion());
+        Location location = new Location(houseRequest.getLocation().getAddress(), houseRequest.getLocation().getTownOrProvince(), houseRequest.getLocation().getRegion());
         location.setHouse(house);
         house.setLocation(location);
         house.setDateHouseCreated(LocalDate.now());
