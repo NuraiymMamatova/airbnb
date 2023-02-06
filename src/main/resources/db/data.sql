@@ -21,7 +21,7 @@ insert into houses(id, price, title, description_of_listing, max_of_guests, coun
                    house_type, houses_status,is_favorite, houses_booked, date_house_created, owner_id)
 values (1, 20, 'Asman', 'flat-screen TV and a shared bathroom with a shower.' ||
                         ' At Garden Hotel & SPA the rooms have bed linen and towels.
-    ', 5, 0, 1, 2,false, 1, null, 1);
+    ', 5, 0, 1, 3,false, 1, null, 2);
 
 insert into houses(id, price, title, description_of_listing, max_of_guests, count_of_booked_user,
                    house_type, houses_status,is_favorite, houses_booked, date_house_created, owner_id)
