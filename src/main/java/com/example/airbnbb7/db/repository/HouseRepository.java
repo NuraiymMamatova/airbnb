@@ -1,7 +1,6 @@
 package com.example.airbnbb7.db.repository;
 
 import com.example.airbnbb7.db.entities.House;
-import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import org.springframework.data.domain.Pageable;
@@ -15,14 +14,17 @@ import java.util.List;
 @Repository
 public interface HouseRepository extends JpaRepository<House, Long> {
 
-   @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.title,h.descriptionOfListing) from House h order by h.dateHouseCreated desc limit 1")
-   AccommodationResponse getLatestAccommodation();
+   @Query("select new com.example.airbnbb7.dto.response.HouseResponse(h.id, h.countOfBookedUser, h.title, h.price) from House h order by h.dateHouseCreated desc")
+   List<HouseResponse> getLatestAccommodation();
 
-   @Query("select new com.example.airbnbb7.dto.response.HouseResponse(h.id,h.countOfBookedUser,h.title,h.price ) from House h where h.houseType = 1 order by h.countOfBookedUser desc")
-   List<HouseResponse> getPopularHouse(Pageable pageable);
+    @Query("select new com.example.airbnbb7.dto.response.HouseResponse(h.id, h.countOfBookedUser,h.title,h.price) from House h ORDER BY h.rating DESC, h.countOfBookedUser DESC")
+    List<Property> findAllByOrderByRatingDescBookingsDesc();
 
-   @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.title,h.descriptionOfListing) from House h where h.houseType = 0 order by h.countOfBookedUser desc")
-   List<AccommodationResponse> getPopularApartment(Pageable pageable);
+   @Query("select new com.example.airbnbb7.dto.response.HouseResponse(h.id,h.countOfBookedUser,h.title,h.price ) from House h where h.houseType = 1 and h.countOfBookedUser is not null  order by h.countOfBookedUser desc")
+   List<HouseResponse> getPopularHouse();
+
+   @Query("select new com.example.airbnbb7.dto.response.HouseResponse(h.id, h.title, h.descriptionOfListing) from House h where h.houseType = 0 and h.countOfBookedUser is not null order by h.countOfBookedUser desc")
+   List<HouseResponse> getPopularApartment();
 
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
             "h.price," +

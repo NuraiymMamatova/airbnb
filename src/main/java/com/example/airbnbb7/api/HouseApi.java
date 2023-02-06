@@ -27,7 +27,7 @@ import java.util.List;
 @Tag(name = "House Api", description = "House Api")
 public class HouseApi {
 
-    private final HouseServiceImpl houseService;
+    private final HouseService houseService;
 
     @GetMapping("/pagination")
     @Operation(summary = "House get all pagination", description = "This is get all pagination for houses")
@@ -42,15 +42,22 @@ public class HouseApi {
 
     }
 
-    @GetMapping("/pagination")
+    @GetMapping("/popular_houses")
     @Operation(summary = "Get popular houses")
-    public List<HouseResponse> getPopularHouses(Pageable pageable) {
-        return houseService.getPopularHouses(pageable);
+    public List<HouseResponse> getPopularHouses() {
+        return houseService.getPopularHouses();
+    }
+
+    @GetMapping("/popular_apartment")
+    @Operation(summary = "Get popular houses")
+    public HouseResponse getPopular() {
+        System.out.println("Test");
+        return houseService.getPopularApartment();
     }
 
     @GetMapping("/latest_accommodation")
-    @Operation(summary = "Get latest accommodation")
-    public AccommodationResponse getLatestAccommodation() {
+    @Operation(summary = "Get latest accommodation", description = "")
+    public HouseResponse getLatestAccommodation() {
         return houseService.getLatestAccommodation();
     }
 

@@ -11,14 +11,14 @@ import java.util.List;
 
 @Service
 public interface HouseService {
-    AccommodationResponse getLatestAccommodation ();
+
+    HouseResponse getLatestAccommodation();
+
     List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region);
 
-    List<HouseResponse> getPopularHouses(Pageable pageable);
+    List<HouseResponse> getPopularHouses();
 
-    List<HouseResponse> getAllPopularHouse(Pageable pageable);
-
-    List<AccommodationResponse> getAllPopularApartments(Pageable pageable);
+    HouseResponse getPopularApartment();
 
     double getRating (Long houseId);
 

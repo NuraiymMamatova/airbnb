@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static org.apache.catalina.security.SecurityUtil.remove;
+
 @Service
 @RequiredArgsConstructor
 public class HouseServiceImpl implements HouseService {
@@ -32,8 +34,8 @@ public class HouseServiceImpl implements HouseService {
     private final FeedbackRepository feedbackRepository;
 
     @Override
-    public List<HouseResponse> getPopularHouses(Pageable pageable) {
-        List<HouseResponse> houseResponses = houseRepository.getPopularHouse(pageable);
+    public List<HouseResponse> getPopularHouses() {
+        List<HouseResponse> houseResponses = houseRepository.getPopularHouse();
         List<HouseResponse> h = new ArrayList<>();
         double rating = 0;
         Long booked = 0L;
@@ -43,26 +45,54 @@ public class HouseServiceImpl implements HouseService {
                 rating = houseResponse.getRating();
                 booked = houseResponse.getCountOfBookedUser();
             }
+            houseResponse.setRating(getRating(houseResponse.getId()));
+            h.add(houseResponse);
+            remove(houseResponse);
+        }
+        return h.stream().limit(3).toList();
+    }
+
+    @Override
+    public HouseResponse getPopularApartment() {
+        System.out.println("ser1");
+        List<HouseResponse> houseResponses = houseRepository.getPopularApartment();
+        System.out.println("ser");
+        List<HouseResponse> h = new ArrayList<>();
+        System.out.println("ser3");
+        double rating = 0;
+        int booked = 0;
+        for (HouseResponse houseResponse : houseResponses) {
+            double r = getRating(houseResponse.getId());
+            if (r > rating && (houseResponse.getCountOfBookedUser() > booked)) {
+                rating = houseResponse.getRating();
+                booked = Math.toIntExact(houseResponse.getCountOfBookedUser());
+            }
             h.add(houseResponse);
             houseResponses.remove(houseResponse);
         }
-        return h;
+        /**
+         if (value != null) {
+         //Do something with value
+         } else {
+         //Ignore null value
+         }
+
+         //Ignore null values
+         if (myObject != null) {
+         // Do something
+         }
+         */
+        System.out.println("ser10");
+        return h.stream().limit(1).findFirst().orElseThrow(() -> new NotFoundException("Apartment not found!"));
     }
 
     @Override
-    public List<HouseResponse> getAllPopularHouse(Pageable pageable) {
-        return houseRepository.getPopularHouse(pageable);
-    }
-
-    @Override
-    public List<AccommodationResponse> getAllPopularApartments(Pageable pageable) {
-        return houseRepository.getPopularApartment(pageable);
-    }
-
-    @Override
-    public AccommodationResponse getLatestAccommodation() {
-        return houseRepository.getLatestAccommodation();
-
+    public HouseResponse getLatestAccommodation() {
+        HouseResponse houseResponse = houseRepository.getLatestAccommodation().stream().findFirst().get();
+        House house = houseRepository.findById(houseResponse.getId()).get();
+        houseResponse.setLocationResponse(locationRepository.convertToResponse(house.getLocation()));
+        houseResponse.setImages(house.getImages());
+        return houseResponse;
     }
 
     @Override

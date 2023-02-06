@@ -22,6 +22,8 @@ public class HouseResponse {
 
     private List<String> images;
 
+    private String description;
+
     private Double price;
 
     private LocationResponse locationResponse;
@@ -34,4 +36,13 @@ public class HouseResponse {
         this.name = name;
         this.price = price;
     }
+
+    public HouseResponse(Long id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
+
+
 }
