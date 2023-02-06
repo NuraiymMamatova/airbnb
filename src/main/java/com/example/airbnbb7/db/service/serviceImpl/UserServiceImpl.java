@@ -39,6 +39,19 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
+    private static Long userId;
+
+
+    private String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @PostConstruct
     void init() throws IOException {
         GoogleCredentials googleCredentials =
@@ -56,14 +69,15 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(firebaseToken.getEmail()).isEmpty()) {
             user = new User();
             user.addRole(roleRepository.findByName("USER"));
-            user.setPassword(firebaseToken.getEmail());
+            user.setPassword(passwordEncoder.encode(firebaseToken.getEmail()));
             user.setName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
+            setUserId(user.getId());
             userRepository.save(user);
         }
 
         user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!", firebaseToken.getEmail())));
-
+        setUserId(user.getId());
         String token = jwtTokenUtil.generateToken(user);
         return new LoginResponse(user.getEmail(), token, userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
     }
@@ -82,12 +96,21 @@ public class UserServiceImpl implements UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("invalid password");
         }
-        return new LoginResponse(jwtTokenUtil.generateToken(user), user.getEmail(),
-                roleRepository.findRoleByUserId(user.getId()).getNameOfRole());
+        setEmail(user.getEmail());
+        setUserId(user.getId());
+        return new LoginResponse(jwtTokenUtil.generateToken(user), user.getEmail(), roleRepository.findRoleByUserId(user.getId()).getNameOfRole());
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("not found email"));
+    }
+
+    public static Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

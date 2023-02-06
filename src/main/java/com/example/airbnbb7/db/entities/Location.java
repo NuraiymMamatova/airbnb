@@ -13,11 +13,12 @@ import static javax.persistence.CascadeType.*;
 @Setter
 @Getter
 @NoArgsConstructor
+@Table(name = "locations")
 @AllArgsConstructor
 public class Location {
 
     @Id
-    @SequenceGenerator(name = "location_gen", sequenceName = "location_seq", allocationSize = 1)
+    @SequenceGenerator(name = "location_gen", sequenceName = "location_seq", allocationSize = 1, initialValue = 6)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "location_gen")
     private Long id;
 
@@ -30,4 +31,10 @@ public class Location {
 
     @OneToOne(cascade = {REFRESH, MERGE, DETACH, PERSIST, REMOVE})
     private House house;
+
+    public Location(String townOrProvince, String address, String region) {
+        this.townOrProvince = townOrProvince;
+        this.address = address;
+        this.region = region;
+    }
 }
