@@ -193,7 +193,6 @@ public class UserServiceImpl implements UserService {
         }
         for (House house : userRepository.findById(UserRepository.getUserId()).get().getAnnouncements()) {
             houseResponses.add(houseResponseConverter.viewHouse(house));
-
         }
         return houseResponses;
     }
