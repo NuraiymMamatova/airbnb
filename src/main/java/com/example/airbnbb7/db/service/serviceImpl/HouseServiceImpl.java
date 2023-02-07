@@ -49,8 +49,6 @@ public class HouseServiceImpl implements HouseService {
 
     private final Rating rating;
 
-    private final LocationService locationService;
-
     private final FeedbackRepository feedbackRepository;
 
     @Override

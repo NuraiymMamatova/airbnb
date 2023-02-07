@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 public class LocationServiceImpl implements LocationService {
 
     private final LocationRepository locationRepository;
+
     private final UserRepository userRepository;
+
     private final UserService userService;
 
     @Override
@@ -42,7 +44,6 @@ public class LocationServiceImpl implements LocationService {
     }
 
     public void saveLocation(LocationRequest locationRequest) {
-        House house = new House();
         User user = userRepository.findByEmail(userService.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
         locationRepository.saveLocation(locationRequest.getAddress(), locationRequest.getRegion(), locationRequest.getTownOrProvince(), user.getId().intValue());
 
