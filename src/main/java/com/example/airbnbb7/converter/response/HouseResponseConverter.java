@@ -39,7 +39,6 @@ public class HouseResponseConverter {
         houseResponse.setLocation(locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("House not found")));
         houseResponse.setOwner(userRepository.findUserById(house.getOwner().getId()));
         houseResponse.setRating(rating.getRating(house.getId()));
-
         return houseResponse;
     }
 

@@ -1,7 +1,6 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.service.UserService;
-import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.HouseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,7 +18,7 @@ public class UserApi {
     private final UserService userService;
 
     @GetMapping
-    @Operation(summary = "User Profile", description = "This method goes to user profile")
+    @Operation(summary = "User Profile", description = "With this method you can see your houses and booked houses. Homes still pending")
     public List<HouseResponse> userProfile(@RequestParam(name = "mainInUserProfile", required = false) String mainInUserProfile,
                                            @RequestParam(name = "houseSorting", required = false)String houseSorting,
                                            @RequestParam(name = "sortingHousesByValue", required = false)String sortingHousesByValue,
