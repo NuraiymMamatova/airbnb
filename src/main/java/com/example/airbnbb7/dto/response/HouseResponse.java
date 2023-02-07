@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
+import java.util.Objects;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -41,5 +45,23 @@ public class HouseResponse {
         this.descriptionOfListing = descriptionOfListing;
         this.maxOfGuests = maxOfGuests;
         this.houseType = houseType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HouseResponse that = (HouseResponse) o;
+        return Objects.equals(id, that.id) && Objects.equals(price,
+                that.price) && Objects.equals(title, that.title)
+                && Objects.equals(descriptionOfListing, that.descriptionOfListing) &&
+                Objects.equals(images, that.images) && Objects.equals(maxOfGuests,
+                that.maxOfGuests) && houseType == that.houseType && Objects.equals(location,
+                that.location) && Objects.equals(owner, that.owner);
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
     }
 }

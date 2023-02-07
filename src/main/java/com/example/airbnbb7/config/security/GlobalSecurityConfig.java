@@ -1,6 +1,5 @@
 package com.example.airbnbb7.config.security;
 
-
 import com.example.airbnbb7.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

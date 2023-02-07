@@ -1,6 +1,5 @@
 package com.example.airbnbb7.db.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,13 +14,11 @@ import java.util.List;
 
 import static javax.persistence.CascadeType.*;
 
-
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(name = "users")
-@AllArgsConstructor
 public class User implements UserDetails {
 
     @Id

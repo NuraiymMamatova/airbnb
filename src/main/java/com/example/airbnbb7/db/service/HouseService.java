@@ -4,6 +4,7 @@ import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.HouseResponse;
+import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,4 +31,5 @@ public interface HouseService {
     List<HouseResponseSortedPagination> sort (Pageable pageable, HouseType houseType, String region, String
             priceSort, String fieldToSort, List < HouseResponseSortedPagination > sortedHouseResponse);
 
+    List<HouseResponse> globalSearch(String searchEngine);
 }
