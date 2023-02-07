@@ -1,9 +1,8 @@
 package com.example.airbnbb7.db.service;
 
 import com.example.airbnbb7.db.enums.HouseType;
-import com.example.airbnbb7.dto.response.AccommodationResponse;
-import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.request.HouseRequest;
+import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +26,6 @@ public interface HouseService {
     List<AccommodationResponse> getPopularHouses();
 
     AccommodationResponse getPopularApartment();
-
-    double getRating (Long houseId);
 
     List<HouseResponseSortedPagination> sort (Pageable pageable, HouseType houseType, String region, String
             priceSort, String fieldToSort, List < HouseResponseSortedPagination > sortedHouseResponse);

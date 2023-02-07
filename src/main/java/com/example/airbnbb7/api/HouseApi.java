@@ -1,8 +1,6 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.enums.HouseType;
-import com.example.airbnbb7.db.service.serviceImpl.HouseServiceImpl;
-import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.HouseResponse;
@@ -10,17 +8,6 @@ import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import com.example.airbnbb7.db.service.HouseService;
-import com.example.airbnbb7.db.service.serviceImpl.HouseServiceImpl;
-import com.example.airbnbb7.dto.response.HouseResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
