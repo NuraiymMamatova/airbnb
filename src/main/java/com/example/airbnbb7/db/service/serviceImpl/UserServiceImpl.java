@@ -172,6 +172,7 @@ public class UserServiceImpl implements UserService {
                 for (House house : userRepository.findById(UserRepository.getUserId()).get().getAnnouncements()) {
                     houseResponses.add(houseResponseConverter.viewHouse(house));
                 }
+                houseResponses.sort(Comparator.comparing(HouseResponse::getRating).reversed());
                 return houseResponses;
             }
             case "Apartment" -> {
