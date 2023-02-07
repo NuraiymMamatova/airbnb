@@ -53,11 +53,6 @@ public class User implements UserDetails {
         roles.add(role);
     }
 
-    public void addHouse(House house) {
-        if (house == null) announcements = new ArrayList<>();
-        announcements.add(house);
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
