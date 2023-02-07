@@ -1,5 +1,6 @@
 package com.example.airbnbb7.dto.response;
 
+import com.example.airbnbb7.db.enums.HouseType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,35 +15,31 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HouseResponse {
+
     private Long id;
-
-    private String name;
-
-    private double rating;
-
-    private List<String> images;
-
-    private String description;
 
     private Double price;
 
-    private LocationResponse locationResponse;
+    private String title;
 
-    private Long countOfBookedUser;
+    private String descriptionOfListing;
 
-    public HouseResponse(Long id,Long countOfBookedUser,String name, Double price) {
+    private List<String> images;
+
+    private Long maxOfGuests;
+
+    private HouseType houseType;
+
+    private LocationResponse location;
+
+    private UserResponse owner;
+
+    public HouseResponse(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
         this.id = id;
-        this.countOfBookedUser = countOfBookedUser;
-        this.name = name;
         this.price = price;
+        this.title = title;
+        this.descriptionOfListing = descriptionOfListing;
+        this.maxOfGuests = maxOfGuests;
+        this.houseType = houseType;
     }
-
-    public HouseResponse(Long id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-    }
-
-
-
 }

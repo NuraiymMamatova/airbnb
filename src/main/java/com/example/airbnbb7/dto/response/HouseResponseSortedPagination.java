@@ -36,12 +36,13 @@ public class HouseResponseSortedPagination {
 
     private Boolean isFavorite = false;
 
-    public HouseResponseSortedPagination(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
+    public HouseResponseSortedPagination(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType, Boolean isFavorite) {
         this.id = id;
         this.price = price;
         this.title = title;
         this.descriptionOfListing = descriptionOfListing;
         this.maxOfGuests = maxOfGuests;
         this.houseType = houseType;
+        this.isFavorite = isFavorite;
     }
 }

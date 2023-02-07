@@ -18,7 +18,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Feedback {
 
     @Id
-    @SequenceGenerator(name = "feedback_gen", sequenceName = "feedback_seq", allocationSize = 1)
+    @SequenceGenerator(name = "feedback_gen", sequenceName = "feedback_seq", allocationSize = 1, initialValue = 6)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "feedback_gen")
     private Long id;
 

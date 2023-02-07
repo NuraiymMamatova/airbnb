@@ -3,6 +3,8 @@ package com.example.airbnbb7.db.service;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.HouseResponse;
+import com.example.airbnbb7.dto.request.HouseRequest;
+import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,13 +14,19 @@ import java.util.List;
 @Service
 public interface HouseService {
 
-    HouseResponse getLatestAccommodation();
+    HouseResponse deleteByIdHouse(Long houseId);
+
+    HouseResponse save(HouseRequest houseRequest);
+
+    HouseResponse updateHouse(Long id, HouseRequest houseRequest);
+
+    AccommodationResponse getLatestAccommodation();
 
     List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region);
 
-    List<HouseResponse> getPopularHouses();
+    List<AccommodationResponse> getPopularHouses();
 
-    HouseResponse getPopularApartment();
+    AccommodationResponse getPopularApartment();
 
     double getRating (Long houseId);
 
