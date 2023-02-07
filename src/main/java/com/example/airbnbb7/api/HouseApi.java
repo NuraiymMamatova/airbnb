@@ -56,10 +56,9 @@ public class HouseApi {
 
     @GetMapping("/announcement/{houseId}")
     @Operation(summary = "House inner page", description = "Any user can go through to view the house")
-    public AnnouncementService announcementsForVendor(@PathVariable Long houseId) {
-        return houseService.getHouse(houseId);
+    public AnnouncementService announcementById(@PathVariable Long houseId) {
+        return houseService.getAnnouncementById(houseId);
     }
-
 
     @GetMapping("/search")
     @Operation(summary = "Global search", description = "Global Home Search")

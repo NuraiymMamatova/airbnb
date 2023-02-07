@@ -71,11 +71,15 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(firebaseToken.getEmail()));
             user.setName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
+            setEmail(user.getEmail());
+            setId(user.getId());
             userRepository.save(user);
+
         }
 
         user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!", firebaseToken.getEmail())));
-
+        setId(user.getId());
+        setEmail(user.getEmail());
         String token = jwtTokenUtil.generateToken(user);
         return new LoginResponse(user.getEmail(), token, userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
     }
@@ -95,6 +99,7 @@ public class UserServiceImpl implements UserService {
             throw new BadCredentialsException("invalid password");
         }
         setEmail(user.getEmail());
+        setId(user.getId());
         return new LoginResponse(jwtTokenUtil.generateToken(user), user.getEmail(), roleRepository.findRoleByUserId(user.getId()).getNameOfRole());
     }
 
