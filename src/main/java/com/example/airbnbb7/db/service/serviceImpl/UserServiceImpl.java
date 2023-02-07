@@ -12,7 +12,10 @@ import com.example.airbnbb7.db.repository.RoleRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
-import com.example.airbnbb7.dto.response.*;
+import com.example.airbnbb7.dto.response.HouseResponse;
+import com.example.airbnbb7.dto.response.LocationResponse;
+import com.example.airbnbb7.dto.response.LoginResponse;
+import com.example.airbnbb7.dto.response.UserResponse;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -56,6 +59,7 @@ public class UserServiceImpl implements UserService {
 
 
     private String email;
+
     private final HouseRepository houseRepository;
 
     public String getEmail() {
@@ -69,15 +73,7 @@ public class UserServiceImpl implements UserService {
         switch (mainInUserProfile) {
             case "Bookings" -> {
                 for (Booking booking:bookings) {
-                    HouseResponse houseResponse = new HouseResponse(booking.getHouse().getId(), booking.getHouse().getPrice(),
-                            booking.getHouse().getTitle(), booking.getHouse().getDescriptionOfListing(), booking.getHouse().getMaxOfGuests(), booking.getHouse().getHouseType()
-                    ,rating.getRating(booking.getHouse().getId()));
-                    houseResponse.setOwner(new UserResponse(booking.getHouse().getOwner().getId(),
-                            booking.getHouse().getOwner().getName(), booking.getHouse().getOwner().getEmail(), booking.getHouse().getOwner().getImage()));
-                    houseResponse.setLocation(new LocationResponse(booking.getHouse().getLocation().getId(),
-                            booking.getHouse().getLocation().getTownOrProvince(), booking.getHouse().getLocation().getAddress(), booking.getHouse().getLocation().getRegion()));
-                    houseResponse.setImages(booking.getHouse().getImages());
-                    houseResponses.add(houseResponse);
+                    houseResponses.add(houseResponseConverter.viewHouse(booking.getHouse()));
                 }
                 return houseResponses;
             }
@@ -188,6 +184,162 @@ public class UserServiceImpl implements UserService {
         }
         return houseResponses;
     }
+
+//    @Override
+//    public List<HouseResponse> userProfile(String mainInUserProfile, String houseSorting, String sortingHousesByValue, String sortingHousesByRating) {
+//        List<HouseResponse> houseResponses = new ArrayList<>();
+//        List<Booking> bookings = new ArrayList<>(userRepository.findById(UserRepository.getUserId()).get().getBookings());
+//        switch (mainInUserProfile) {
+//            case "Bookings" -> {
+//                for (Booking booking:bookings) {
+//                    HouseResponse houseResponse = new HouseResponse(booking.getHouse().getId(), booking.getHouse().getPrice(),
+//                            booking.getHouse().getTitle(), booking.getHouse().getDescriptionOfListing(), booking.getHouse().getMaxOfGuests(), booking.getHouse().getHouseType()
+//                    ,rating.getRating(booking.getHouse().getId()));
+//                    houseResponse.setOwner(new UserResponse(booking.getHouse().getOwner().getId(),
+//                            booking.getHouse().getOwner().getName(), booking.getHouse().getOwner().getEmail(), booking.getHouse().getOwner().getImage()));
+//                    houseResponse.setLocation(new LocationResponse(booking.getHouse().getLocation().getId(),
+//                            booking.getHouse().getLocation().getTownOrProvince(), booking.getHouse().getLocation().getAddress(), booking.getHouse().getLocation().getRegion()));
+//                    houseResponse.setImages(booking.getHouse().getImages());
+//                    houseResponses.add(houseResponse);
+//                }
+//                return houseResponses;
+//            }
+//            case "My announcement" -> {
+//                return sortingHousesByRating(houseSorting,sortingHousesByValue,sortingHousesByRating);
+//            }
+//            case "On moderation" -> {
+//                for (House house: userRepository.findById(UserRepository.getUserId()).get().getAnnouncements()) {
+//                    if (house.getHousesStatus().equals(HousesStatus.ON_MODERATION)){
+//                        HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(),
+//                                house.getTitle(), house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType(),rating.getRating(house.getId()));
+//                        houseResponse.setOwner(new UserResponse(house.getOwner().getId(),
+//                                house.getOwner().getName(), house.getOwner().getEmail(), house.getOwner().getImage()));
+//                        houseResponse.setLocation(new LocationResponse(house.getLocation().getId(),
+//                                house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
+//                        houseResponse.setImages(house.getImages());
+//                        houseResponses.add(houseResponse);
+//                    }
+//                }
+//                return houseResponses;
+//            }
+//        }
+//        return null;
+//    }
+//
+//    private List<HouseResponse> houseSorting(String houseSorting) {
+//        List<HouseResponse> houseResponses = new ArrayList<>();
+//        List<HouseResponse> houseResponseList = new ArrayList<>();
+//        for (House house : userRepository.findById(UserRepository.getUserId()).get().getAnnouncements()) {
+//            HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(),
+//                    house.getTitle(), house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType(),rating.getRating(house.getId()));
+//            houseResponse.setOwner(new UserResponse(house.getOwner().getId(),
+//                    house.getOwner().getName(), house.getOwner().getEmail(), house.getOwner().getImage()));
+//            houseResponse.setLocation(new LocationResponse(house.getLocation().getId(),
+//                    house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
+//            houseResponse.setImages(house.getImages());
+//            houseResponses.add(houseResponse);
+//        }
+//        switch (houseSorting) {
+//            case "In wish list" -> {
+//                return houseResponses;
+//            }
+//            case "Apartment" -> {
+//                for (House house : userRepository.findById(UserRepository.getUserId()).get().getAnnouncements()) {
+//                    if (house.getHouseType().toString().equals("APARTMENT")) {
+//                        HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(),
+//                                house.getTitle(), house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType(),rating.getRating(house.getId()));
+//                        houseResponse.setOwner(new UserResponse(house.getOwner().getId(),
+//                                house.getOwner().getName(), house.getOwner().getEmail(), house.getOwner().getImage()));
+//                        houseResponse.setLocation(new LocationResponse(house.getLocation().getId(),
+//                                house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
+//                        houseResponse.setImages(house.getImages());
+//                        houseResponseList.add(houseResponse);
+//                    }
+//                }
+//                return houseResponseList;
+//            }
+//            case "House" -> {
+//                for (House house : userRepository.findById(UserRepository.getUserId()).get().getAnnouncements()) {
+//                    if (house.getHouseType().toString().equals("HOUSE")) {
+//                        HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(),
+//                                house.getTitle(), house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType(),rating.getRating(house.getId()));
+//                        houseResponse.setOwner(new UserResponse(house.getOwner().getId(),
+//                                house.getOwner().getName(), house.getOwner().getEmail(), house.getOwner().getImage()));
+//                        houseResponse.setLocation(new LocationResponse(house.getLocation().getId(),
+//                                house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
+//                        houseResponse.setImages(house.getImages());
+//                        houseResponseList.add(houseResponse);
+//                    }
+//                    return houseResponseList;
+//                }
+//            }
+//        }
+//        return houseResponses;
+//    }
+//
+//    private List<HouseResponse> sortingHousesByValue(String houseSorting, String sortingHousesByValue) {
+//        List<HouseResponse> houseResponses = new ArrayList<>(houseSorting(houseSorting));
+//        switch (sortingHousesByValue) {
+//            case "Low to high" -> {
+//                houseResponses.sort(Comparator.comparing(HouseResponse::getPrice));
+//                return houseResponses;
+//            }
+//            case "High to low" -> {
+//                houseResponses.sort(Comparator.comparing(HouseResponse::getPrice).reversed());
+//                return houseResponses;
+//            }
+//        }
+//        return houseResponses;
+//    }
+//
+//    private List<HouseResponse> sortingHousesByRating(String houseSorting, String sortingHousesByValue, String sortingHousesByRating) {
+//        List<HouseResponse> houseResponses = new ArrayList<>(sortingHousesByValue(houseSorting, sortingHousesByValue));
+//        List<HouseResponse> houseResponseList = new ArrayList<>();
+//        switch (sortingHousesByRating) {
+//            case "One" -> {
+//                for (HouseResponse house : houseResponses) {
+//                    if (house.getRating() > 0 && house.getRating() <= 1) {
+//                        houseResponseList.add(house);
+//                    }
+//                }
+//                return houseResponseList;
+//            }
+//            case "Two" -> {
+//                for (HouseResponse house : houseResponses) {
+//                    if (house.getRating() > 1 && house.getRating() <= 2) {
+//                        houseResponseList.add(house);
+//                    }
+//                }
+//                return houseResponseList;
+//            }
+//            case "Three" -> {
+//                for (HouseResponse house : houseResponses) {
+//                    if (house.getRating() > 2 && house.getRating() <= 3) {
+//                        houseResponseList.add(house);
+//                    }
+//                }
+//                return houseResponseList;
+//            }
+//            case "Four" -> {
+//                for (HouseResponse house : houseResponses) {
+//                    if (house.getRating() > 3 && house.getRating() <= 4) {
+//                        houseResponseList.add(house);
+//                    }
+//                }
+//                return houseResponseList;
+//            }
+//            case "Five" -> {
+//                for (HouseResponse house : houseResponses) {
+//                    if (house.getRating() > 4 && house.getRating() <= 5) {
+//                        houseResponseList.add(house);
+//                    }
+//                }
+//                return houseResponseList;
+//            }
+//        }
+//        return houseResponses;
+//    }
+
 
     public void setEmail(String email) {
         this.email = email;
