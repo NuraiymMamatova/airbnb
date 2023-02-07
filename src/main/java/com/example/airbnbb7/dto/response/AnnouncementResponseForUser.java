@@ -1,6 +1,6 @@
 package com.example.airbnbb7.dto.response;
 
-import com.example.airbnbb7.db.customclass.Rating;
+import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
-import com.example.airbnbb7.db.customclass.Rating;
+import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.entities.FavoriteHouse;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.User;

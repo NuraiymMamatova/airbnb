@@ -2,7 +2,7 @@ package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.converter.request.HouseRequestConverter;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
-import com.example.airbnbb7.db.customclass.Rating;
+import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.entities.Booking;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Location;
@@ -12,7 +12,6 @@ import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.*;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
-import com.example.airbnbb7.db.service.LocationService;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.*;
