@@ -52,9 +52,9 @@ public class HouseApi {
         return houseService.getAllPagination(houseType, fieldToSort, text, page, size, priceSort, region);
     }
 
-    @GetMapping("/latest_accommodation")
+    @GetMapping("/popular & latest accommodations")
     @Operation(summary = "Get accommodations", description = "")
-    public Object getLatestAccommodation(boolean popularHouse, boolean popularApartment) {
+    public Object getPopularLatestAccommodations(boolean popularHouse, boolean popularApartment) {
         if (popularHouse) {
             return houseService.getPopularHouses();
         }
