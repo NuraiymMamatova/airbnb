@@ -3,6 +3,7 @@ package com.example.airbnbb7.db.service;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.LoginResponse;
+import com.example.airbnbb7.dto.response.ProfileResponse;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,6 +22,6 @@ public interface UserService extends UserDetailsService {
 
     String getEmail();
 
-    List<HouseResponse> userProfile(String mainInUserProfile, String houseSorting, String sortingHousesByValue, String sortingHousesByRating);
+    ProfileResponse userProfile(String mainInUserProfile, String houseSorting, String sortingHousesByValue, String sortingHousesByRating);
 
 }
