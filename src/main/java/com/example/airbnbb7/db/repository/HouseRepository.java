@@ -1,6 +1,5 @@
 package com.example.airbnbb7.db.repository;
 
-import com.example.airbnbb7.db.entities.FavoriteHouse;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +16,8 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.title," +
             "h.descriptionOfListing," +
             "h.maxOfGuests," +
-            "h.houseType,h.isFavorite) from House h where upper(h.title) like concat('%',:pagination, '%')")
-    List<HouseResponseSortedPagination> pagination(@Param("pagination") String pagination, Pageable pageable);
+            "h.houseType,h.isFavorite) from House h where upper(h.title) like concat('%',:pagination, '%') or h.title like concat('%',:search,'%') or h.location.region like concat('%',:search,'%') or h.location.townOrProvince like concat('%',:search,'%') or h.location.address like concat('%',:search,'%')")
+    List<HouseResponseSortedPagination> pagination(@Param("pagination") String pagination,String search, Pageable pageable);
 
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
             "h.price," +

@@ -16,7 +16,7 @@ public interface HouseService {
 
     HouseResponse updateHouse(Long id, HouseRequest houseRequest);
 
-    List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region);
+    List<HouseResponseSortedPagination> getAllPagination(String search,HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region);
 
     List<HouseResponse> globalSearch(String searchEngine);
 }

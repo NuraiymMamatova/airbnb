@@ -91,14 +91,14 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region) {
+    public List<HouseResponseSortedPagination> getAllPagination(String search,HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region) {
         Pageable pageable = PageRequest.of(page - 1, countOfHouses);
         String text;
         if (nameOfHouse == null)
             text = "";
         else text = nameOfHouse;
         List<House> houses = houseRepository.findAll();
-        List<HouseResponseSortedPagination> houseResponses = houseRepository.pagination(text, pageable);
+        List<HouseResponseSortedPagination> houseResponses = houseRepository.pagination(search,text, pageable);
         List<HouseResponseSortedPagination> sortedHouseResponse = sort(pageable, houseType, region, priceSort, fieldToSort, houseResponses);
         for (HouseResponseSortedPagination response : sortedHouseResponse) {
             Long index = response.getId() - 1;
