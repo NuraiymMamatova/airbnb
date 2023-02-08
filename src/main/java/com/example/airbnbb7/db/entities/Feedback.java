@@ -33,7 +33,7 @@ public class Feedback {
     @ElementCollection(fetch = LAZY)
     private List<String> image;
 
-    @Column(name = "take_a_look")
+    @Column(name = "likes")
     private Long like;
 
     @Column(name = "dislike")
