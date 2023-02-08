@@ -21,10 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u.roles from User u where u.email = :email")
     Role findRoleByUserEmail(String email);
 
-    static Long getUserId() {
-        return UserServiceImpl.getId();
-    }
-
     @Query("select new com.example.airbnbb7.dto.response.UserResponse(u.id, u.name, u.email, u.image) from User u where u.id = :userId")
     UserResponse findUserById(Long userId);
 

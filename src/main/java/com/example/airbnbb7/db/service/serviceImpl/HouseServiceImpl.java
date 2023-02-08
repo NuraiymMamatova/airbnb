@@ -12,7 +12,6 @@ import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.*;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
-import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.*;
 import com.example.airbnbb7.exceptions.NotFoundException;
@@ -42,8 +41,6 @@ public class HouseServiceImpl implements HouseService {
 
     private final UserRepository userRepository;
 
-    private final UserService userService;
-
     private final LocationRepository locationRepository;
 
     private final Rating rating;
@@ -65,8 +62,8 @@ public class HouseServiceImpl implements HouseService {
 
     }
 
-    public HouseResponse save(HouseRequest houseRequest) {
-        User user = userRepository.findByEmail(userService.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
+    public HouseResponse save(HouseRequest houseRequest, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
         House house = new House(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getDescriptionOfListing(), houseRequest.getMaxOfGuests(), houseRequest.getImages(), houseRequest.getHouseType());
         Location location = new Location(houseRequest.getLocation().getAddress(), houseRequest.getLocation().getTownOrProvince(), houseRequest.getLocation().getRegion());
         location.setHouse(house);
@@ -151,10 +148,9 @@ public class HouseServiceImpl implements HouseService {
 
 
     @Override
-    public AnnouncementService getAnnouncementById(Long houseId) {
+    public AnnouncementService getAnnouncementById(Long houseId, Long userId) {
         AnnouncementResponseForUser house = houseRepository.findHouseByIdForUser(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
         UserResponse user = userRepository.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("User not found!")).getOwner().getId());
-        Long userId = UserRepository.getUserId();
         house.setImages(houseRepository.findImagesByHouseId(houseId));
         house.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
         house.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));

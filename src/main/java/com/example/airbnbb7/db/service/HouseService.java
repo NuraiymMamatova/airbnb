@@ -11,13 +11,13 @@ public interface HouseService {
 
     HouseResponse deleteByIdHouse(Long houseId);
 
-    HouseResponse save(HouseRequest houseRequest);
+    HouseResponse save(HouseRequest houseRequest, Long userId);
 
     HouseResponse updateHouse(Long id, HouseRequest houseRequest);
 
     List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region);
 
-    AnnouncementService getAnnouncementById(Long houseId);
+    AnnouncementService getAnnouncementById(Long houseId, Long userId);
 
     List<HouseResponse> globalSearch(String searchEngine);
 }

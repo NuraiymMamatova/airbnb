@@ -1,6 +1,7 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.config.jwt.JwtTokenUtil;
+import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.repository.RoleRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
@@ -39,18 +40,6 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
-    private static Long id;
-
-    private String email;
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     @PostConstruct
     void init() throws IOException {
         GoogleCredentials googleCredentials =
@@ -71,15 +60,11 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(firebaseToken.getEmail()));
             user.setName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
-            setEmail(user.getEmail());
-            setId(user.getId());
             userRepository.save(user);
 
         }
 
         user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!", firebaseToken.getEmail())));
-        setId(user.getId());
-        setEmail(user.getEmail());
         String token = jwtTokenUtil.generateToken(user);
         return new LoginResponse(user.getEmail(), token, userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
     }
@@ -98,8 +83,6 @@ public class UserServiceImpl implements UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("invalid password");
         }
-        setEmail(user.getEmail());
-        setId(user.getId());
         return new LoginResponse(jwtTokenUtil.generateToken(user), user.getEmail(), roleRepository.findRoleByUserId(user.getId()).getNameOfRole());
     }
 
@@ -108,11 +91,4 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("not found email"));
     }
 
-    public static Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

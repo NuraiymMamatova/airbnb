@@ -27,9 +27,9 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
     private final FeedbackRepository feedbackRepository;
 
     @Override
-    public void saveFavoriteHouse(Long houseId) {
+    public void saveFavoriteHouse(Long houseId, Long userId) {
         House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
-        User user = userRepository.findById(UserRepository.getUserId()).orElseThrow(() -> new NotFoundException("User not found!"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found!"));
         FavoriteHouse findFavoriteHouse = favoriteHouseRepository.getFavoriteHouseByHouseIdByUserId(house.getId(), user.getId());
         if (findFavoriteHouse == null) {
             FavoriteHouse favoriteHouse = new FavoriteHouse();
@@ -45,8 +45,8 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
     }
 
     @Override
-    public List<HouseResponseSortedPagination> getAllFavoriteHouseByUserId() {
-        User user = userRepository.findById(UserRepository.getUserId()).orElseThrow(() -> new NotFoundException("User not found!"));
+    public List<HouseResponseSortedPagination> getAllFavoriteHouseByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found!"));
         List<FavoriteHouse> favoriteHouses = userRepository.getFavoriteHousesByUserId(user.getId());
         List<House> houses = new ArrayList<>();
         for (FavoriteHouse f : favoriteHouses) {

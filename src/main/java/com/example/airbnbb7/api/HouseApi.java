@@ -1,5 +1,6 @@
 package com.example.airbnbb7.api;
 
+import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
@@ -9,6 +10,7 @@ import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +26,9 @@ public class HouseApi {
 
     @PostMapping
     @Operation(summary = "Save house", description = "Save house and location")
-    public HouseResponse saveHouse(@RequestBody HouseRequest houseRequest) {
-        return houseService.save(houseRequest);
+    public HouseResponse saveHouse(@RequestBody HouseRequest houseRequest, Authentication authentication) {
+        User principle = (User) authentication.getPrincipal();
+        return houseService.save(houseRequest, principle.getId());
     }
 
     @PutMapping("/{id}")
@@ -56,8 +59,9 @@ public class HouseApi {
 
     @GetMapping("/announcement/{houseId}")
     @Operation(summary = "House inner page", description = "Any user can go through to view the house")
-    public AnnouncementService announcementById(@PathVariable Long houseId) {
-        return houseService.getAnnouncementById(houseId);
+    public AnnouncementService announcementById(@PathVariable Long houseId, Authentication authentication) {
+        User principle = (User) authentication.getPrincipal();
+        return houseService.getAnnouncementById(houseId, principle.getId());
     }
 
     @GetMapping("/search")
