@@ -8,7 +8,6 @@ import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.FeedbackRepository;
-import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.RoleRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.UserService;
@@ -23,7 +22,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,9 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -136,13 +132,13 @@ public class UserServiceImpl implements UserService {
         houseSorting = (houseSorting != null) ? houseSorting : " ";
         sortingHousesByValue = (sortingHousesByValue != null) ? sortingHousesByValue : " ";
         sortingHousesByRating = (sortingHousesByRating != null) ? sortingHousesByRating : " ";
-        ProfileResponse profileResponse = new ProfileResponse(UserRepository.getUserId(),userRepository.findById(UserRepository.getUserId()).get().getName(),userRepository.findById(UserRepository.getUserId()).get().getEmail());
+        ProfileResponse profileResponse = new ProfileResponse(UserRepository.getUserId(), userRepository.findById(UserRepository.getUserId()).get().getName(), userRepository.findById(UserRepository.getUserId()).get().getEmail());
         switch (mainInUserProfile) {
             case "Bookings" -> {
                 for (Booking booking : userRepository.findById(UserRepository.getUserId()).get().getBookings()) {
                     ProfileBookingHouseResponse profileBookingHouseResponse = new ProfileBookingHouseResponse(booking.getHouse().getId(), booking.getHouse().getPrice(), booking.getHouse().getTitle(),
                             booking.getHouse().getDescriptionOfListing(), booking.getHouse().getMaxOfGuests(), booking.getHouse().getHouseType(),
-                            rating.getRating(feedbackRepository.getAllFeedbackByHouseId(booking.getHouse().getId())),booking.getCheckIn(),booking.getCheckOut());
+                            rating.getRating(feedbackRepository.getAllFeedbackByHouseId(booking.getHouse().getId())), booking.getCheckIn(), booking.getCheckOut());
                     profileBookingHouseResponse.setImages(booking.getHouse().getImages());
                     profileBookingHouseResponse.setOwner(new UserResponse(booking.getHouse().getOwner().getId(),
                             booking.getHouse().getOwner().getName(), booking.getHouse().getOwner().getEmail(), booking.getHouse().getOwner().getImage()));
@@ -174,7 +170,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private ProfileResponse houseType(String houseSorting) {
-        ProfileResponse profileResponse = new ProfileResponse(UserRepository.getUserId(),userRepository.findById(UserRepository.getUserId()).get().getName(),userRepository.findById(UserRepository.getUserId()).get().getEmail());
+        ProfileResponse profileResponse = new ProfileResponse(UserRepository.getUserId(), userRepository.findById(UserRepository.getUserId()).get().getName(), userRepository.findById(UserRepository.getUserId()).get().getEmail());
         switch (houseSorting) {
             case "In wish list" -> {
                 for (House house : userRepository.findById(UserRepository.getUserId()).get().getAnnouncements()) {
@@ -209,8 +205,10 @@ public class UserServiceImpl implements UserService {
     private ProfileResponse price(String houseSorting, String sortingHousesByValue) {
         ProfileResponse profileResponse = houseType(houseSorting);
         switch (sortingHousesByValue) {
-            case "Low to high" -> profileResponse.getMyAnnouncement().sort(Comparator.comparing(HouseResponse::getPrice));
-            case "High to low" -> profileResponse.getMyAnnouncement().sort(Comparator.comparing(HouseResponse::getPrice).reversed());
+            case "Low to high" ->
+                    profileResponse.getMyAnnouncement().sort(Comparator.comparing(HouseResponse::getPrice));
+            case "High to low" ->
+                    profileResponse.getMyAnnouncement().sort(Comparator.comparing(HouseResponse::getPrice).reversed());
             default -> {
                 return profileResponse;
             }
