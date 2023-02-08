@@ -54,13 +54,16 @@ public class UserServiceImpl implements UserService {
         FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
 
         User user;
+
         if (userRepository.findByEmail(firebaseToken.getEmail()).isEmpty()) {
             user = new User();
-            user.addRole(roleRepository.findByName("USER"));
+            Role role = roleRepository.findByName("USER");
+            role.addUser(user);
+            user.addRole(role);
             user.setPassword(passwordEncoder.encode(firebaseToken.getEmail()));
             user.setName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
-            userRepository.save(user);
+            roleRepository.save(role);
 
         }
 
