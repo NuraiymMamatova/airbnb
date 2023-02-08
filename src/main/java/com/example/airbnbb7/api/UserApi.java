@@ -19,7 +19,8 @@ public class UserApi {
     private final UserService userService;
 
     @GetMapping
-    @Operation(summary = "User Profile", description = "With this method you can see your houses and booked houses. Homes still pending")
+    @Operation(summary = "User Profile", description = "With this method, you can see your houses and booked houses. Houses that are already being checked by the administrator." +
+            "houseSorting = houseType, sortingHousesByValue = price, sortingHousesByRating = rating")
     public ProfileResponse userProfile(@RequestParam(name = "mainInUserProfile", required = false) String mainInUserProfile,
                                        @RequestParam(name = "houseSorting", required = false)String houseSorting,
                                        @RequestParam(name = "sortingHousesByValue", required = false)String sortingHousesByValue,

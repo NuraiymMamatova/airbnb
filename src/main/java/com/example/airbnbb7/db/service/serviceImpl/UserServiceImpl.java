@@ -137,20 +137,23 @@ public class UserServiceImpl implements UserService {
         switch (mainInUserProfile) {
             case "Bookings" -> {
                 for (Booking booking : userRepository.findById(UserRepository.getUserId()).get().getBookings()) {
-                    ProfileBookingHouseResponse houseResponse = new ProfileBookingHouseResponse(booking.getHouse().getId(), booking.getHouse().getPrice(), booking.getHouse().getTitle(),
+                    ProfileBookingHouseResponse profileBookingHouseResponse = new ProfileBookingHouseResponse(booking.getHouse().getId(), booking.getHouse().getPrice(), booking.getHouse().getTitle(),
                             booking.getHouse().getDescriptionOfListing(), booking.getHouse().getMaxOfGuests(), booking.getHouse().getHouseType(),
                             rating.getRating(feedbackRepository.getAllFeedbackByHouseId(booking.getHouse().getId())),booking.getCheckIn(),booking.getCheckOut());
-                    houseResponse.setImages(booking.getHouse().getImages());
-                    houseResponse.setOwner(new UserResponse(booking.getHouse().getOwner().getId(),
+                    profileBookingHouseResponse.setImages(booking.getHouse().getImages());
+                    profileBookingHouseResponse.setOwner(new UserResponse(booking.getHouse().getOwner().getId(),
                             booking.getHouse().getOwner().getName(), booking.getHouse().getOwner().getEmail(), booking.getHouse().getOwner().getImage()));
-                    houseResponse.setLocation(new LocationResponse(booking.getHouse().getLocation().getId(),
+                    profileBookingHouseResponse.setLocation(new LocationResponse(booking.getHouse().getLocation().getId(),
                             booking.getHouse().getLocation().getTownOrProvince(), booking.getHouse().getLocation().getAddress(), booking.getHouse().getLocation().getRegion()));
-                    profileResponse.addBookings(houseResponse);
+                    profileResponse.addBookings(profileBookingHouseResponse);
                 }
+                profileResponse.setBookingsSize((long) profileResponse.getBookings().size());
                 return profileResponse;
             }
             case "My announcement" -> {
-                return star(houseSorting, sortingHousesByValue, sortingHousesByRating);
+                profileResponse = star(houseSorting, sortingHousesByValue, sortingHousesByRating);
+                profileResponse.setMyAnnouncementSize((long) userRepository.findById(profileResponse.getId()).get().getAnnouncements().size());
+                return profileResponse;
             }
             case "On moderation" -> {
                 for (House house : userRepository.findById(UserRepository.getUserId()).get().getAnnouncements()) {
@@ -158,6 +161,7 @@ public class UserServiceImpl implements UserService {
                         profileResponse.addOnModeration(houseResponseConverter.viewHouse(house));
                     }
                 }
+                profileResponse.setOnModerationSize((long) profileResponse.getOnModeration().size());
                 return profileResponse;
             }
             default -> {
@@ -200,67 +204,68 @@ public class UserServiceImpl implements UserService {
     }
 
     private ProfileResponse price(String houseSorting, String sortingHousesByValue) {
-        ProfileResponse houseResponses = houseType(houseSorting);
+        ProfileResponse profileResponse = houseType(houseSorting);
         switch (sortingHousesByValue) {
-            case "Low to high" -> houseResponses.getMyAnnouncement().sort(Comparator.comparing(HouseResponse::getPrice));
-            case "High to low" -> houseResponses.getMyAnnouncement().sort(Comparator.comparing(HouseResponse::getPrice).reversed());
+            case "Low to high" -> profileResponse.getMyAnnouncement().sort(Comparator.comparing(HouseResponse::getPrice));
+            case "High to low" -> profileResponse.getMyAnnouncement().sort(Comparator.comparing(HouseResponse::getPrice).reversed());
             default -> {
-                return houseResponses;
+                return profileResponse;
             }
         }
-        return houseResponses;
+        return profileResponse;
     }
 
     private ProfileResponse star(String houseSorting, String sortingHousesByValue, String sortingHousesByRating) {
-        ProfileResponse houseResponses = price(houseSorting, sortingHousesByValue);
+        ProfileResponse profileResponse1 = price(houseSorting, sortingHousesByValue);
+        ProfileResponse profileResponse = new ProfileResponse(profileResponse1.getId(), profileResponse1.getProfileName(), profileResponse1.getProfileContact());
         switch (sortingHousesByRating) {
             case "One" -> {
-                for (HouseResponse house : houseResponses.getMyAnnouncement()) {
+                for (HouseResponse house : profileResponse1.getMyAnnouncement()) {
                     if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 0 &&
                             rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 1) {
-                        houseResponses.addMyAnnouncement(house);
+                        profileResponse.addMyAnnouncement(house);
                     }
                 }
-                return houseResponses;
+                return profileResponse;
             }
             case "Two" -> {
-                for (HouseResponse house : houseResponses.getMyAnnouncement()) {
+                for (HouseResponse house : profileResponse1.getMyAnnouncement()) {
                     if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 1 &&
                             rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 2) {
-                        houseResponses.addMyAnnouncement(house);
+                        profileResponse.addMyAnnouncement(house);
                     }
                 }
-                return houseResponses;
+                return profileResponse;
             }
             case "Three" -> {
-                for (HouseResponse house : houseResponses.getMyAnnouncement()) {
+                for (HouseResponse house : profileResponse1.getMyAnnouncement()) {
                     if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 2 &&
                             rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 3) {
-                        houseResponses.addMyAnnouncement(house);
+                        profileResponse.addMyAnnouncement(house);
                     }
                 }
-                return houseResponses;
+                return profileResponse;
             }
             case "Four" -> {
-                for (HouseResponse house : houseResponses.getMyAnnouncement()) {
+                for (HouseResponse house : profileResponse1.getMyAnnouncement()) {
                     if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 3 &&
                             rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 4) {
-                        houseResponses.addMyAnnouncement(house);
+                        profileResponse.addMyAnnouncement(house);
                     }
                 }
-                return houseResponses;
+                return profileResponse;
             }
             case "Five" -> {
-                for (HouseResponse house : houseResponses.getMyAnnouncement()) {
+                for (HouseResponse house : profileResponse1.getMyAnnouncement()) {
                     if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 4 &&
                             rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 5) {
-                        houseResponses.addMyAnnouncement(house);
+                        profileResponse.addMyAnnouncement(house);
                     }
                 }
-                return houseResponses;
+                return profileResponse;
             }
             default -> {
-                return houseResponses;
+                return profileResponse1;
             }
         }
     }

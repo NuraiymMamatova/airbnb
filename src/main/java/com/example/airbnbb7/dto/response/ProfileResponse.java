@@ -21,6 +21,12 @@ public class ProfileResponse {
 
     private String profileContact;
 
+    private Long bookingsSize;
+
+    private Long myAnnouncementSize;
+
+    private Long onModerationSize;
+
     private List<ProfileBookingHouseResponse> bookings;
 
     private List<HouseResponse> myAnnouncement;
