@@ -11,27 +11,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class HouseRequestConverter {
 
-    private final LocationRepository locationRepository;
-
     private final LocationService locationService;
-
-
-    public House saveHouse(HouseRequest houseRequest) {
-        if (houseRequest == null) {
-            return null;
-        }
-
-        House house = new House();
-        house.setPrice(houseRequest.getPrice());
-        house.setTitle(houseRequest.getTitle());
-        house.setDescriptionOfListing(houseRequest.getDescriptionOfListing());
-        house.setImages(houseRequest.getImages());
-        house.setMaxOfGuests(houseRequest.getMaxOfGuests());
-        house.setHouseType(houseRequest.getHouseType());
-        house.setLocation(house.getLocation());
-        System.out.println(house.getLocation());
-        return house;
-    }
 
     public void update(House house, HouseRequest houseRequest) {
 
