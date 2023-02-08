@@ -33,4 +33,5 @@ public class Booking {
 
     @ManyToOne(cascade = {MERGE, REFRESH, DETACH})
     private House house;
+
 }

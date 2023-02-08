@@ -1,6 +1,7 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.enums.HouseType;
+import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.HouseResponse;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/houses")
 @Tag(name = "House Api", description = "House Api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class HouseApi {
 
     private final HouseService houseService;
@@ -62,6 +64,12 @@ public class HouseApi {
             return houseService.getPopularApartment();
         }
         return houseService.getLatestAccommodation();
+    }
+
+    @GetMapping("/announcement/{houseId}")
+    @Operation(summary = "House inner page", description = "Any user can go through to view the house")
+    public AnnouncementService announcementById(@PathVariable Long houseId) {
+        return houseService.getAnnouncementById(houseId);
     }
 
     @GetMapping("/search")

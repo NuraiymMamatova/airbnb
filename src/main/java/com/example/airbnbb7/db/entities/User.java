@@ -42,20 +42,15 @@ public class User implements UserDetails {
     @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "users")
     private List<Booking> bookings;
 
-    @ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class, cascade = {REFRESH, DETACH, MERGE, PERSIST}, mappedBy = "users")
+    @ManyToMany(targetEntity = Role.class, cascade = {REFRESH, DETACH, MERGE, PERSIST}, mappedBy = "users", fetch = FetchType.EAGER)
     private List<Role> roles;
 
-    @OneToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE})
+    @OneToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "user")
     private List<FavoriteHouse> favoriteHouses;
 
     public void addRole(Role role) {
         if (roles == null) roles = new ArrayList<>();
         roles.add(role);
-    }
-
-    public void addHouse(House house) {
-        if (house == null) announcements = new ArrayList<>();
-        announcements.add(house);
     }
 
     @Override
