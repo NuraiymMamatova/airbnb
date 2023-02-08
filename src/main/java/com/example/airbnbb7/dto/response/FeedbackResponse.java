@@ -1,9 +1,5 @@
 package com.example.airbnbb7.dto.response;
 
-import com.example.airbnbb7.db.entities.House;
-import com.example.airbnbb7.db.entities.User;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

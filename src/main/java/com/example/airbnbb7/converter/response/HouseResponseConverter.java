@@ -7,9 +7,6 @@ import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Component
 public class HouseResponseConverter {
     private final LocationRepository locationRepository;
