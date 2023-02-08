@@ -5,6 +5,7 @@ import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.service.serviceImpl.UserServiceImpl;
 import com.example.airbnbb7.dto.response.UserResponse;
+import com.example.airbnbb7.dto.response.UserResponseForVendor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Role findRoleByUserEmail(String email);
 
     static Long getUserId() {
-        return UserServiceImpl.getUserId();
+        return UserServiceImpl.getId();
     }
 
     @Query("select new com.example.airbnbb7.dto.response.UserResponse(u.id, u.name, u.email, u.image) from User u where u.id = :userId")
@@ -29,4 +30,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select f from FavoriteHouse f where f.user.id = :userId")
     List<FavoriteHouse> getFavoriteHousesByUserId(Long userId);
+
+    @Query("select new com.example.airbnbb7.dto.response.UserResponseForVendor(f.user.id, f.user.name, f.user.email, f.user.image, f.addedHouseToFavorites) from FavoriteHouse f where f.house.id = :houseId")
+    List<UserResponseForVendor> inFavorite(Long houseId);
+
 }

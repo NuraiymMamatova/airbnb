@@ -4,6 +4,10 @@ import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.User;
 import lombok.*;
 import org.springframework.stereotype.Component;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
