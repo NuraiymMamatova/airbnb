@@ -51,6 +51,8 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
+    private static Long id;
+
     private final HouseResponseConverter houseResponseConverter;
 
     private final Rating rating;
@@ -87,12 +89,14 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(firebaseToken.getEmail()));
             user.setName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
-            setUserId(user.getId());
+            setEmail(user.getEmail());
+            setId(user.getId());
             userRepository.save(user);
         }
 
         user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!", firebaseToken.getEmail())));
-        setUserId(user.getId());
+        setId(user.getId());
+        setEmail(user.getEmail());
         String token = jwtTokenUtil.generateToken(user);
         return new LoginResponse(user.getEmail(), token, userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
     }
@@ -112,7 +116,7 @@ public class UserServiceImpl implements UserService {
             throw new BadCredentialsException("invalid password");
         }
         setEmail(user.getEmail());
-        setUserId(user.getId());
+        setId(user.getId());
         return new LoginResponse(jwtTokenUtil.generateToken(user), user.getEmail(), roleRepository.findRoleByUserId(user.getId()).getNameOfRole());
     }
 
@@ -121,12 +125,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("not found email"));
     }
 
-    public static Long getUserId() {
-        return userId;
+    public static Long getId() {
+        return id;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

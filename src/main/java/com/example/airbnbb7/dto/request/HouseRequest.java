@@ -29,4 +29,5 @@ public class HouseRequest {
     private HouseType houseType;
 
     private LocationRequest location;
+
 }

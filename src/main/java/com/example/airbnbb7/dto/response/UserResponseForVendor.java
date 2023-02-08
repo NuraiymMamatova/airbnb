@@ -6,17 +6,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Component
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
+public class UserResponseForVendor {
 
-    private String jwtToken;
+    private Long id;
+
+    private String name;
 
     private String email;
 
-    private String authorities;
+    private String image;
+
+    private LocalDate addedHouseToFavorites;
 
 }

@@ -83,4 +83,5 @@ public class House {
         this.houseType = houseType;
 
     }
+
 }

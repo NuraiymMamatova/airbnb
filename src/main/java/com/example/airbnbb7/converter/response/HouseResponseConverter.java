@@ -42,11 +42,4 @@ public class HouseResponseConverter {
         return houseResponse;
     }
 
-    public List<HouseResponse> viewAllHouse(List<House> houses) {
-        List<HouseResponse> houseResponses = new ArrayList<>();
-        for (House house : houses) {
-            houseResponses.add(viewHouse(house));
-        }
-        return houseResponses;
-    }
 }
