@@ -1,6 +1,5 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
-import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.converter.request.HouseRequestConverter;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.customClass.Rating;
@@ -91,7 +90,7 @@ public class HouseServiceImpl implements HouseService {
     public List<AccommodationResponse> getPopularHouses() {
         List<AccommodationResponse> houseResponses = houseRepository.getPopularHouse();
         for (AccommodationResponse accommodationResponse : houseResponses) {
-            accommodationResponse.setRating(rating.getRating(accommodationResponse.getId()));
+            accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
         }
         houseResponses.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
         return houseResponses.stream().limit(3).toList();
@@ -100,8 +99,8 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public AccommodationResponse getPopularApartment() {
         List<AccommodationResponse> popularApartmentByCountOfBookedUser = houseRepository.getPopularApartment();
-        for (AccommodationResponse accommodationResponse1 : popularApartmentByCountOfBookedUser) {
-            accommodationResponse1.setRating(rating.getRating(accommodationResponse1.getId()));
+        for (AccommodationResponse accommodationResponse : popularApartmentByCountOfBookedUser) {
+            accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
         }
         popularApartmentByCountOfBookedUser.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
         return popularApartmentByCountOfBookedUser.stream().limit(1).findFirst().get();

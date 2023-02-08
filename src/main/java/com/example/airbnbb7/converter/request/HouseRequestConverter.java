@@ -1,7 +1,6 @@
 package com.example.airbnbb7.converter.request;
 
 import com.example.airbnbb7.db.entities.House;
-import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.db.service.LocationService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import lombok.RequiredArgsConstructor;
