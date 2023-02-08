@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -57,7 +58,6 @@ public class UserServiceImpl implements UserService {
 
     private String email;
     private final FeedbackRepository feedbackRepository;
-    private final HouseRepository houseRepository;
 
     public String getEmail() {
         return email;
@@ -133,6 +133,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileResponse userProfile(String mainInUserProfile, String houseSorting, String sortingHousesByValue, String sortingHousesByRating) {
+        houseSorting = (houseSorting != null) ? houseSorting : " ";
+        sortingHousesByValue = (sortingHousesByValue != null) ? sortingHousesByValue : " ";
+        sortingHousesByRating = (sortingHousesByRating != null) ? sortingHousesByRating : " ";
         ProfileResponse profileResponse = new ProfileResponse(UserRepository.getUserId(),userRepository.findById(UserRepository.getUserId()).get().getName(),userRepository.findById(UserRepository.getUserId()).get().getEmail());
         switch (mainInUserProfile) {
             case "Bookings" -> {
