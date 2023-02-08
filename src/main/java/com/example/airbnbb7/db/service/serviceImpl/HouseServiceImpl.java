@@ -3,24 +3,18 @@ package com.example.airbnbb7.db.service.serviceImpl;
 import com.example.airbnbb7.converter.request.HouseRequestConverter;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.customClass.Rating;
-import com.example.airbnbb7.db.entities.Feedback;
+import com.example.airbnbb7.db.entities.Booking;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Location;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.enums.HousesStatus;
-import com.example.airbnbb7.db.repository.FeedbackRepository;
-import com.example.airbnbb7.db.repository.HouseRepository;
-import com.example.airbnbb7.db.repository.LocationRepository;
-import com.example.airbnbb7.db.repository.UserRepository;
+import com.example.airbnbb7.db.repository.*;
+import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
-import com.example.airbnbb7.db.service.LocationService;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.HouseRequest;
-import com.example.airbnbb7.dto.response.HouseResponse;
-import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
-import com.example.airbnbb7.dto.response.LocationResponse;
-import com.example.airbnbb7.dto.response.UserResponse;
+import com.example.airbnbb7.dto.response.*;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +30,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HouseServiceImpl implements HouseService {
 
+    private final BookingRepository bookingRepository;
+
+    private final RoleRepository roleRepository;
+
     private final HouseRepository houseRepository;
 
     private final HouseRequestConverter houseRequestConverter;
@@ -49,8 +47,6 @@ public class HouseServiceImpl implements HouseService {
     private final LocationRepository locationRepository;
 
     private final Rating rating;
-
-    private final LocationService locationService;
 
     private final FeedbackRepository feedbackRepository;
 
@@ -105,12 +101,12 @@ public class HouseServiceImpl implements HouseService {
             if (index.equals(houses.get(Math.toIntExact(index)).getLocation().getId())) {
                 response.setImages(houses.get(Math.toIntExact(index)).getImages());
                 response.setLocationResponse(locationRepository.convertToResponse(houses.get(Math.toIntExact(index)).getLocation()));
-                response.setHouseRating(getRating(response.getId()));
+                response.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(response.getId())));
             } else {
                 Location location = locationRepository.findById(response.getId()).orElseThrow(() -> new NotFoundException("location not found!"));
                 response.setImages(houses.get(Math.toIntExact(index)).getImages());
                 response.setLocationResponse(locationRepository.convertToResponse(location));
-                response.setHouseRating(getRating(response.getId()));
+                response.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(response.getId())));
             }
         }
         return sortedHouseResponse;
@@ -153,19 +149,48 @@ public class HouseServiceImpl implements HouseService {
         return sortedHouseResponse;
     }
 
-    public double getRating(Long houseId) {
-        List<Feedback> feedbacks = feedbackRepository.getAllFeedbackByHouseId(houseId);
-        List<Integer> ratings = new ArrayList<>();
-        for (Feedback feedback : feedbacks) {
-            ratings.add(feedback.getRating());
+
+    @Override
+    public AnnouncementService getAnnouncementById(Long houseId) {
+        AnnouncementResponseForUser house = houseRepository.findHouseByIdForUser(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+        UserResponse user = userRepository.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("User not found!")).getOwner().getId());
+        Long userId = UserRepository.getUserId();
+        house.setImages(houseRepository.findImagesByHouseId(houseId));
+        house.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
+        house.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
+        List<Booking> bookings = bookingRepository.getBookingsByUserId(userId);
+        house.setRating(rating.getRatingCount(feedbackRepository.getAllFeedbackByHouseId(houseId)));
+        for (Booking booking : bookings) {
+            if (booking.getHouse().getId() == houseId) {
+                house.setBookingResponse(bookingRepository.findBookingById(booking.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+            }
+
         }
-        double sum = 0;
-        for (Integer rating : ratings) {
-            sum += rating;
+        if (user.getId() == userId) {
+            AnnouncementResponseForVendor houseResponseForVendor = houseRepository.findHouseByIdForVendor(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+            houseResponseForVendor.setImages(houseRepository.findImagesByHouseId(houseId));
+            List<BookingResponse> bookingResponses = new ArrayList<>();
+            for (BookingResponse booking : bookingRepository.getBookingsByHouseId(houseId)) {
+                booking.setOwner(userRepository.findUserById(bookingRepository.getUserIdByBookingId(booking.getId())));
+                bookingResponses.add(booking);
+            }
+            houseResponseForVendor.setRating(rating.getRatingCount(feedbackRepository.getAllFeedbackByHouseId(houseId)));
+            houseResponseForVendor.setBookingResponses(bookingResponses);
+            houseResponseForVendor.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
+            houseResponseForVendor.setInFavorites(userRepository.inFavorite(houseId));
+            houseResponseForVendor.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
+            return houseResponseForVendor;
+        } else if (roleRepository.findRoleByUserId(userId).getNameOfRole().equals("ADMIN")) {
+            AnnouncementResponseForAdmin announcementResponseForAdmin = houseRepository.findHouseByIdForAdmin(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+            announcementResponseForAdmin.setImages(houseRepository.findImagesByHouseId(houseId));
+            announcementResponseForAdmin.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
+            announcementResponseForAdmin.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
+            announcementResponseForAdmin.setOwner(user);
+            announcementResponseForAdmin.setRating(rating.getRatingCount(feedbackRepository.getAllFeedbackByHouseId(houseId)));
+            return announcementResponseForAdmin;
         }
-        sum = sum / ratings.size();
-        String.format("%.1f", sum);
-        return sum;
+        house.setOwner(user);
+        return house;
     }
 
     @Override
