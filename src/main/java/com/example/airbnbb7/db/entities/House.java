@@ -54,7 +54,7 @@ public class House {
 
     private boolean isFavorite = false;
 
-    @OneToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST}, fetch = EAGER, mappedBy = "house")
+    @OneToOne(cascade = {MERGE, REFRESH, DETACH}, fetch = EAGER)
     private Location location;
 
     @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")

@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
         return new LoginResponse(user.getEmail(), token, userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
     }
 
-    public LoginResponse login(@RequestBody UserRequest request) {
+    public LoginResponse login(UserRequest request) {
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(request.getEmail(),
                         request.getPassword());

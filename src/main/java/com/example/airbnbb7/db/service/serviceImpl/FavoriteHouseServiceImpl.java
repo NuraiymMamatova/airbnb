@@ -27,9 +27,8 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
     private final FeedbackRepository feedbackRepository;
 
     @Override
-    public void saveFavoriteHouse(Long houseId, Long userId) {
+    public void saveFavoriteHouse(Long houseId, User user) {
         House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found!"));
         FavoriteHouse findFavoriteHouse = favoriteHouseRepository.getFavoriteHouseByHouseIdByUserId(house.getId(), user.getId());
         if (findFavoriteHouse == null) {
             FavoriteHouse favoriteHouse = new FavoriteHouse();

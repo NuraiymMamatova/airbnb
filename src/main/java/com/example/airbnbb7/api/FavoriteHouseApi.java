@@ -21,14 +21,14 @@ public class FavoriteHouseApi {
 
     @PostMapping("/{houseId}")
     public void saveFavorite(@PathVariable Long houseId, Authentication authentication) {
-        User principle = (User) authentication.getPrincipal();
-        favoriteHouseService.saveFavoriteHouse(houseId, principle.getId());
+        User user = (User) authentication.getPrincipal();
+        favoriteHouseService.saveFavoriteHouse(houseId, user);
     }
 
     @GetMapping
     @Operation(summary = "get all favorite house", description = " this is get all favorite by userId")
     public List<HouseResponseSortedPagination> getAllFavoriteByUserId(Authentication authentication) {
-        User principle = (User) authentication.getPrincipal();
-        return favoriteHouseService.getAllFavoriteHouseByUserId(principle.getId());
+        User user = (User) authentication.getPrincipal();
+        return favoriteHouseService.getAllFavoriteHouseByUserId(user.getId());
     }
 }

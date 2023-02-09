@@ -29,7 +29,7 @@ public class Location {
 
     private String region;
 
-    @OneToOne(cascade = {REFRESH, MERGE, DETACH, PERSIST, REMOVE})
+    @OneToOne(cascade = ALL, mappedBy = "location")
     private House house;
 
     public Location(String townOrProvince, String address, String region) {

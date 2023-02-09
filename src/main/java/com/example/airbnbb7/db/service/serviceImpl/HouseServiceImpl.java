@@ -59,11 +59,10 @@ public class HouseServiceImpl implements HouseService {
         House house = houseRepository.findById(id).orElseThrow(() -> new NotFoundException("House id not found"));
         houseRequestConverter.update(house, houseRequest);
         return houseResponseConverter.viewHouse(houseRepository.save(house));
-
     }
 
-    public HouseResponse save(HouseRequest houseRequest, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+    @Override
+    public HouseResponse save(HouseRequest houseRequest, User user) {
         House house = new House(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getDescriptionOfListing(), houseRequest.getMaxOfGuests(), houseRequest.getImages(), houseRequest.getHouseType());
         Location location = new Location(houseRequest.getLocation().getAddress(), houseRequest.getLocation().getTownOrProvince(), houseRequest.getLocation().getRegion());
         location.setHouse(house);
@@ -150,7 +149,7 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public AnnouncementService getAnnouncementById(Long houseId, Long userId) {
         AnnouncementResponseForUser house = houseRepository.findHouseByIdForUser(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
-        UserResponse user = userRepository.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("User not found!")).getOwner().getId());
+        UserResponse userResponse = userRepository.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("User not found!")).getOwner().getId());
         house.setImages(houseRepository.findImagesByHouseId(houseId));
         house.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
         house.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
@@ -162,7 +161,7 @@ public class HouseServiceImpl implements HouseService {
             }
 
         }
-        if (user.getId() == userId) {
+        if (userResponse.getId() == userId) {
             AnnouncementResponseForVendor houseResponseForVendor = houseRepository.findHouseByIdForVendor(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
             houseResponseForVendor.setImages(houseRepository.findImagesByHouseId(houseId));
             List<BookingResponse> bookingResponses = new ArrayList<>();
@@ -181,11 +180,11 @@ public class HouseServiceImpl implements HouseService {
             announcementResponseForAdmin.setImages(houseRepository.findImagesByHouseId(houseId));
             announcementResponseForAdmin.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
             announcementResponseForAdmin.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
-            announcementResponseForAdmin.setOwner(user);
+            announcementResponseForAdmin.setOwner(userResponse);
             announcementResponseForAdmin.setRating(rating.getRatingCount(feedbackRepository.getAllFeedbackByHouseId(houseId)));
             return announcementResponseForAdmin;
         }
-        house.setOwner(user);
+        house.setOwner(userResponse);
         return house;
     }
 

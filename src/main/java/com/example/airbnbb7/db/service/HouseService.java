@@ -1,5 +1,6 @@
 package com.example.airbnbb7.db.service;
 
+import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.HouseResponse;
@@ -11,7 +12,7 @@ public interface HouseService {
 
     HouseResponse deleteByIdHouse(Long houseId);
 
-    HouseResponse save(HouseRequest houseRequest, Long userId);
+    HouseResponse save(HouseRequest houseRequest, User user);
 
     HouseResponse updateHouse(Long id, HouseRequest houseRequest);
 

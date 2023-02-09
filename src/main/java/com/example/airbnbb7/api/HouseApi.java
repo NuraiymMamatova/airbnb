@@ -27,8 +27,8 @@ public class HouseApi {
     @PostMapping
     @Operation(summary = "Save house", description = "Save house and location")
     public HouseResponse saveHouse(@RequestBody HouseRequest houseRequest, Authentication authentication) {
-        User principle = (User) authentication.getPrincipal();
-        return houseService.save(houseRequest, principle.getId());
+        User user = (User) authentication.getPrincipal();
+        return houseService.save(houseRequest, user);
     }
 
     @PutMapping("/{id}")
@@ -36,7 +36,6 @@ public class HouseApi {
     public HouseResponse updateHouse(@PathVariable Long id,
                                      @RequestBody HouseRequest houseRequest) {
         return houseService.updateHouse(id, houseRequest);
-
     }
 
     @DeleteMapping("/{id}")
@@ -60,8 +59,8 @@ public class HouseApi {
     @GetMapping("/announcement/{houseId}")
     @Operation(summary = "House inner page", description = "Any user can go through to view the house")
     public AnnouncementService announcementById(@PathVariable Long houseId, Authentication authentication) {
-        User principle = (User) authentication.getPrincipal();
-        return houseService.getAnnouncementById(houseId, principle.getId());
+        User user = (User) authentication.getPrincipal();
+        return houseService.getAnnouncementById(houseId, user.getId());
     }
 
     @GetMapping("/search")
