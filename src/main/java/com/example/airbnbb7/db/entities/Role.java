@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.*;
@@ -28,6 +29,11 @@ public class Role {
 
     public Role(String nameOfRole) {
         this.nameOfRole = nameOfRole;
+    }
+
+    public void addUser(User user) {
+        if (users == null) users = new ArrayList<>();
+        users.add(user);
     }
 
 }

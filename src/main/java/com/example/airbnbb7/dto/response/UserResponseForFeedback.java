@@ -11,12 +11,11 @@ import org.springframework.stereotype.Component;
 @Component
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
+public class UserResponseForFeedback {
 
-    private String jwtToken;
+    private Long id;
 
-    private String email;
+    private String name;
 
-    private String authorities;
-
+    private String image;
 }
