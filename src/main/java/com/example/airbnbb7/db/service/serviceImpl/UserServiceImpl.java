@@ -9,6 +9,7 @@ import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
+import com.example.airbnbb7.exceptions.ExceptionResponse;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -18,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -50,8 +52,13 @@ public class UserServiceImpl implements UserService {
         FirebaseApp firebaseApp = FirebaseApp.initializeApp(firebaseOptions);
     }
 
-    public LoginResponse authWithGoogle(String tokenId) throws FirebaseAuthException {
-        FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
+    public LoginResponse authWithGoogle(String tokenId) {
+        FirebaseToken firebaseToken;
+        try {
+            firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
+        } catch (FirebaseAuthException firebaseAuthException) {
+            throw new ExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, firebaseAuthException.getClass().getSimpleName(), firebaseAuthException.getMessage());
+        }
 
         User user;
 
