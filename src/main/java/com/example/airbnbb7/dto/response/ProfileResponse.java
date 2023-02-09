@@ -28,10 +28,6 @@ public class ProfileResponse {
 
     private List<ProfileBookingHouseResponse> bookings;
 
-    private List<HouseResponse> myAnnouncement;
-
-    private List<HouseResponse> onModeration;
-
     public ProfileResponse(Long id, String profileName, String profileContact) {
         this.id = id;
         this.profileName = profileName;
@@ -41,16 +37,6 @@ public class ProfileResponse {
     public void addBookings(ProfileBookingHouseResponse profileBookingHouseResponse) {
         if (bookings == null) bookings = new ArrayList<>();
         bookings.add(profileBookingHouseResponse);
-    }
-
-    public void addMyAnnouncement(HouseResponse houseResponse) {
-        if (myAnnouncement == null) myAnnouncement = new ArrayList<>();
-        myAnnouncement.add(houseResponse);
-    }
-
-    public void addOnModeration(HouseResponse houseResponse) {
-        if (onModeration == null) onModeration = new ArrayList<>();
-        onModeration.add(houseResponse);
     }
 
 }

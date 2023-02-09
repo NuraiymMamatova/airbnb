@@ -1,10 +1,12 @@
 package com.example.airbnbb7.api;
 
+import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.response.ProfileResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,7 +26,9 @@ public class UserApi {
     public ProfileResponse userProfile(@RequestParam(name = "mainInUserProfile", required = false) String mainInUserProfile,
                                        @RequestParam(name = "houseSorting", required = false)String houseSorting,
                                        @RequestParam(name = "sortingHousesByValue", required = false)String sortingHousesByValue,
-                                       @RequestParam(name = "sortingHousesByRating", required = false)String sortingHousesByRating) {
-        return userService.userProfile(mainInUserProfile, houseSorting, sortingHousesByValue, sortingHousesByRating);
+                                       @RequestParam(name = "sortingHousesByRating", required = false)String sortingHousesByRating,
+                                       Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return userService.userProfile(mainInUserProfile, houseSorting, sortingHousesByValue, sortingHousesByRating, user.getId());
     }
 }

@@ -8,6 +8,7 @@ import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.FeedbackRepository;
+import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.RoleRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.UserService;
@@ -23,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +58,7 @@ public class UserServiceImpl implements UserService {
 
     private String email;
     private final FeedbackRepository feedbackRepository;
+    private final HouseRepository houseRepository;
 
     public String getEmail() {
         return email;
@@ -128,87 +133,81 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ProfileResponse userProfile(String mainInUserProfile, String houseSorting, String sortingHousesByValue, String sortingHousesByRating) {
+    public ProfileResponse userProfile(String mainInUserProfile, String houseSorting, String sortingHousesByValue, String sortingHousesByRating, Long userId) {
         houseSorting = (houseSorting != null) ? houseSorting : " ";
         sortingHousesByValue = (sortingHousesByValue != null) ? sortingHousesByValue : " ";
         sortingHousesByRating = (sortingHousesByRating != null) ? sortingHousesByRating : " ";
         ProfileResponse profileResponse = new ProfileResponse(UserRepository.getUserId(), userRepository.findById(UserRepository.getUserId()).get().getName(), userRepository.findById(UserRepository.getUserId()).get().getEmail());
         switch (mainInUserProfile) {
             case "Bookings" -> {
-                for (Booking booking : userRepository.findById(UserRepository.getUserId()).get().getBookings()) {
-                    ProfileBookingHouseResponse profileBookingHouseResponse = new ProfileBookingHouseResponse(booking.getHouse().getId(), booking.getHouse().getPrice(), booking.getHouse().getTitle(),
-                            booking.getHouse().getDescriptionOfListing(), booking.getHouse().getMaxOfGuests(), booking.getHouse().getHouseType(),
-                            rating.getRating(feedbackRepository.getAllFeedbackByHouseId(booking.getHouse().getId())), booking.getCheckIn(), booking.getCheckOut());
-                    profileBookingHouseResponse.setImages(booking.getHouse().getImages());
-                    profileBookingHouseResponse.setOwner(new UserResponse(booking.getHouse().getOwner().getId(),
-                            booking.getHouse().getOwner().getName(), booking.getHouse().getOwner().getEmail(), booking.getHouse().getOwner().getImage()));
-                    profileBookingHouseResponse.setLocation(new LocationResponse(booking.getHouse().getLocation().getId(),
-                            booking.getHouse().getLocation().getTownOrProvince(), booking.getHouse().getLocation().getAddress(), booking.getHouse().getLocation().getRegion()));
+                for (Booking booking : userRepository.findById(userId).get().getBookings()) {
+                    ProfileBookingHouseResponse profileBookingHouseResponse = houseResponseConverter.view(booking.getHouse());
+                    profileBookingHouseResponse.setCheckIn(booking.getCheckIn());
+                    profileBookingHouseResponse.setCheckOut(booking.getCheckOut());
                     profileResponse.addBookings(profileBookingHouseResponse);
                 }
                 profileResponse.setBookingsSize((long) profileResponse.getBookings().size());
                 return profileResponse;
             }
             case "My announcement" -> {
-                profileResponse = star(houseSorting, sortingHousesByValue, sortingHousesByRating);
-                profileResponse.setMyAnnouncementSize((long) userRepository.findById(profileResponse.getId()).get().getAnnouncements().size());
+                profileResponse = star(houseSorting, sortingHousesByValue, sortingHousesByRating, userId);
+                profileResponse.setMyAnnouncementSize((long) userRepository.findById(userId).get().getAnnouncements().size());
                 return profileResponse;
             }
             case "On moderation" -> {
-                for (House house : userRepository.findById(UserRepository.getUserId()).get().getAnnouncements()) {
+                for (House house : userRepository.findById(userId).get().getAnnouncements()) {
                     if (house.getHousesStatus().equals(HousesStatus.ON_MODERATION)) {
-                        profileResponse.addOnModeration(houseResponseConverter.viewHouse(house));
+                        profileResponse.addBookings(houseResponseConverter.view(house));
                     }
                 }
-                profileResponse.setOnModerationSize((long) profileResponse.getOnModeration().size());
                 return profileResponse;
             }
             default -> {
-                return null;
+                return profileResponse;
             }
         }
     }
 
-    private ProfileResponse houseType(String houseSorting) {
-        ProfileResponse profileResponse = new ProfileResponse(UserRepository.getUserId(), userRepository.findById(UserRepository.getUserId()).get().getName(), userRepository.findById(UserRepository.getUserId()).get().getEmail());
+    private ProfileResponse houseType(String houseSorting, Long userId) {
+        ProfileResponse profileResponse = new ProfileResponse(userId, userRepository.findById(userId).get().getName(), userRepository.findById(userId).get().getEmail());
         switch (houseSorting) {
             case "In wish list" -> {
-                for (House house : userRepository.findById(UserRepository.getUserId()).get().getAnnouncements()) {
-                    profileResponse.addMyAnnouncement(houseResponseConverter.viewHouse(house));
+                for (House house : userRepository.findById(userId).get().getAnnouncements()) {
+                    profileResponse.addBookings(houseResponseConverter.view(house));
                 }
-                profileResponse.getMyAnnouncement().sort(Comparator.comparing(HouseResponse::getRating).reversed());
+                profileResponse.getBookings().sort(Comparator.comparing(ProfileBookingHouseResponse::getRating).reversed());
                 return profileResponse;
             }
             case "Apartment" -> {
-                for (House house : userRepository.findById(UserRepository.getUserId()).get().getAnnouncements()) {
+                for (House house : userRepository.findById(userId).get().getAnnouncements()) {
                     if (house.getHouseType().toString().equals("APARTMENT")) {
-                        profileResponse.addMyAnnouncement(houseResponseConverter.viewHouse(house));
+                        profileResponse.addBookings(houseResponseConverter.view(house));
                     }
                 }
                 return profileResponse;
             }
             case "House" -> {
-                for (House house : userRepository.findById(UserRepository.getUserId()).get().getAnnouncements()) {
+                for (House house : userRepository.findById(userId).get().getAnnouncements()) {
                     if (house.getHouseType().toString().equals("HOUSE")) {
-                        profileResponse.addMyAnnouncement(houseResponseConverter.viewHouse(house));
+                        profileResponse.addBookings(houseResponseConverter.view(house));
                     }
                 }
                 return profileResponse;
             }
         }
-        for (House house : userRepository.findById(UserRepository.getUserId()).get().getAnnouncements()) {
-            profileResponse.addMyAnnouncement(houseResponseConverter.viewHouse(house));
+        for (House house : userRepository.findById(userId).get().getAnnouncements()) {
+            profileResponse.addBookings(houseResponseConverter.view(house));
         }
         return profileResponse;
     }
 
-    private ProfileResponse price(String houseSorting, String sortingHousesByValue) {
-        ProfileResponse profileResponse = houseType(houseSorting);
+    private ProfileResponse price(String houseSorting, String sortingHousesByValue, Long userId) {
+        ProfileResponse profileResponse = houseType(houseSorting, userId);
         switch (sortingHousesByValue) {
             case "Low to high" ->
-                    profileResponse.getMyAnnouncement().sort(Comparator.comparing(HouseResponse::getPrice));
+                    profileResponse.getBookings().sort(Comparator.comparing(ProfileBookingHouseResponse::getPrice));
             case "High to low" ->
-                    profileResponse.getMyAnnouncement().sort(Comparator.comparing(HouseResponse::getPrice).reversed());
+                    profileResponse.getBookings().sort(Comparator.comparing(ProfileBookingHouseResponse::getPrice).reversed());
             default -> {
                 return profileResponse;
             }
@@ -216,51 +215,51 @@ public class UserServiceImpl implements UserService {
         return profileResponse;
     }
 
-    private ProfileResponse star(String houseSorting, String sortingHousesByValue, String sortingHousesByRating) {
-        ProfileResponse profileResponse1 = price(houseSorting, sortingHousesByValue);
+    private ProfileResponse star(String houseSorting, String sortingHousesByValue, String sortingHousesByRating, Long userId) {
+        ProfileResponse profileResponse1 = price(houseSorting, sortingHousesByValue, userId);
         ProfileResponse profileResponse = new ProfileResponse(profileResponse1.getId(), profileResponse1.getProfileName(), profileResponse1.getProfileContact());
         switch (sortingHousesByRating) {
             case "One" -> {
-                for (HouseResponse house : profileResponse1.getMyAnnouncement()) {
+                for (ProfileBookingHouseResponse house : profileResponse1.getBookings()) {
                     if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 0 &&
                             rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 1) {
-                        profileResponse.addMyAnnouncement(house);
+                        profileResponse.addBookings(house);
                     }
                 }
                 return profileResponse;
             }
             case "Two" -> {
-                for (HouseResponse house : profileResponse1.getMyAnnouncement()) {
+                for (ProfileBookingHouseResponse house : profileResponse1.getBookings()) {
                     if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 1 &&
                             rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 2) {
-                        profileResponse.addMyAnnouncement(house);
+                        profileResponse.addBookings(house);
                     }
                 }
                 return profileResponse;
             }
             case "Three" -> {
-                for (HouseResponse house : profileResponse1.getMyAnnouncement()) {
+                for (ProfileBookingHouseResponse house : profileResponse1.getBookings()) {
                     if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 2 &&
                             rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 3) {
-                        profileResponse.addMyAnnouncement(house);
+                        profileResponse.addBookings(house);
                     }
                 }
                 return profileResponse;
             }
             case "Four" -> {
-                for (HouseResponse house : profileResponse1.getMyAnnouncement()) {
+                for (ProfileBookingHouseResponse house : profileResponse1.getBookings()) {
                     if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 3 &&
                             rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 4) {
-                        profileResponse.addMyAnnouncement(house);
+                        profileResponse.addBookings(house);
                     }
                 }
                 return profileResponse;
             }
             case "Five" -> {
-                for (HouseResponse house : profileResponse1.getMyAnnouncement()) {
+                for (ProfileBookingHouseResponse house : profileResponse1.getBookings()) {
                     if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 4 &&
                             rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 5) {
-                        profileResponse.addMyAnnouncement(house);
+                        profileResponse.addBookings(house);
                     }
                 }
                 return profileResponse;
