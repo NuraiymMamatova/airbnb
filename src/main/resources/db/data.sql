@@ -17,30 +17,30 @@ VALUES (1, 1);
 insert into roles_users(role_id, user_id)
 VALUES (2, 2);
 
-insert into houses(id, price, title, description_of_listing, max_of_guests, count_of_booked_user,
-                   house_type, houses_status,is_favorite, houses_booked, date_house_created, owner_id)
+insert into houses(id, price, title, description_of_listing, max_of_guests, bookings,
+                   house_type, houses_status, is_favorite, houses_booked, date_house_created, owner_id)
 values (1, 20, 'Asman', 'flat-screen TV and a shared bathroom with a shower.' ||
                         ' At Garden Hotel & SPA the rooms have bed linen and towels.
     ', 5, 0, 1, 2,false, 1, null, 1);
 
-insert into houses(id, price, title, description_of_listing, max_of_guests, count_of_booked_user,
+insert into houses(id, price, title, description_of_listing, max_of_guests, bookings,
                    house_type, houses_status,is_favorite, houses_booked, date_house_created, owner_id)
 values (2, 15, 'Ihlas', 'Tit box, a flat-screen TV and a shared bathroom with a shower. At Garden' ||
                         ' Hotel & SPA the rooms have bed linen and towels.
     ', 10, 1, 1, 2,false, 1, null, 1);
 
-insert into houses(id, price, title, description_of_listing, max_of_guests, count_of_booked_user,
+insert into houses(id, price, title, description_of_listing, max_of_guests, bookings,
                    house_type, houses_status,is_favorite, houses_booked, date_house_created, owner_id)
 values (3, 29, 'Elite', ' and towels.
 ', 10, 1, 0, 2,false, 1, null, 1);
 
-insert into houses(id, price, title, description_of_listing, max_of_guests, count_of_booked_user,
+insert into houses(id, price, title, description_of_listing, max_of_guests, bookings,
                    house_type, houses_status,is_favorite, houses_booked, date_house_created, owner_id)
 values (4, 10, 'Delmar', ' boa shared bathroom with a shower. At Garden ' ||
                          'Hotel & SPA the rooms have bed linen and towels.
     ', 10, 1, 0, 2, false,1, null, 2);
 
-insert into houses(id, price, title, description_of_listing, max_of_guests, count_of_booked_user,
+insert into houses(id, price, title, description_of_listing, max_of_guests, bookings,
                    house_type, houses_status,is_favorite, houses_booked, date_house_created, owner_id)
 values (5, 40, 'Best', 'e bed linen and towels.', 10, 1, 0, 2, false,1, null, 2);
 
@@ -87,20 +87,20 @@ values (4, null, null, 10, 4);
 insert into booking_dates(id, check_in, check_out, price, house_id)
 values (5, null, null, 40, 5);
 
-insert into feedbacks(id, created_feedback, dislike, take_a_look, rating, text, house_id, user_id)
+insert into feedbacks(id, created_feedback, dislike, likes, rating, text, house_id, user_id)
 values (1, now(), 0, 5, 4, 'this was one of the nicest places we stayed in the four weeks w...', 1, 2);
 
-insert into feedbacks(id, created_feedback, dislike, take_a_look, rating, text, house_id, user_id)
+insert into feedbacks(id, created_feedback, dislike, likes, rating, text, house_id, user_id)
 values (2, now(), 0, 10, 5, 'ayed in the four weeks w...', 2, 2);
 
-insert into feedbacks(id, created_feedback, dislike, take_a_look, rating, text, house_id, user_id)
+insert into feedbacks(id, created_feedback, dislike, likes, rating, text, house_id, user_id)
 values (3, now(), 0, 3, 3, 'Good', 3, 2);
 
-insert into feedbacks(id, created_feedback, dislike, take_a_look, rating, text, house_id, user_id)
+insert into feedbacks(id, created_feedback, dislike, likes, rating, text, house_id, user_id)
 values (4, now(), 0, 5, 4, 'nicest places we stayed in the four weeks w...', 4, 2);
 
 
-insert into feedbacks(id, created_feedback, dislike, take_a_look, rating, text, house_id, user_id)
+insert into feedbacks(id, created_feedback, dislike, likes, rating, text, house_id, user_id)
 values (5, now(), 2, 5, 4, 'Grlaces we stayed in the four weeks w...', 5, 2);
 
 
