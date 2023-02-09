@@ -3,6 +3,7 @@ package com.example.airbnbb7.db.service.serviceImpl;
 import com.example.airbnbb7.converter.request.HouseRequestConverter;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.customClass.Rating;
+import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.entities.Booking;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Location;
@@ -51,21 +52,20 @@ public class HouseServiceImpl implements HouseService {
     private final FeedbackRepository feedbackRepository;
 
     @Override
-    public HouseResponse deleteByIdHouse(Long houseId) {
+    public SimpleResponse deleteByIdHouse(Long houseId) {
         House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House id not found"));
         houseRepository.delete(house);
-        return houseResponseConverter.viewHouse(house);
+        return new SimpleResponse("House successfully deleted");
     }
 
     @Override
-    public HouseResponse updateHouse(Long id, HouseRequest houseRequest) {
+    public SimpleResponse updateHouse(Long id, HouseRequest houseRequest) {
         House house = houseRepository.findById(id).orElseThrow(() -> new NotFoundException("House id not found"));
         houseRequestConverter.update(house, houseRequest);
-        return houseResponseConverter.viewHouse(houseRepository.save(house));
-
+        return new SimpleResponse("House successfully updated!");
     }
 
-    public HouseResponse save(HouseRequest houseRequest) {
+    public SimpleResponse save(HouseRequest houseRequest) {
         User user = userRepository.findByEmail(userService.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
         House house = new House(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getDescriptionOfListing(), houseRequest.getMaxOfGuests(), houseRequest.getImages(), houseRequest.getHouseType());
         Location location = new Location(houseRequest.getLocation().getAddress(), houseRequest.getLocation().getTownOrProvince(), houseRequest.getLocation().getRegion());
@@ -83,7 +83,7 @@ public class HouseServiceImpl implements HouseService {
         houseResponse.setLocation(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(),
                 house.getLocation().getAddress(), house.getLocation().getRegion()));
         houseResponse.setImages(house.getImages());
-        return houseResponse;
+        return new SimpleResponse("House successfully saved!");
     }
 
     @Override

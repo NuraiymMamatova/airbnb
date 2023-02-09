@@ -1,5 +1,6 @@
 package com.example.airbnbb7.api;
 
+import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
@@ -25,21 +26,21 @@ public class HouseApi {
 
     @PostMapping
     @Operation(summary = "Save house", description = "Save house and location")
-    public HouseResponse saveHouse(@RequestBody HouseRequest houseRequest) {
+    public SimpleResponse saveHouse(@RequestBody HouseRequest houseRequest) {
         return houseService.save(houseRequest);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update House", description = "Update house by id")
-    public HouseResponse updateHouse(@PathVariable Long id,
-                                     @RequestBody HouseRequest houseRequest) {
+    public SimpleResponse updateHouse(@PathVariable Long id,
+                                      @RequestBody HouseRequest houseRequest) {
         return houseService.updateHouse(id, houseRequest);
 
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete House", description = "Delete house by id")
-    public HouseResponse deleteHouseById(@PathVariable Long id) {
+    public SimpleResponse deleteHouseById(@PathVariable Long id) {
         return houseService.deleteByIdHouse(id);
     }
 
