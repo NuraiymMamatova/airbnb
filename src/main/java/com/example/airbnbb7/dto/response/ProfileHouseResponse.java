@@ -15,7 +15,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileBookingHouseResponse {
+public class ProfileHouseResponse {
 
     private Long id;
 
@@ -41,7 +41,7 @@ public class ProfileBookingHouseResponse {
 
     private LocalDate checkOut;
 
-    public ProfileBookingHouseResponse(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType, Double rating, LocalDate checkIn, LocalDate checkOut) {
+    public ProfileHouseResponse(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType, Double rating, LocalDate checkIn, LocalDate checkOut) {
         this.id = id;
         this.price = price;
         this.title = title;

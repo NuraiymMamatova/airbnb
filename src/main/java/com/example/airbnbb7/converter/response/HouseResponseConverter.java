@@ -6,7 +6,7 @@ import com.example.airbnbb7.db.repository.FeedbackRepository;
 import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.dto.response.HouseResponse;
-import com.example.airbnbb7.dto.response.ProfileBookingHouseResponse;
+import com.example.airbnbb7.dto.response.ProfileHouseResponse;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -44,11 +44,11 @@ public class HouseResponseConverter {
         houseResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())));
         return houseResponse;
     }
-    public ProfileBookingHouseResponse view(House house) {
+    public ProfileHouseResponse view(House house) {
         if (house == null) {
             return null;
         }
-        ProfileBookingHouseResponse houseResponse = new ProfileBookingHouseResponse();
+        ProfileHouseResponse houseResponse = new ProfileHouseResponse();
         houseResponse.setId(house.getId());
         houseResponse.setPrice(house.getPrice());
         houseResponse.setTitle(house.getTitle());

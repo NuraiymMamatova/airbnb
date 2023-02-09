@@ -26,7 +26,7 @@ public class ProfileResponse {
 
     private Long onModerationSize;
 
-    private List<ProfileBookingHouseResponse> bookings;
+    private List<ProfileHouseResponse> bookings;
 
     public ProfileResponse(Long id, String profileName, String profileContact) {
         this.id = id;
@@ -34,7 +34,7 @@ public class ProfileResponse {
         this.profileContact = profileContact;
     }
 
-    public void addBookings(ProfileBookingHouseResponse profileBookingHouseResponse) {
+    public void addBookings(ProfileHouseResponse profileBookingHouseResponse) {
         if (bookings == null) bookings = new ArrayList<>();
         bookings.add(profileBookingHouseResponse);
     }

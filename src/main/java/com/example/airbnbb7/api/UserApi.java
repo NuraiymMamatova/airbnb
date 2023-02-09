@@ -27,8 +27,9 @@ public class UserApi {
                                        @RequestParam(name = "houseSorting", required = false)String houseSorting,
                                        @RequestParam(name = "sortingHousesByValue", required = false)String sortingHousesByValue,
                                        @RequestParam(name = "sortingHousesByRating", required = false)String sortingHousesByRating,
+                                       @RequestParam(name = "paginationSize")int paginationSize,
                                        Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return userService.userProfile(mainInUserProfile, houseSorting, sortingHousesByValue, sortingHousesByRating, user.getId());
+        return userService.userProfile(mainInUserProfile, houseSorting, sortingHousesByValue, sortingHousesByRating, user.getId(),paginationSize);
     }
 }

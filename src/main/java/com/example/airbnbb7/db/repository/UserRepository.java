@@ -38,15 +38,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select new com.example.airbnbb7.dto.response.UserResponseForVendor(f.user.id, f.user.name, f.user.email, f.user.image, f.addedHouseToFavorites) from FavoriteHouse f where f.house.id = :houseId")
     List<UserResponseForVendor> inFavorite(Long houseId);
 
-    @Query("SELECT new com.example.airbnbb7.dto.response.ProfileResponse(u.id, u.name, u.email) " +
-            "FROM User u LEFT JOIN Booking b ON u.id = b.user.id " +
-            "LEFT JOIN Announcement a ON u.id = a.user.id " +
-            "LEFT JOIN Moderation m ON a.id = m.announcement.id " +
-            "WHERE u.id = :userId " +
-            "GROUP BY u.id")
-    ProfileResponse houseSortingProfileResponseByUserId(@Param("userId") Long userId);
-
-    @Query("SELECT h FROM House h WHERE h.rating BETWEEN :minRating AND :maxRating")
-    List<House> findHousesByRating(@Param("minRating") int minRating, @Param("maxRating") int maxRating);
-
 }
