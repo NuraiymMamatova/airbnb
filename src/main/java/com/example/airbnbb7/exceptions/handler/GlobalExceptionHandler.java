@@ -40,4 +40,13 @@ public class GlobalExceptionHandler {
                 e.getClass().getSimpleName(),
                 e.getMessage());
     }
+
+    @ExceptionHandler(Exception.class)
+    public ExceptionResponse handle(Exception ex) {
+        if (ex instanceof NullPointerException) {
+            return new ExceptionResponse(HttpStatus.BAD_REQUEST, ex.getClass().getSimpleName(), ex.getMessage());
+        }
+        return new ExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getClass().getSimpleName(), ex.getMessage());
+    }
+
 }
