@@ -32,8 +32,8 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.title," +
             "h.descriptionOfListing," +
             "h.maxOfGuests," +
-            "h.houseType,h.isFavorite) from House h where upper(h.title) like concat('%',:pagination, '%') or h.title like concat('%',:search,'%') or h.location.region like concat('%',:search,'%') or h.location.townOrProvince like concat('%',:search,'%') or h.location.address like concat('%',:search,'%')")
-    List<HouseResponseSortedPagination> pagination(@Param("pagination") String pagination,String search, Pageable pageable);
+            "h.houseType,h.isFavorite) from House h where upper(h.title) like upper(concat('%',:search, '%')) or upper(h.location.region) like  upper(concat('%',:search,'%')) or upper( h.location.townOrProvince) like upper( concat('%',:search,'%')) or upper( h.location.address) like upper( concat('%',:search,'%'))")
+    List<HouseResponseSortedPagination> pagination(String search, Pageable pageable);
 
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
             "h.price," +
@@ -59,4 +59,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.maxOfGuests," +
             "h.houseType,h.isFavorite) from House h where h.location.region = :region ")
     List<HouseResponseSortedPagination> regionHouses(String region, Pageable pageable);
+
+    @Query("select count(h) from House h where h.location.region = :region")
+    Long count(String region);
 }

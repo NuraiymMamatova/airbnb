@@ -4,6 +4,7 @@ import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
+import com.example.airbnbb7.dto.response.ApplicationResponse;
 import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,15 +44,19 @@ public class HouseApi {
     }
 
     @GetMapping("/pagination")
-    @Operation(summary = "House get all pagination", description = "This is get all pagination for houses")
-    public List<HouseResponseSortedPagination> findAllHousesPage(@RequestParam(name = "sortOrFilter", required = false) String fieldToSort,
-                                                                 @RequestParam(name = "text", required = false) String text,
-                                                                 @RequestParam int page,
-                                                                 @RequestParam int size,
-                                                                 @RequestParam(name = "priceSort", required = false) String priceSort,
-                                                                 @RequestParam(name = "region", required = false) String region,
-                                                                 @RequestParam(name = "houseType", required = false) HouseType houseType) {
-        return houseService.getAllPagination(houseType, fieldToSort, text, page, size, priceSort, region);
+    @Operation(summary = "House get all pagination", description = "sortOrFilter: write for priceSort = (homePrice) || choose with filter for houseType ||" +
+            "homePrice : High to low or Low to high" +
+            "page : how many pages do you want" +
+            "size : how many houses on the page do you want" +
+            "region : region must start with upper case letter")
+    public ApplicationResponse findAllHousesPage(@RequestParam(name = "sortOrFilter", required = false) String fieldToSort,
+                                                 @RequestParam(name = "text", required = false) String text,
+                                                 @RequestParam int page,
+                                                 @RequestParam int size,
+                                                 @RequestParam(name = "priceSort", required = false) String priceSort,
+                                                 @RequestParam(name = "region", required = false) String region,
+                                                 @RequestParam(name = "houseType", required = false) HouseType houseType) {
+        return houseService.getAllPagination(text,houseType,fieldToSort,page,size,priceSort,region);
     }
 
     @GetMapping("/announcement/{houseId}")

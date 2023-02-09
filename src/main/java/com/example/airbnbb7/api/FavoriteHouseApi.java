@@ -18,12 +18,15 @@ public class FavoriteHouseApi {
     private final FavoriteHouseService favoriteHouseService;
 
     @PostMapping("/{houseId}")
+    @Operation(summary = "SAVE FAVORITE HOUSE", description = "to houseId you must write house id that you want add to favorite" +
+            "if you click you can add House to favorite," +
+            "if you click another one you can put away House from Favorite")
     public void saveFavorite(@PathVariable Long houseId) {
         favoriteHouseService.saveFavoriteHouse(houseId);
     }
 
     @GetMapping
-    @Operation(summary = "get all favorite house", description = " this is get all favorite by userId")
+    @Operation(summary = "GET ALL FAVORITE HOUSE", description = "This endpoint answer that get all house which you add to favorite")
     public List<HouseResponseSortedPagination> getAllFavoriteByUserId() {
         return favoriteHouseService.getAllFavoriteHouseByUserId();
     }

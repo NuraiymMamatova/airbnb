@@ -87,14 +87,15 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public List<HouseResponseSortedPagination> getAllPagination(String search,HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region) {
+    public ApplicationResponse getAllPagination(String search,HouseType houseType, String fieldToSort, int page, int countOfHouses, String priceSort, String region) {
+        ApplicationResponse applicationResponse = new ApplicationResponse();
         Pageable pageable = PageRequest.of(page - 1, countOfHouses);
         String text;
-        if (nameOfHouse == null)
+        if (search == null)
             text = "";
-        else text = nameOfHouse;
+        else text = search;
         List<House> houses = houseRepository.findAll();
-        List<HouseResponseSortedPagination> houseResponses = houseRepository.pagination(search,text, pageable);
+        List<HouseResponseSortedPagination> houseResponses = houseRepository.pagination(text, pageable);
         List<HouseResponseSortedPagination> sortedHouseResponse = sort(pageable, houseType, region, priceSort, fieldToSort, houseResponses);
         for (HouseResponseSortedPagination response : sortedHouseResponse) {
             Long index = response.getId() - 1;
@@ -109,7 +110,10 @@ public class HouseServiceImpl implements HouseService {
                 response.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(response.getId())));
             }
         }
-        return sortedHouseResponse;
+        applicationResponse.setPage((long)(page));
+        applicationResponse.setCountOfRegion(houseRepository.count(region));
+        applicationResponse.setPaginationList(sortedHouseResponse);
+        return applicationResponse;
     }
 
     public List<HouseResponseSortedPagination> sort(Pageable pageable, HouseType houseType, String region, String priceSort, String fieldToSort, List<HouseResponseSortedPagination> sortedHouseResponse) {
