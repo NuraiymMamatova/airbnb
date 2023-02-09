@@ -42,7 +42,7 @@ public class House {
     @Column(nullable = false)
     private Long maxOfGuests;
 
-    private Long countOfBookedUser;
+    private Long bookings;
 
     private HouseType houseType;
 
