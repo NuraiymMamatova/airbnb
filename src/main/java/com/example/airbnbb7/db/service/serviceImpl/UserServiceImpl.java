@@ -1,6 +1,7 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.config.jwt.JwtTokenUtil;
+import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.repository.RoleRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
@@ -65,15 +66,16 @@ public class UserServiceImpl implements UserService {
         FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
 
         User user;
+
         if (userRepository.findByEmail(firebaseToken.getEmail()).isEmpty()) {
             user = new User();
-            user.addRole(roleRepository.findByName("USER"));
+            Role role = roleRepository.findByName("USER");
+            role.addUser(user);
+            user.addRole(role);
             user.setPassword(passwordEncoder.encode(firebaseToken.getEmail()));
             user.setName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
-            setEmail(user.getEmail());
-            setId(user.getId());
-            userRepository.save(user);
+            roleRepository.save(role);
 
         }
 
