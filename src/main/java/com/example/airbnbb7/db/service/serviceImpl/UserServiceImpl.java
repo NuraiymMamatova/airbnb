@@ -1,6 +1,7 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.config.jwt.JwtTokenUtil;
+import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.entities.Booking;
@@ -13,7 +14,7 @@ import com.example.airbnbb7.db.repository.RoleRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
-import com.example.airbnbb7.dto.response.*;
+import com.example.airbnbb7.dto.response.LoginResponse;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -84,13 +85,14 @@ public class UserServiceImpl implements UserService {
         User user;
         if (userRepository.findByEmail(firebaseToken.getEmail()).isEmpty()) {
             user = new User();
-            user.addRole(roleRepository.findByName("USER"));
+            Role role = roleRepository.findByName("USER");
+            role.addUser(user);
+            user.addRole(role);
             user.setPassword(passwordEncoder.encode(firebaseToken.getEmail()));
             user.setName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
-            setEmail(user.getEmail());
-            setId(user.getId());
-            userRepository.save(user);
+            roleRepository.save(role);
+
         }
 
         user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!", firebaseToken.getEmail())));
