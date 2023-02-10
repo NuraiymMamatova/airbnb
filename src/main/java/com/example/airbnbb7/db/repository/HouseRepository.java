@@ -57,12 +57,5 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.houseType,h.isFavorite) from House h where h.location.region = :region ")
     List<HouseResponseSortedPagination> regionHouses(String region, Pageable pageable);
 
-    @Query("select new com.example.airbnbb7.dto.response.ProfileHouseResponse(h.id," +
-            "h.price," +
-            "h.title," +
-            "h.descriptionOfListing," +
-            "h.maxOfGuests," +
-            "h.houseType," +
-            "h.isFavorite) from House h where h.id = :profileHouseResponses")
-    List<ProfileHouseResponse> profilePagination(Pageable pageable, List<ProfileHouseResponse> profileHouseResponses);
+
 }

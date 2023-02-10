@@ -22,6 +22,6 @@ public interface UserService extends UserDetailsService {
 
     String getEmail();
 
-    ProfileResponse userProfile(String mainInUserProfile, String houseSorting, String sortingHousesByValue, String sortingHousesByRating, Long userId, int paginationSize);
+    ProfileResponse userProfile(String mainInUserProfile, String houseSorting, String sortingHousesByValue, String sortingHousesByRating, Long userId, int page, int size);
 
 }

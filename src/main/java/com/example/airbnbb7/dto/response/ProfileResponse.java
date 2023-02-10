@@ -34,9 +34,9 @@ public class ProfileResponse {
         this.profileContact = profileContact;
     }
 
-    public void addBookings(ProfileHouseResponse profileBookingHouseResponse) {
+    public void addBookings(ProfileHouseResponse profileHouseResponse) {
         if (bookings == null) bookings = new ArrayList<>();
-        bookings.add(profileBookingHouseResponse);
+        bookings.add(profileHouseResponse);
     }
 
 }

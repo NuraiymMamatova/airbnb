@@ -1,16 +1,16 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.config.jwt.JwtTokenUtil;
+import com.example.airbnbb7.converter.response.HouseResponseConverter;
+import com.example.airbnbb7.db.customClass.Rating;
+import com.example.airbnbb7.db.entities.Booking;
+import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HousesStatus;
-import com.example.airbnbb7.db.repository.FeedbackRepository;
-import com.example.airbnbb7.db.repository.HouseRepository;
-import com.example.airbnbb7.db.repository.RoleRepository;
-import com.example.airbnbb7.db.repository.UserRepository;
+import com.example.airbnbb7.db.repository.*;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
-import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import com.example.airbnbb7.dto.response.LoginResponse;
 import com.example.airbnbb7.dto.response.ProfileHouseResponse;
 import com.example.airbnbb7.dto.response.ProfileResponse;
@@ -25,9 +25,9 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,6 +37,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +61,9 @@ public class UserServiceImpl implements UserService {
 
     private String email;
     private final FeedbackRepository feedbackRepository;
+
+    private final BookingRepository bookingRepository;
+
     private final HouseRepository houseRepository;
 
     public String getEmail() {
@@ -139,12 +145,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ProfileResponse userProfile(String mainInUserProfile, String houseSorting, String sortingHousesByValue, String sortingHousesByRating, Long userId, int paginationSize) {
+    public ProfileResponse userProfile(String mainInUserProfile, String houseSorting, String sortingHousesByValue, String sortingHousesByRating, Long userId, int page, int size) {
         houseSorting = (houseSorting != null) ? houseSorting : " ";
         sortingHousesByValue = (sortingHousesByValue != null) ? sortingHousesByValue : " ";
         sortingHousesByRating = (sortingHousesByRating != null) ? sortingHousesByRating : " ";
+        Pageable pageable = PageRequest.of(page - 1, size);
         ProfileResponse profileResponse = new ProfileResponse(userId, userRepository.findById(userId).get().getName(), userRepository.findById(userId).get().getEmail());
-        profileResponse.setBookings(profilePagination(paginationSize, profileResponse));
         profileResponse.setBookingsSize((long) userRepository.findById(userId).get().getBookings().size());
         profileResponse.setMyAnnouncementSize((long) userRepository.findById(userId).get().getAnnouncements().size());
         Long counter = 0L;
@@ -165,11 +171,11 @@ public class UserServiceImpl implements UserService {
                 return profileResponse;
             }
             case "My announcement" -> {
-                ProfileResponse profileBookingHouseResponse = star(houseSorting, sortingHousesByValue, sortingHousesByRating, userId, paginationSize);
+                ProfileResponse profileBookingHouseResponse = star(houseSorting, sortingHousesByValue, sortingHousesByRating, userId);
                 profileBookingHouseResponse.setBookingsSize(profileResponse.getBookingsSize());
                 profileBookingHouseResponse.setOnModerationSize(profileResponse.getOnModerationSize());
                 profileBookingHouseResponse.setMyAnnouncementSize(profileResponse.getMyAnnouncementSize());
-                profileBookingHouseResponse.setBookings(profilePagination(paginationSize, profileResponse));
+                profileBookingHouseResponse.setBookings(getProfileHouseResponse(page, size, profileBookingHouseResponse.getBookings()));
                 return profileBookingHouseResponse;
             }
             case "On moderation" -> {
@@ -178,6 +184,7 @@ public class UserServiceImpl implements UserService {
                         profileResponse.addBookings(houseResponseConverter.view(house));
                     }
                 }
+                profileResponse.setBookings(getProfileHouseResponse(page, size, profileResponse.getBookings()));
                 return profileResponse;
             }
             default -> {
@@ -186,9 +193,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private ProfileResponse houseType(String houseSorting, Long userId, int paginationSize) {
+    private ProfileResponse houseType(String houseSorting, Long userId) {
         ProfileResponse profileResponse = new ProfileResponse(userId, userRepository.findById(userId).get().getName(), userRepository.findById(userId).get().getEmail());
-        profileResponse.setBookings(profilePagination(paginationSize, profileResponse));
         switch (houseSorting) {
             case "In wish list" -> {
                 for (House house : userRepository.findById(userId).get().getAnnouncements()) {
@@ -220,14 +226,15 @@ public class UserServiceImpl implements UserService {
         return profileResponse;
     }
 
-    private ProfileResponse price(String houseSorting, String sortingHousesByValue, Long userId, int paginationSize) {
-        ProfileResponse profileResponse = houseType(houseSorting, userId, paginationSize);
-        profileResponse.setBookings(profilePagination(paginationSize, profileResponse));
+    private ProfileResponse price(String houseSorting, String sortingHousesByValue, Long userId) {
+        ProfileResponse profileResponse = houseType(houseSorting, userId);
         switch (sortingHousesByValue) {
-            case "Low to high" ->
-                    profileResponse.getBookings().sort(Comparator.comparing(ProfileHouseResponse::getPrice));
-            case "High to low" ->
-                    profileResponse.getBookings().sort(Comparator.comparing(ProfileHouseResponse::getPrice).reversed());
+            case "Low to high" -> {
+                profileResponse.getBookings().sort(Comparator.comparing(ProfileHouseResponse::getPrice));
+            }
+            case "High to low" -> {
+                profileResponse.getBookings().sort(Comparator.comparing(ProfileHouseResponse::getPrice).reversed());
+            }
             default -> {
                 return profileResponse;
             }
@@ -235,11 +242,9 @@ public class UserServiceImpl implements UserService {
         return profileResponse;
     }
 
-    private ProfileResponse star(String houseSorting, String sortingHousesByValue, String sortingHousesByRating, Long userId, int paginationSize) {
-        ProfileResponse profileResponse1 = price(houseSorting, sortingHousesByValue, userId, paginationSize);
+    private ProfileResponse star(String houseSorting, String sortingHousesByValue, String sortingHousesByRating, Long userId) {
+        ProfileResponse profileResponse1 = price(houseSorting, sortingHousesByValue, userId);
         ProfileResponse profileResponse = new ProfileResponse(profileResponse1.getId(), profileResponse1.getProfileName(), profileResponse1.getProfileContact());
-        profileResponse.setBookings(profilePagination(paginationSize, profileResponse));
-        profileResponse1.setBookings(profilePagination(paginationSize, profileResponse));
         switch (sortingHousesByRating) {
             case "One" -> {
                 for (ProfileHouseResponse house : profileResponse1.getBookings()) {
@@ -292,8 +297,17 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private List<ProfileHouseResponse> profilePagination(int page, ProfileResponse profileResponse) {
-        Pageable pageable = PageRequest.of(page - 1, 2);
-        return houseRepository.profilePagination(pageable,profileResponse);
+    public List<ProfileHouseResponse> getProfileHouseResponse(int page, int size, List<ProfileHouseResponse> profileHouseResponses) {
+        int startItem = page * size;
+        List<ProfileHouseResponse> list;
+
+        if (profileHouseResponses.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + size, profileHouseResponses.size());
+            list = profileHouseResponses.subList(startItem, toIndex);
+        }
+
+        return list;
     }
 }

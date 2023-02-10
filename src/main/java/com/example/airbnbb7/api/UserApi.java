@@ -24,12 +24,13 @@ public class UserApi {
     @Operation(summary = "User Profile", description = "With this method, you can see your houses and booked houses. Houses that are already being checked by the administrator." +
             "houseSorting = houseType, sortingHousesByValue = price, sortingHousesByRating = rating")
     public ProfileResponse userProfile(@RequestParam(name = "mainInUserProfile", required = false) String mainInUserProfile,
-                                       @RequestParam(name = "houseSorting", required = false)String houseSorting,
-                                       @RequestParam(name = "sortingHousesByValue", required = false)String sortingHousesByValue,
-                                       @RequestParam(name = "sortingHousesByRating", required = false)String sortingHousesByRating,
-                                       @RequestParam(name = "paginationSize")int paginationSize,
+                                       @RequestParam(name = "houseSorting", required = false) String houseSorting,
+                                       @RequestParam(name = "sortingHousesByValue", required = false) String sortingHousesByValue,
+                                       @RequestParam(name = "sortingHousesByRating", required = false) String sortingHousesByRating,
+                                       @RequestParam(name = "page") int page,
+                                       @RequestParam(name = "size") int size,
                                        Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return userService.userProfile(mainInUserProfile, houseSorting, sortingHousesByValue, sortingHousesByRating, user.getId(),paginationSize);
+        return userService.userProfile(mainInUserProfile, houseSorting, sortingHousesByValue, sortingHousesByRating, user.getId(), page,size);
     }
 }
