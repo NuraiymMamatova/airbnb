@@ -1,10 +1,6 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.config.jwt.JwtTokenUtil;
-import com.example.airbnbb7.converter.response.HouseResponseConverter;
-import com.example.airbnbb7.db.customClass.Rating;
-import com.example.airbnbb7.db.entities.Booking;
-import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HousesStatus;
@@ -19,6 +15,7 @@ import com.example.airbnbb7.dto.response.LoginResponse;
 import com.example.airbnbb7.dto.response.ProfileHouseResponse;
 import com.example.airbnbb7.dto.response.ProfileResponse;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
+import com.example.airbnbb7.exceptions.ExceptionResponse;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -28,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,8 +37,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -82,8 +78,13 @@ public class UserServiceImpl implements UserService {
         FirebaseApp firebaseApp = FirebaseApp.initializeApp(firebaseOptions);
     }
 
-    public LoginResponse authWithGoogle(String tokenId) throws FirebaseAuthException {
-        FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
+    public LoginResponse authWithGoogle(String tokenId) {
+        FirebaseToken firebaseToken;
+        try {
+            firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
+        } catch (FirebaseAuthException firebaseAuthException) {
+            throw new ExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, firebaseAuthException.getClass().getSimpleName(), firebaseAuthException.getMessage());
+        }
 
         User user;
         if (userRepository.findByEmail(firebaseToken.getEmail()).isEmpty()) {
