@@ -4,7 +4,6 @@ import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.db.service.serviceImpl.UserServiceImpl;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
-import com.google.firebase.auth.FirebaseAuthException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

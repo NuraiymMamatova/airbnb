@@ -16,13 +16,13 @@ import java.util.Optional;
 
 public interface HouseRepository extends JpaRepository<House, Long> {
 
-    @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.id, h.countOfBookedUser, h.title, h.price) from House h order by h.dateHouseCreated desc")
+    @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.id, h.bookings, h.title, h.price) from House h order by h.dateHouseCreated desc")
     List<AccommodationResponse> getLatestAccommodation();
 
-    @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.id, h.countOfBookedUser, h.title, h.descriptionOfListing) from House h where h.houseType = 1 and h.countOfBookedUser = (select max(h.countOfBookedUser) from House h where h.houseType = 1)")
+    @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.id, h.bookings, h.title, h.descriptionOfListing) from House h where h.houseType = 1 and h.bookings = (select max(h.bookings) from House h where h.houseType = 1)")
     List<AccommodationResponse> getPopularHouse();
 
-    @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.id, h.countOfBookedUser, h.title, h.descriptionOfListing) from House h where h.houseType = 0 and h.countOfBookedUser = (select max(h.countOfBookedUser) from House h where h.houseType = 0)")
+    @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.id, h.bookings, h.title, h.descriptionOfListing) from House h where h.houseType = 0 and h.bookings = (select max(h.bookings) from House h where h.houseType = 0)")
     List<AccommodationResponse> getPopularApartment();
 
     @Query("select new com.example.airbnbb7.dto.response.AnnouncementResponseForVendor(h.id, h.title, h.descriptionOfListing, h.maxOfGuests, h.houseType) from House h where h.id = :houseId")
