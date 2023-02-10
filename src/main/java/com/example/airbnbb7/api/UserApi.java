@@ -22,7 +22,8 @@ public class UserApi {
 
     @GetMapping
     @Operation(summary = "User Profile", description = "With this method, you can see your houses and booked houses. Houses that are already being checked by the administrator." +
-            "houseSorting = houseType, sortingHousesByValue = price, sortingHousesByRating = rating")
+            " sorted (houseSorting = houseType, sortingHousesByValue = price, sortingHousesByRating = rating)" +
+            " Pagination(page = how many pages should be on a sheet, size = and how many objects should be on one page")
     public ProfileResponse userProfile(@RequestParam(name = "mainInUserProfile", required = false) String mainInUserProfile,
                                        @RequestParam(name = "houseSorting", required = false) String houseSorting,
                                        @RequestParam(name = "sortingHousesByValue", required = false) String sortingHousesByValue,
@@ -31,6 +32,6 @@ public class UserApi {
                                        @RequestParam(name = "size") int size,
                                        Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return userService.userProfile(mainInUserProfile, houseSorting, sortingHousesByValue, sortingHousesByRating, user.getId(), page,size);
+        return userService.userProfile(mainInUserProfile, houseSorting, sortingHousesByValue, sortingHousesByRating, user.getId(), page, size);
     }
 }

@@ -1,17 +1,13 @@
 package com.example.airbnbb7.db.repository;
 
 import com.example.airbnbb7.db.entities.FavoriteHouse;
-import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.service.serviceImpl.UserServiceImpl;
-import com.example.airbnbb7.dto.response.HouseResponse;
-import com.example.airbnbb7.dto.response.ProfileResponse;
 import com.example.airbnbb7.dto.response.UserResponse;
 import com.example.airbnbb7.dto.response.UserResponseForVendor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
