@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface HouseService {
 
-    HouseResponse deleteByIdHouse(Long houseId);
+    HouseResponse deleteByIdHouse(Long houseId, Long userId);
 
     HouseResponse save(HouseRequest houseRequest, User user);
 
-    HouseResponse updateHouse(Long id, HouseRequest houseRequest);
+    HouseResponse updateHouse(Long id, Long userId, HouseRequest houseRequest);
 
     List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region);
 

@@ -10,6 +10,7 @@ import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,7 @@ public class HouseApi {
 
     @PostMapping
     @Operation(summary = "Save house", description = "Save house and location")
+    @PreAuthorize("hasRole('USER')")
     public HouseResponse saveHouse(@RequestBody HouseRequest houseRequest, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return houseService.save(houseRequest, user);
@@ -33,15 +35,18 @@ public class HouseApi {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update House", description = "Update house by id")
+    @PreAuthorize("hasRole('USER')")
     public HouseResponse updateHouse(@PathVariable Long id,
-                                     @RequestBody HouseRequest houseRequest) {
-        return houseService.updateHouse(id, houseRequest);
+                                     @RequestBody HouseRequest houseRequest, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return houseService.updateHouse(id, user.getId(), houseRequest);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete House", description = "Delete house by id")
-    public HouseResponse deleteHouseById(@PathVariable Long id) {
-        return houseService.deleteByIdHouse(id);
+    public HouseResponse deleteHouseById(@PathVariable Long id, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return houseService.deleteByIdHouse(id, user.getId());
     }
 
     @GetMapping("/pagination")

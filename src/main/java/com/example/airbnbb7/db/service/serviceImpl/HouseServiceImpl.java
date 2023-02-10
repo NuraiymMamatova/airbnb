@@ -18,6 +18,7 @@ import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -47,17 +48,29 @@ public class HouseServiceImpl implements HouseService {
 
     private final FeedbackRepository feedbackRepository;
 
+    private final FavoriteHouseRepository favoriteHouseRepository;
+
     @Override
-    public HouseResponse deleteByIdHouse(Long houseId) {
+    public HouseResponse deleteByIdHouse(Long houseId, Long userId) {
         House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House id not found"));
-        houseRepository.delete(house);
+        if (house.getOwner().getId() == userId || roleRepository.findRoleByUserId(userId).getId() == 1) {
+            favoriteHouseRepository.deleteAll(favoriteHouseRepository.getAllFavoriteHouseByHouseId(houseId));
+            houseRepository.delete(house);
+        } else {
+            throw new BadCredentialsException("You can't delete this announcement because it's not your announcement");
+        }
         return houseResponseConverter.viewHouse(house);
     }
 
     @Override
-    public HouseResponse updateHouse(Long id, HouseRequest houseRequest) {
+    public HouseResponse updateHouse(Long id, Long userId, HouseRequest houseRequest) {
         House house = houseRepository.findById(id).orElseThrow(() -> new NotFoundException("House id not found"));
-        houseRequestConverter.update(house, houseRequest);
+        if (house.getOwner().getId() == userId) {
+            house.setHousesStatus(HousesStatus.ON_MODERATION);
+            houseRequestConverter.update(house, houseRequest);
+        } else {
+            throw new BadCredentialsException("You can't update this announcement because it's not your announcement");
+        }
         return houseResponseConverter.viewHouse(houseRepository.save(house));
     }
 
