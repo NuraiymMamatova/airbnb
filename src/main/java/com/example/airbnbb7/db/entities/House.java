@@ -54,10 +54,10 @@ public class House {
 
     private boolean isFavorite = false;
 
-    @OneToOne(cascade = {MERGE, REFRESH, DETACH}, fetch = EAGER)
+    @OneToOne(cascade = ALL, fetch = EAGER, mappedBy = "house")
     private Location location;
 
-    @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")
+    @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house", fetch = LAZY)
     private List<Booking> bookingDates;
 
     @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")

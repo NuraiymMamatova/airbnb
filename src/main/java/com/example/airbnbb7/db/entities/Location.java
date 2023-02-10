@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 import static javax.persistence.CascadeType.*;
+import static javax.persistence.FetchType.EAGER;
 
 @Entity
 @Setter
@@ -29,7 +30,7 @@ public class Location {
 
     private String region;
 
-    @OneToOne(cascade = ALL, mappedBy = "location")
+    @OneToOne(cascade = ALL, fetch = EAGER)
     private House house;
 
     public Location(String townOrProvince, String address, String region) {
