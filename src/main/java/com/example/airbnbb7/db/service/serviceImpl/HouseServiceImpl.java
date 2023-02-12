@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -247,4 +248,24 @@ public class HouseServiceImpl implements HouseService {
         }
         return globalHouses;
     }
+
+    public List<HouseResponseSortedPagination> searchNearby(String location) {
+        String[] words = location.toUpperCase().split(" ");
+        System.out.println(Arrays.toString(words));
+        List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>();
+        for (String word : words) {
+            houseResponseSortedPaginations.addAll(houseRepository.searchNearby(word));
+        }
+        System.out.println(houseResponseSortedPaginations);
+        if (houseResponseSortedPaginations != null) {
+            System.out.println("not nulllll");
+            for (HouseResponseSortedPagination house : houseResponseSortedPaginations) {
+                house.setImages(houseRepository.findImagesByHouseId(house.getId()));
+                house.setLocationResponse(locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+            }
+            System.out.println("after for");
+        }
+        return houseResponseSortedPaginations;
+    }
+
 }

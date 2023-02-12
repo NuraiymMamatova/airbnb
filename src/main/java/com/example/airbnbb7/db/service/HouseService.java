@@ -20,4 +20,7 @@ public interface HouseService {
     AnnouncementService getAnnouncementById(Long houseId);
 
     List<HouseResponse> globalSearch(String searchEngine);
+
+    List<HouseResponseSortedPagination> searchNearby(String location);
+
 }

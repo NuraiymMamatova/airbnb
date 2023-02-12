@@ -65,4 +65,10 @@ public class HouseApi {
     public List<HouseResponse> search(@RequestParam("search") String search) {
         return houseService.globalSearch(search);
     }
+
+    @GetMapping("/searchNearby")
+    @Operation(summary = "Houses search nearby", description = "Any user can go through to view the houses")
+    public List<HouseResponseSortedPagination> searchNearby(@RequestParam String location) {
+        return houseService.searchNearby(location);
+    }
 }

@@ -59,4 +59,8 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.maxOfGuests," +
             "h.houseType,h.isFavorite) from House h where h.location.region = :region ")
     List<HouseResponseSortedPagination> regionHouses(String region, Pageable pageable);
+
+    @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id, h.price, h.title, h.descriptionOfListing, h.maxOfGuests, h.houseType, h.isFavorite) from House h where upper(h.location.townOrProvince) like :word or upper(h.location.address) like :word or upper(h.location.region) like :word")
+    List<HouseResponseSortedPagination> searchNearby(String word);
+
 }
