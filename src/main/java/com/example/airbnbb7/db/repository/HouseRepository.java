@@ -5,6 +5,7 @@ import com.example.airbnbb7.dto.response.AnnouncementResponseForAdmin;
 import com.example.airbnbb7.dto.response.AnnouncementResponseForUser;
 import com.example.airbnbb7.dto.response.AnnouncementResponseForVendor;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -40,6 +41,14 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.title," +
             "h.descriptionOfListing," +
             "h.maxOfGuests," +
+            "h.houseType,h.isFavorite) from House h")
+    List<HouseResponseSortedPagination> getAllResponse(Pageable pageable);
+
+    @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
+            "h.price," +
+            "h.title," +
+            "h.descriptionOfListing," +
+            "h.maxOfGuests," +
             "h.houseType,h.isFavorite) from House h where h.houseType = 1 ")
     List<HouseResponseSortedPagination> getAllHouses(Pageable pageable);
 
@@ -62,4 +71,5 @@ public interface HouseRepository extends JpaRepository<House, Long> {
 
     @Query("select count(h) from House h where h.location.region = :region")
     Long count(String region);
+
 }

@@ -16,7 +16,7 @@ public interface HouseService {
 
     SimpleResponse updateHouse(Long id, HouseRequest houseRequest);
 
-    ApplicationResponse getAllPagination(String search, HouseType houseType, String fieldToSort, int page, int countOfHouses, String priceSort, String region);
+    ApplicationResponse getAllPagination(HouseType houseType, String filter, String nameOfHouse, int page, int countOfHouses, String region);
 
     AnnouncementService getAnnouncementById(Long houseId);
 

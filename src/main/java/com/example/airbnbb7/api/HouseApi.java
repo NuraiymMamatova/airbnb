@@ -45,19 +45,18 @@ public class HouseApi {
     }
 
     @GetMapping("/pagination")
-    @Operation(summary = "House get all pagination", description = "sortOrFilter: write for priceSort = (homePrice) || choose with filter for houseType ||" +
+    @Operation(summary = "House get all pagination", description = "filter: write for priceSort = (homePrice) || choose with filter for houseType ||" +
             "homePrice : High to low or Low to high" +
             "page : how many pages do you want" +
             "size : how many houses on the page do you want" +
             "region : region must start with upper case letter")
-    public ApplicationResponse findAllHousesPage(@RequestParam(name = "sortOrFilter", required = false) String fieldToSort,
+    public ApplicationResponse findAllHousesPage(@RequestParam(name = "filter", required = false) String fieldToFilter,
                                                  @RequestParam(name = "text", required = false) String text,
                                                  @RequestParam int page,
                                                  @RequestParam int size,
-                                                 @RequestParam(name = "priceSort", required = false) String priceSort,
                                                  @RequestParam(name = "region", required = false) String region,
                                                  @RequestParam(name = "houseType", required = false) HouseType houseType) {
-        return houseService.getAllPagination(text,houseType,fieldToSort,page,size,priceSort,region);
+        return houseService.getAllPagination(houseType, fieldToFilter, text,page,size,region);
     }
 
     @GetMapping("/announcement/{houseId}")

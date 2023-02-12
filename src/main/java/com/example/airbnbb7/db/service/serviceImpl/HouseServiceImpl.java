@@ -4,10 +4,7 @@ import com.example.airbnbb7.converter.request.HouseRequestConverter;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.customClass.SimpleResponse;
-import com.example.airbnbb7.db.entities.Booking;
-import com.example.airbnbb7.db.entities.House;
-import com.example.airbnbb7.db.entities.Location;
-import com.example.airbnbb7.db.entities.User;
+import com.example.airbnbb7.db.entities.*;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.*;
@@ -87,50 +84,85 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public ApplicationResponse getAllPagination(String search,HouseType houseType, String fieldToSort, int page, int countOfHouses, String priceSort, String region) {
+    public ApplicationResponse getAllPagination(HouseType houseType, String filter, String search, int page, int countOfHouses, String region) {
         ApplicationResponse applicationResponse = new ApplicationResponse();
         Pageable pageable = PageRequest.of(page - 1, countOfHouses);
-        String text;
+        List<HouseResponseSortedPagination> houseResponses;
         if (search == null)
-            text = "";
-        else text = search;
-        List<House> houses = houseRepository.findAll();
-        List<HouseResponseSortedPagination> houseResponses = houseRepository.pagination(text, pageable);
-        List<HouseResponseSortedPagination> sortedHouseResponse = sort(pageable, houseType, region, priceSort, fieldToSort, houseResponses);
-        for (HouseResponseSortedPagination response : sortedHouseResponse) {
-            Long index = response.getId() - 1;
-            if (index.equals(houses.get(Math.toIntExact(index)).getLocation().getId())) {
-                response.setImages(houses.get(Math.toIntExact(index)).getImages());
-                response.setLocationResponse(locationRepository.convertToResponse(houses.get(Math.toIntExact(index)).getLocation()));
-                response.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(response.getId())));
-            } else {
-                Location location = locationRepository.findById(response.getId()).orElseThrow(() -> new NotFoundException("location not found!"));
-                response.setImages(houses.get(Math.toIntExact(index)).getImages());
-                response.setLocationResponse(locationRepository.convertToResponse(location));
-                response.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(response.getId())));
+            houseResponses = houseRepository.getAllResponse(pageable);
+        else {
+            houseResponses = houseRepository.pagination(search, pageable);
+        }
+        houseResponses.forEach(h -> {
+            House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+            Location location = house.getLocation();
+            h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(),
+                    location.getAddress(), location.getRegion()));
+        });
+
+        houseResponses = sortingHouse(houseResponses, houseType, region);
+        houseResponses.forEach(h -> {
+            House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+            Location location = house.getLocation();
+            h.setImages(house.getImages());
+            h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(),
+                    location.getAddress(), location.getRegion()));
+            h.setHouseRating(rating.getRating(house.getFeedbacks()));
+        });
+        applicationResponse.setPaginationList(houseResponses);
+        applicationResponse.setCountOfRegion(houseRepository.count(region));
+
+        if (filter != null) {
+            switch (filter) {
+                case "Low to high" -> houseResponses.sort(Comparator.comparing(HouseResponseSortedPagination::getPrice));
+                case "High to low" -> houseResponses.sort(Comparator.comparing(HouseResponseSortedPagination::getPrice).reversed());
             }
         }
-        applicationResponse.setPage((long)(page));
-        applicationResponse.setCountOfRegion(houseRepository.count(region));
-        applicationResponse.setPaginationList(sortedHouseResponse);
+
         return applicationResponse;
     }
 
-    public List<HouseResponseSortedPagination> sort(Pageable pageable, HouseType houseType, String region, String priceSort, String fieldToSort, List<HouseResponseSortedPagination> sortedHouseResponse) {
-        switch (fieldToSort) {
+    private List<HouseResponseSortedPagination> sortingHouse(List<HouseResponseSortedPagination> responseSortedPaginationList, HouseType houseType, String region) {
+        List<HouseResponseSortedPagination> responses = responseSortedPaginationList;
+
+        if (houseType != null) {
+            switch (houseType) {
+                case HOUSE -> {
+                    responses = responses.stream().filter(x -> x.getHouseType() == HouseType.HOUSE).toList();
+                }
+                case APARTMENT -> {
+                    responses = responses.stream().filter(x -> x.getHouseType() == HouseType.APARTMENT).toList();
+                }
+            }
+        }
+
+        if (region != null) {
+            responses = responses.stream().filter(x -> x.getLocationResponse().getRegion().equals(region)).toList();
+        }
+
+
+
+        return responses;
+    }
+
+    public List<HouseResponseSortedPagination> sort(Pageable pageable, String sort, List<HouseResponseSortedPagination> sortedHouseResponse) {
+        if (sort.equals("High to low")) {
+            sortedHouseResponse.sort(Comparator.comparing(HouseResponseSortedPagination::getPrice).reversed());
+        } else if (sort.equals("Low to high")) {
+            sortedHouseResponse.sort(Comparator.comparing(HouseResponseSortedPagination::getPrice));
+        }
+        return sortedHouseResponse;
+    }
+
+    public List<HouseResponseSortedPagination> filter(List<HouseResponseSortedPagination> houseResponseSortedPaginationList, String filter, HouseType houseType,
+                                                      String region, Pageable pageable) {
+        switch (filter) {
             case "homeType":
                 return switch (houseType) {
                     case HOUSE -> houseRepository.getAllHouses(pageable);
                     case APARTMENT -> houseRepository.getAllApartments(pageable);
                 };
-            case "homePrice":
-                if (priceSort.equals("High to low")) {
-                    sortedHouseResponse.sort(Comparator.comparing(HouseResponseSortedPagination::getPrice).reversed());
-                } else if (priceSort.equals("Low to high")) {
-                    sortedHouseResponse.sort(Comparator.comparing(HouseResponseSortedPagination::getPrice));
-                }
-                break;
-            case "region":
+            case "region": {
                 switch (region) {
                     case "Bishkek":
                         return houseRepository.regionHouses("Bishkek", pageable);
@@ -149,10 +181,10 @@ public class HouseServiceImpl implements HouseService {
                     case "Jalal-Abat":
                         return houseRepository.regionHouses("Jalal-Abat", pageable);
                 }
+            }
         }
-        return sortedHouseResponse;
+        return houseResponseSortedPaginationList;
     }
-
 
     @Override
     public AnnouncementService getAnnouncementById(Long houseId) {
