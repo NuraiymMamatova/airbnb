@@ -1,5 +1,7 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
+import com.example.airbnbb7.db.service.S3Service;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,7 +14,8 @@ import java.io.IOException;
 import java.util.Map;
 
 @Service
-public class S3ServiceImpl {
+@RequiredArgsConstructor
+public class S3ServiceImpl implements S3Service {
 
     @Autowired
     private S3Client s3;
@@ -20,14 +23,16 @@ public class S3ServiceImpl {
     @Value("${aws.path}")
     private String BUCKET_PATH;
 
-    public Map<String,String> uploadFile(MultipartFile file) throws IOException {
-        String key = System.currentTimeMillis() + file.getOriginalFilename();
+    @Override
+    public Map<String, String> uploadFile(MultipartFile multipartFile) throws IOException {
+        String key = System.currentTimeMillis() + multipartFile.getOriginalFilename();
         PutObjectRequest putObjectAclRequest = PutObjectRequest.builder()
-                        .bucket("airbnb")
+                .bucket("airbnb")
                 .contentType("jpeg")
                 .contentType("png")
-                                .key(key).build();
-        s3.putObject(putObjectAclRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-    return Map.of("link",BUCKET_PATH+key);
+                .key(key).build();
+        s3.putObject(putObjectAclRequest, RequestBody.fromInputStream(multipartFile.getInputStream(), multipartFile.getSize()));
+        return Map.of("link", BUCKET_PATH + key);
     }
 }
+

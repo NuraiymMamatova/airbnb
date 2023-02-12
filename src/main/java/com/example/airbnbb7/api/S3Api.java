@@ -1,7 +1,8 @@
 package com.example.airbnbb7.api;
 
-import com.example.airbnbb7.db.service.serviceImpl.S3ServiceImpl;
-import lombok.AllArgsConstructor;
+import com.example.airbnbb7.db.service.S3Service;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,14 +17,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/file")
+@Tag(name = "S3Client", description = "S3 upload")
 public class S3Api {
-    private final S3ServiceImpl service;
+    private final S3Service service;
 
     @PostMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    private Map<String,String> uploadFile(@RequestParam(name = "file") MultipartFile file) throws IOException {
+    @Operation(summary = "Upload file", description = "Upload photo, video")
+    private Map<String, String> uploadFile(@RequestParam(name = "file") MultipartFile file) throws IOException {
         return service.uploadFile(file);
     }
 }
