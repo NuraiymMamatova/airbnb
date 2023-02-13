@@ -91,28 +91,30 @@ public class HouseServiceImpl implements HouseService {
             Page<HouseResponseSortedPagination> houseResponsePage = houseRepository.getAllResponse(pageable);
             houseResponses = houseResponsePage.getContent();
             applicationResponse.setPageSize(houseResponsePage.getTotalPages());
+            houseResponses.forEach(h -> {
+                House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+                Location location = house.getLocation();
+                h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(),
+                        location.getAddress(), location.getRegion()));
+                h.setHouseRating(rating.getRating(house.getFeedbacks()));
+            });
+
+            houseResponses = sortingHouse(houseResponses, houseType, region);
+            houseResponses.forEach(h -> {
+                House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+                Location location = house.getLocation();
+                h.setImages(house.getImages());
+                h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(),
+                        location.getAddress(), location.getRegion()));
+                h.setHouseRating(rating.getRating(house.getFeedbacks()));
+            });
         } else {
+
             Page<HouseResponseSortedPagination> houseResponsePage = houseRepository.pagination(search, pageable);
             houseResponses = houseResponsePage.getContent();
             applicationResponse.setPageSize(houseResponsePage.getTotalPages());
         }
-        houseResponses.forEach(h -> {
-            House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
-            Location location = house.getLocation();
-            h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(),
-                    location.getAddress(), location.getRegion()));
-            h.setHouseRating(rating.getRating(house.getFeedbacks()));
-        });
 
-        houseResponses = sortingHouse(houseResponses, houseType, region);
-        houseResponses.forEach(h -> {
-            House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
-            Location location = house.getLocation();
-            h.setImages(house.getImages());
-            h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(),
-                    location.getAddress(), location.getRegion()));
-            h.setHouseRating(rating.getRating(house.getFeedbacks()));
-        });
 
         houseResponses = sortHouse(houseResponses, filter);
         applicationResponse.setPage((long) page);

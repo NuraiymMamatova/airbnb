@@ -45,7 +45,7 @@ public class House {
 
     private Long bookings;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     private HouseType houseType;
 
     private HousesStatus housesStatus;

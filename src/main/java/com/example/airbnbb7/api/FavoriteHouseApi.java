@@ -1,5 +1,6 @@
 package com.example.airbnbb7.api;
 
+import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.service.FavoriteHouseService;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
