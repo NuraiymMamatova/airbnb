@@ -19,9 +19,7 @@ public class UserApi {
     private final UserService userService;
 
     @GetMapping
-    @Operation(summary = "User Profile", description = "With this method, you can see your houses and booked houses. Houses that are already being checked by the administrator." +
-            " sorted (houseSorting = houseType, sortingHousesByValue = price, sortingHousesByRating = rating)" +
-            " Pagination(page = how many pages should be on a sheet, size = and how many objects should be on one page")
+    @Operation(summary = "User Profile", description = "With this method, you can see your houses and booked houses. Houses that are already being checked by the administrator.")
     public ProfileResponse userProfile(@RequestParam(name = "mainInUserProfile", required = false) String mainInUserProfile,
                                        @RequestParam(name = "sortHousesAsDesired", required = false) String sortHousesAsDesired,
                                        @RequestParam(name = "sortHousesByApartments", required = false) String sortHousesByApartments,
