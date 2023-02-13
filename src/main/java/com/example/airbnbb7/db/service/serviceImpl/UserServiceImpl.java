@@ -25,7 +25,6 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -60,7 +59,6 @@ public class UserServiceImpl implements UserService {
 
     private String email;
     private final FeedbackRepository feedbackRepository;
-    private final HouseRepository houseRepository;
 
     public String getEmail() {
         return email;
@@ -140,7 +138,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ProfileResponse userProfile(String mainInUserProfile, String sortHousesAsDesired, String sortHousesByApartments, String sortHousesByHouses, String sortingHousesByValue, String sortingHousesByRating, Long userId, int page, int size) {
+    public ProfileResponse userProfile(String mainInUserProfile, String sortHousesAsDesired, String sortHousesByApartments,
+                                       String sortHousesByHouses, String sortingHousesByValue, String sortingHousesByRating, Long userId, int page, int size) {
         sortHousesAsDesired = (sortHousesAsDesired != null) ? sortHousesAsDesired : " ";
         sortHousesByApartments = (sortHousesByApartments != null) ? sortHousesByApartments : " ";
         sortHousesByHouses = (sortHousesByHouses != null) ? sortHousesByHouses : " ";
@@ -196,7 +195,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private ProfileResponse houseType(String sortHousesByApartments, String sortHousesByHouses,String sortHousesAsDesired, Long userId) {
+    private ProfileResponse houseType(String sortHousesByApartments, String sortHousesByHouses, String sortHousesAsDesired, Long userId) {
         ProfileResponse profileResponse = new ProfileResponse(userId, userRepository.findById(userId).get().getName(), userRepository.findById(userId).get().getEmail());
         int counter = 0;
         if (sortHousesByApartments.equals("Apartment")) {
@@ -226,8 +225,8 @@ public class UserServiceImpl implements UserService {
         } else if (sortHousesAsDesired.equals("In wish list")) {
             profileResponse.getProfileHouseResponses().sort(Comparator.comparing(ProfileHouseResponse::getRating).reversed());
         }
-    return profileResponse;
-}
+        return profileResponse;
+    }
 
     private ProfileResponse price(String sortHousesAsDesired, String sortHousesByApartments, String sortHousesByHouses, String sortingHousesByValue, Long userId) {
         ProfileResponse profileResponse = houseType(sortHousesAsDesired, sortHousesByApartments, sortHousesByHouses, userId);
