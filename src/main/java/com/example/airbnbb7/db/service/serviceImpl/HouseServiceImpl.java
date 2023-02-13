@@ -107,7 +107,15 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public AccommodationResponse getLatestAccommodation() {
+    public Object getLatestAccommodation(boolean popularHouse, boolean popularApartments) {
+
+        if (popularHouse) {
+            return getPopularHouses();
+        }
+        if (popularApartments) {
+            return getPopularApartment();
+        }
+
         AccommodationResponse houseResponse = houseRepository.getLatestAccommodation().stream().findFirst().get();
         House house = houseRepository.findById(houseResponse.getId()).get();
         houseResponse.setLocationResponse(locationRepository.convertToResponse(house.getLocation()));

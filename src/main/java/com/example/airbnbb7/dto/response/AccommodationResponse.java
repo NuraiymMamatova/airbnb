@@ -33,7 +33,7 @@ public class AccommodationResponse {
 
     private UserResponse owner;
 
-    public AccommodationResponse(Long id,Long countOfBookedUser,String name, Double price) {
+    public AccommodationResponse(Long id, Long countOfBookedUser, String name, Double price) {
         this.id = id;
         this.countOfBookedUser = countOfBookedUser;
         this.name = name;

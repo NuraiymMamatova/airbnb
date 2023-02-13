@@ -19,7 +19,7 @@ public interface HouseService {
 
     HouseResponse updateHouse(Long id, HouseRequest houseRequest);
 
-    AccommodationResponse getLatestAccommodation();
+    Object getLatestAccommodation(boolean popularHouse, boolean popularApartments);
 
     List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region);
 
@@ -29,8 +29,8 @@ public interface HouseService {
 
     AccommodationResponse getPopularApartment();
 
-    List<HouseResponseSortedPagination> sort (Pageable pageable, HouseType houseType, String region, String
-            priceSort, String fieldToSort, List < HouseResponseSortedPagination > sortedHouseResponse);
+    List<HouseResponseSortedPagination> sort(Pageable pageable, HouseType houseType, String region, String
+            priceSort, String fieldToSort, List<HouseResponseSortedPagination> sortedHouseResponse);
 
     List<HouseResponse> globalSearch(String searchEngine);
 }

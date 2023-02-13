@@ -54,16 +54,10 @@ public class HouseApi {
         return houseService.getAllPagination(houseType, fieldToSort, text, page, size, priceSort, region);
     }
 
-    @GetMapping("/popular & latest accommodations")
-    @Operation(summary = "Get accommodations", description = "")
+    @GetMapping("/popularAndLatest")
+    @Operation(summary = "Get accommodations", description = "Popular and latest accommodations")
     public Object getPopularLatestAccommodations(boolean popularHouse, boolean popularApartment) {
-        if (popularHouse) {
-            return houseService.getPopularHouses();
-        }
-        if (popularApartment) {
-            return houseService.getPopularApartment();
-        }
-        return houseService.getLatestAccommodation();
+        return houseService.getLatestAccommodation(popularHouse, popularApartment);
     }
 
     @GetMapping("/announcement/{houseId}")
