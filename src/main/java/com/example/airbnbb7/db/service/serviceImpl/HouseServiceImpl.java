@@ -17,6 +17,7 @@ import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.*;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -253,8 +254,15 @@ public class HouseServiceImpl implements HouseService {
         String[] words = location.toUpperCase().split(" ");
         System.out.println(Arrays.toString(words));
         List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>();
+        String region;
         for (String word : words) {
-            houseResponseSortedPaginations.addAll(houseRepository.searchNearby(word));
+            if (word.equalsIgnoreCase("Bishkek") || word.equalsIgnoreCase("Osh") || word.equalsIgnoreCase("Issyk-Kul")
+                    || word.equalsIgnoreCase("Jalal-Abat") || word.equalsIgnoreCase("Batken") || word.equalsIgnoreCase("Talas")
+                    || word.equalsIgnoreCase("Chui") || word.equalsIgnoreCase("Naryn")) {
+                region = word;
+                houseResponseSortedPaginations.addAll(houseRepository.searchNearby(word, region));
+            }
+//            houseResponseSortedPaginations.addAll(houseRepository.searchNearby(word, region));
         }
         System.out.println(houseResponseSortedPaginations);
         if (houseResponseSortedPaginations != null) {
@@ -265,6 +273,18 @@ public class HouseServiceImpl implements HouseService {
             }
             System.out.println("after for");
         }
+//        for (String word : words) {
+//            houseResponseSortedPaginations.addAll(houseRepository.searchNearby(word));
+//        }
+//        System.out.println(houseResponseSortedPaginations);
+//        if (houseResponseSortedPaginations != null) {
+//            System.out.println("not nulllll");
+//            for (HouseResponseSortedPagination house : houseResponseSortedPaginations) {
+//                house.setImages(houseRepository.findImagesByHouseId(house.getId()));
+//                house.setLocationResponse(locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+//            }
+//            System.out.println("after for");
+//        }
         return houseResponseSortedPaginations;
     }
 
