@@ -48,7 +48,7 @@ insert into locations(id, address, region, town_or_province, house_id)
 values (1,'Toktogul 12','Bishkek','Goin',1);
 
 insert into locations(id, address, region, town_or_province, house_id)
-values (2,'Kurmanjan 36','Osh','Samsa',2);
+values (2,'Kurmanjan 36','Osh','Ozgon',2);
 
 insert into locations(id, address, region, town_or_province, house_id)
 values (3,'Saburov 19','Bishkek','Vefa',3);
