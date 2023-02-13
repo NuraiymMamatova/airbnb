@@ -5,6 +5,7 @@ import com.example.airbnbb7.dto.response.AnnouncementResponseForAdmin;
 import com.example.airbnbb7.dto.response.AnnouncementResponseForUser;
 import com.example.airbnbb7.dto.response.AnnouncementResponseForVendor;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -32,24 +33,16 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.title," +
             "h.descriptionOfListing," +
             "h.maxOfGuests," +
-            "h.houseType,h.isFavorite) from House h where upper(h.title) like concat('%',:pagination, '%')")
-    List<HouseResponseSortedPagination> pagination(@Param("pagination") String pagination, Pageable pageable);
+            "h.houseType,h.isFavorite) from House h where upper(h.title) like upper(concat('%',:search, '%')) or upper(h.location.region) like  upper(concat('%',:search,'%')) or upper( h.location.townOrProvince) like upper( concat('%',:search,'%')) or upper( h.location.address) like upper( concat('%',:search,'%'))")
+    Page<HouseResponseSortedPagination> pagination(String search, Pageable pageable);
 
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
             "h.price," +
             "h.title," +
             "h.descriptionOfListing," +
             "h.maxOfGuests," +
-            "h.houseType,h.isFavorite) from House h where h.houseType = 1 ")
-    List<HouseResponseSortedPagination> getAllHouses(Pageable pageable);
-
-    @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
-            "h.price," +
-            "h.title," +
-            "h.descriptionOfListing," +
-            "h.maxOfGuests," +
-            "h.houseType,h.isFavorite) from House h where h.houseType = 0 ")
-    List<HouseResponseSortedPagination> getAllApartments(Pageable pageable);
+            "h.houseType,h.isFavorite) from House h")
+    Page<HouseResponseSortedPagination> getAllResponse(Pageable pageable);
 
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(" +
             "h.id," +
@@ -59,6 +52,10 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.maxOfGuests," +
             "h.houseType,h.isFavorite) from House h where h.location.region = :region ")
     List<HouseResponseSortedPagination> regionHouses(String region, Pageable pageable);
+
+    @Query("select count(h) from House h where h.location.region = :region")
+    Long count(String region);
+
 
         @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id, h.price, h.title, h.descriptionOfListing, h.maxOfGuests, h.houseType, h.isFavorite) from House h where upper(h.location.townOrProvince) like :word or upper(h.location.address) like :word or upper(h.location.region) like :word")
 //    @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id, h.price, h.title, h.descriptionOfListing, h.maxOfGuests, h.houseType, h.isFavorite) from House h where upper(h.location.region) like :word and upper(h.location.townOrProvince) like :word or upper(h.location.region) like :word and upper(h.location.address) like :word")
