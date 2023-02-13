@@ -44,22 +44,6 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.houseType,h.isFavorite) from House h")
     Page<HouseResponseSortedPagination> getAllResponse(Pageable pageable);
 
-//    @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
-//            "h.price," +
-//            "h.title," +
-//            "h.descriptionOfListing," +
-//            "h.maxOfGuests," +
-//            "h.houseType,h.isFavorite) from House h where h.houseType = 1 ")
-//    List<HouseResponseSortedPagination> getAllHouses(Pageable pageable);
-
-//    @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
-//            "h.price," +
-//            "h.title," +
-//            "h.descriptionOfListing," +
-//            "h.maxOfGuests," +
-//            "h.houseType,h.isFavorite) from House h where h.houseType = 0 ")
-//    List<HouseResponseSortedPagination> getAllApartments(Pageable pageable);
-
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(" +
             "h.id," +
             "h.price," +

@@ -7,7 +7,6 @@ import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
 import com.example.airbnbb7.dto.response.HouseResponse;
-import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -45,19 +44,20 @@ public class HouseApi {
     }
 
     @GetMapping("/pagination")
-    @Operation(summary = "House get all pagination", description = "filter: write for priceSort = (homePrice) || choose with filter for houseType ||" +
-            "homePrice : High to low or Low to high" +
-            "page : how many pages do you want" +
-            "size : how many houses on the page do you want" +
-            "region : region must start with upper case letter")
-    public ApplicationResponse findAllHousesPage(@RequestParam(name = "filter", required = false) String fieldToFilter,
-                                                 @RequestParam(name = "text", required = false) String text,
+    @Operation(summary = "House get all pagination", description = "sort:High to low or Low t high" +
+            "search:you can search by region address and townOrProvince" +
+            "page:how many page do you want" +
+            "size:how many houses were on one page" +
+            "region:search by region" +
+            "houseType:search by houseType")
+    public ApplicationResponse findAllHousesPage(@RequestParam(name = "sort", required = false) String sort,
+                                                 @RequestParam(name = "search", required = false) String search,
                                                  @RequestParam int page,
                                                  @RequestParam int size,
                                                  @RequestParam(name = "region", required = false) String region,
                                                  @RequestParam(name = "houseType", required = false) HouseType houseType,
-                                                 @RequestParam (name = "popularOrLatest" ,required = false) String popularAndLatest) {
-        return houseService.getAllPagination(houseType, fieldToFilter, text,page,size,region,popularAndLatest);
+                                                 @RequestParam(name = "popularOrLatest", required = false) String popularAndLatest) {
+        return houseService.getAllPagination(houseType, sort, search, page, size, region, popularAndLatest);
     }
 
     @GetMapping("/announcement/{houseId}")
