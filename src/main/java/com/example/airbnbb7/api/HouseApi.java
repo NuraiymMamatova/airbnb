@@ -55,8 +55,9 @@ public class HouseApi {
                                                  @RequestParam int page,
                                                  @RequestParam int size,
                                                  @RequestParam(name = "region", required = false) String region,
-                                                 @RequestParam(name = "houseType", required = false) HouseType houseType) {
-        return houseService.getAllPagination(houseType, fieldToFilter, text,page,size,region);
+                                                 @RequestParam(name = "houseType", required = false) HouseType houseType,
+                                                 @RequestParam (name = "popularOrLatest" ,required = false) String popularAndLatest) {
+        return houseService.getAllPagination(houseType, fieldToFilter, text,page,size,region,popularAndLatest);
     }
 
     @GetMapping("/announcement/{houseId}")
