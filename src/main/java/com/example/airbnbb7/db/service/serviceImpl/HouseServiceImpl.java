@@ -87,39 +87,30 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public List<AccommodationResponse> getPopularHouses() {
-        List<AccommodationResponse> houseResponses = houseRepository.getPopularHouse();
-        for (AccommodationResponse accommodationResponse : houseResponses) {
-            accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
-        }
-        houseResponses.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
-        return houseResponses.stream().limit(3).toList();
-    }
-
-    @Override
-    public AccommodationResponse getPopularApartment() {
-        List<AccommodationResponse> popularApartmentByCountOfBookedUser = houseRepository.getPopularApartment();
-        for (AccommodationResponse accommodationResponse : popularApartmentByCountOfBookedUser) {
-            accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
-        }
-        popularApartmentByCountOfBookedUser.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
-        return popularApartmentByCountOfBookedUser.stream().limit(1).findFirst().get();
-    }
-
-    @Override
-    public Object getLatestAccommodation(boolean popularHouse, boolean popularApartments) {
+    public List<AccommodationResponse> getLatestAccommodation(boolean popularHouse, boolean popularApartments) {
 
         if (popularHouse) {
-            return getPopularHouses();
+            List<AccommodationResponse> houseResponses = houseRepository.getPopularHouse();
+            for (AccommodationResponse accommodationResponse : houseResponses) {
+                accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
+            }
+            houseResponses.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
+            return houseResponses.stream().limit(3).toList();
         }
         if (popularApartments) {
-            return getPopularApartment();
+            List<AccommodationResponse> popularApartmentByCountOfBookedUser = houseRepository.getPopularApartment();
+            for (AccommodationResponse accommodationResponse : popularApartmentByCountOfBookedUser) {
+                accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
+            }
+            popularApartmentByCountOfBookedUser.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
+            return popularApartmentByCountOfBookedUser.stream().limit(7).toList();
         }
-
-        AccommodationResponse houseResponse = houseRepository.getLatestAccommodation().stream().findFirst().get();
-        House house = houseRepository.findById(houseResponse.getId()).get();
-        houseResponse.setLocationResponse(locationRepository.convertToResponse(house.getLocation()));
-        return houseResponse;
+        List<AccommodationResponse> houseResponses = houseRepository.getLatestAccommodation();
+        for (AccommodationResponse houseResponse : houseResponses) {
+            House house = houseRepository.findById(houseResponse.getId()).orElseThrow(() -> new NotFoundException("House Id not found"));
+            houseResponse.setLocationResponse(locationRepository.convertToResponse(house.getLocation()));
+        }
+        return houseResponses.stream().limit(7).toList();
     }
 
     @Override

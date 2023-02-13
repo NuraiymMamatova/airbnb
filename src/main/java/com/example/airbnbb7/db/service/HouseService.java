@@ -19,15 +19,11 @@ public interface HouseService {
 
     HouseResponse updateHouse(Long id, HouseRequest houseRequest);
 
-    Object getLatestAccommodation(boolean popularHouse, boolean popularApartments);
+    List<AccommodationResponse> getLatestAccommodation(boolean popularHouse, boolean popularApartments);
 
     List<HouseResponseSortedPagination> getAllPagination(HouseType houseType, String fieldToSort, String nameOfHouse, int page, int countOfHouses, String priceSort, String region);
 
     AnnouncementService getAnnouncementById(Long houseId);
-
-    List<AccommodationResponse> getPopularHouses();
-
-    AccommodationResponse getPopularApartment();
 
     List<HouseResponseSortedPagination> sort(Pageable pageable, HouseType houseType, String region, String
             priceSort, String fieldToSort, List<HouseResponseSortedPagination> sortedHouseResponse);

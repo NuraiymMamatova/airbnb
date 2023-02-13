@@ -4,6 +4,7 @@ import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
+import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,7 +57,7 @@ public class HouseApi {
 
     @GetMapping("/popularAndLatest")
     @Operation(summary = "Get accommodations", description = "Popular and latest accommodations")
-    public Object getPopularLatestAccommodations(boolean popularHouse, boolean popularApartment) {
+    public List<AccommodationResponse> getPopularLatestAccommodations(boolean popularHouse, boolean popularApartment) {
         return houseService.getLatestAccommodation(popularHouse, popularApartment);
     }
 
