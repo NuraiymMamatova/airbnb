@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
@@ -33,6 +34,16 @@ public class S3ServiceImpl implements S3Service {
                 .key(key).build();
         s3.putObject(putObjectAclRequest, RequestBody.fromInputStream(multipartFile.getInputStream(), multipartFile.getSize()));
         return Map.of("link", BUCKET_PATH + key);
+    }
+
+    @Override
+    public Map<String, String> deleteFile(String fileLink) {
+        String key = fileLink.substring(BUCKET_PATH.length());
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                .bucket("airbnb")
+                .key(key).build();
+        s3.deleteObject(deleteObjectRequest);
+        return Map.of("message", fileLink + " has been deleted");
     }
 }
 
