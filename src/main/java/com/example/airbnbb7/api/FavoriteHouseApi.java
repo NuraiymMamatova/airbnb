@@ -13,11 +13,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/favorite")
 @Tag(name = "Favorite House Api", description = "Favorite House Api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class FavoriteHouseApi {
 
     private final FavoriteHouseService favoriteHouseService;
 
     @PostMapping("/{houseId}")
+    @Operation(summary = "Add house to favorites", description = "The first click - save, the second - delete")
     public void saveFavorite(@PathVariable Long houseId) {
         favoriteHouseService.saveFavoriteHouse(houseId);
     }
