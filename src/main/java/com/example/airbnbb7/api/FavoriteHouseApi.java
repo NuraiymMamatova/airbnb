@@ -1,6 +1,5 @@
 package com.example.airbnbb7.api;
 
-import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.service.FavoriteHouseService;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/favorite")
 @Tag(name = "Favorite House Api", description = "Favorite House Api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class FavoriteHouseApi {
 
     private final FavoriteHouseService favoriteHouseService;
