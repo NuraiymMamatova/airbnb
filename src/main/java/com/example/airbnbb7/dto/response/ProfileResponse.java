@@ -26,6 +26,10 @@ public class ProfileResponse {
 
     private Long onModerationSize;
 
+    private Long pageSize;
+
+    private Long page;
+
     private List<ProfileHouseResponse> profileHouseResponses;
 
     public ProfileResponse(Long id, String profileName, String profileContact) {

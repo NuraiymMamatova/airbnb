@@ -1,15 +1,12 @@
 package com.example.airbnbb7.db.service;
 
 import com.example.airbnbb7.dto.request.UserRequest;
-import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.LoginResponse;
 import com.example.airbnbb7.dto.response.ProfileResponse;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
@@ -22,6 +19,6 @@ public interface UserService extends UserDetailsService {
 
     String getEmail();
 
-    ProfileResponse userProfile(String mainInUserProfile, String houseSorting, String sortingHousesByValue, String sortingHousesByRating, Long userId, int page, int size);
+    ProfileResponse userProfile(String mainInUserProfile, String sortHousesAsDesired, String sortHousesByApartments, String sortHousesByHouses, String sortingHousesByValue, String sortingHousesByRating, Long userId, int page, int size);
 
 }

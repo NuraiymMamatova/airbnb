@@ -23,13 +23,15 @@ public class UserApi {
             " sorted (houseSorting = houseType, sortingHousesByValue = price, sortingHousesByRating = rating)" +
             " Pagination(page = how many pages should be on a sheet, size = and how many objects should be on one page")
     public ProfileResponse userProfile(@RequestParam(name = "mainInUserProfile", required = false) String mainInUserProfile,
-                                       @RequestParam(name = "houseSorting", required = false) String houseSorting,
+                                       @RequestParam(name = "sortHousesAsDesired", required = false) String sortHousesAsDesired,
+                                       @RequestParam(name = "sortHousesByApartments", required = false) String sortHousesByApartments,
+                                       @RequestParam(name = "sortHousesByHouses", required = false) String sortHousesByHouses,
                                        @RequestParam(name = "sortingHousesByValue", required = false) String sortingHousesByValue,
                                        @RequestParam(name = "sortingHousesByRating", required = false) String sortingHousesByRating,
                                        @RequestParam(name = "page") int page,
                                        @RequestParam(name = "size") int size,
                                        Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return userService.userProfile(mainInUserProfile, houseSorting, sortingHousesByValue, sortingHousesByRating, user.getId(), page, size);
+        return userService.userProfile(mainInUserProfile, sortHousesAsDesired, sortHousesByApartments, sortHousesByHouses, sortingHousesByValue, sortingHousesByRating, user.getId(), page, size);
     }
 }
