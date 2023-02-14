@@ -8,7 +8,6 @@ import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
 import com.example.airbnbb7.dto.response.HouseResponse;
-import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
