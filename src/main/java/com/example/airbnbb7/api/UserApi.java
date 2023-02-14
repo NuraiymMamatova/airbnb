@@ -30,6 +30,6 @@ public class UserApi {
                                        @RequestParam(name = "size") int size,
                                        Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return userService.userProfile(mainInUserProfile, sortHousesAsDesired, sortHousesByApartments, sortHousesByHouses, sortingHousesByValue, sortingHousesByRating, user.getId(), page, size);
+        return userService.userProfile(mainInUserProfile, sortHousesByApartments, sortHousesByHouses, sortHousesAsDesired, sortingHousesByValue, sortingHousesByRating, user.getId(), page, size);
     }
 }

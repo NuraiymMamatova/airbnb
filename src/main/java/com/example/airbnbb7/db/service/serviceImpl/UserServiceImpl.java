@@ -59,6 +59,7 @@ public class UserServiceImpl implements UserService {
 
     private String email;
     private final FeedbackRepository feedbackRepository;
+    private final FavoriteHouseRepository favoriteHouseRepository;
 
     public String getEmail() {
         return email;
@@ -173,9 +174,12 @@ public class UserServiceImpl implements UserService {
                 profileBookingHouseResponse.setBookingsSize(profileResponse.getBookingsSize());
                 profileBookingHouseResponse.setOnModerationSize(profileResponse.getOnModerationSize());
                 profileBookingHouseResponse.setMyAnnouncementSize(profileResponse.getMyAnnouncementSize());
-                profileBookingHouseResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileBookingHouseResponse.getProfileHouseResponses()));
+                if (profileBookingHouseResponse.getProfileHouseResponses() != null){
+                    profileBookingHouseResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileBookingHouseResponse.getProfileHouseResponses()));
+                }
                 int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getMyAnnouncementSize() / size);
                 profileBookingHouseResponse.setPageSize((long) sizePage);
+                profileBookingHouseResponse.setPage((long) page);
                 return profileBookingHouseResponse;
             }
             case "On moderation" -> {
@@ -201,7 +205,13 @@ public class UserServiceImpl implements UserService {
         if (sortHousesByApartments.equals("Apartment")) {
             for (House house : userRepository.findById(userId).get().getAnnouncements()) {
                 if (house.getHouseType().toString().equals("APARTMENT")) {
-                    profileResponse.addProfileHouseResponse(houseResponseConverter.view(house));
+                    ProfileHouseResponse profileHouseResponse = houseResponseConverter.view(house);
+                    profileHouseResponse.setCountOfBooking(house.getBookings());
+                    profileHouseResponse.setCountOfFavorite((long) favoriteHouseRepository.getCountOfFavorite(house));
+                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)){
+                        profileHouseResponse.setIsBlockCed(true);
+                    }
+                    profileResponse.addProfileHouseResponse(profileHouseResponse);
                 }
             }
             counter++;
@@ -209,27 +219,36 @@ public class UserServiceImpl implements UserService {
         if (sortHousesByHouses.equals("House")) {
             for (House house : userRepository.findById(userId).get().getAnnouncements()) {
                 if (house.getHouseType().toString().equals("HOUSE")) {
-                    profileResponse.addProfileHouseResponse(houseResponseConverter.view(house));
+                    ProfileHouseResponse profileHouseResponse = houseResponseConverter.view(house);
+                    profileHouseResponse.setCountOfBooking(house.getBookings());
+                    profileHouseResponse.setCountOfFavorite((long) favoriteHouseRepository.getCountOfFavorite(house));
+                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)){
+                        profileHouseResponse.setIsBlockCed(true);
+                    }
+                    profileResponse.addProfileHouseResponse(profileHouseResponse);
                 }
             }
             counter++;
         }
         if (counter == 0) {
             for (House house : userRepository.findById(userId).get().getAnnouncements()) {
-                profileResponse.addProfileHouseResponse(houseResponseConverter.view(house));
-            }
-            if (sortHousesAsDesired.equals("In wish list")) {
-                profileResponse.getProfileHouseResponses().sort(Comparator.comparing(ProfileHouseResponse::getRating).reversed());
+                ProfileHouseResponse profileHouseResponse = houseResponseConverter.view(house);
+                profileHouseResponse.setCountOfBooking(house.getBookings());
+                profileHouseResponse.setCountOfFavorite((long) favoriteHouseRepository.getCountOfFavorite(house));
+                if (house.getHousesStatus().equals(HousesStatus.BLOCKED)){
+                    profileHouseResponse.setIsBlockCed(true);
+                }
+                profileResponse.addProfileHouseResponse(profileHouseResponse);
             }
             return profileResponse;
-        } else if (sortHousesAsDesired.equals("In wish list")) {
+        }  if (sortHousesAsDesired.equals("In wish list")) {
             profileResponse.getProfileHouseResponses().sort(Comparator.comparing(ProfileHouseResponse::getRating).reversed());
         }
         return profileResponse;
     }
 
-    private ProfileResponse price(String sortHousesAsDesired, String sortHousesByApartments, String sortHousesByHouses, String sortingHousesByValue, Long userId) {
-        ProfileResponse profileResponse = houseType(sortHousesAsDesired, sortHousesByApartments, sortHousesByHouses, userId);
+    private ProfileResponse price(String sortHousesByApartments, String sortHousesByHouses, String sortHousesAsDesired, String sortingHousesByValue, Long userId) {
+        ProfileResponse profileResponse = houseType(sortHousesByApartments, sortHousesByHouses, sortHousesAsDesired, userId);
         switch (sortingHousesByValue) {
             case "Low to high" -> {
                 profileResponse.getProfileHouseResponses().sort(Comparator.comparing(ProfileHouseResponse::getPrice));
@@ -244,8 +263,8 @@ public class UserServiceImpl implements UserService {
         return profileResponse;
     }
 
-    private ProfileResponse star(String sortHousesAsDesired, String sortHousesByApartments, String sortHousesByHouses, String sortingHousesByValue, String sortingHousesByRating, Long userId) {
-        ProfileResponse profileResponse1 = price(sortHousesAsDesired, sortHousesByApartments, sortHousesByHouses, sortingHousesByValue, userId);
+    private ProfileResponse star(String sortHousesByApartments, String sortHousesByHouses, String sortHousesAsDesired, String sortingHousesByValue, String sortingHousesByRating, Long userId) {
+        ProfileResponse profileResponse1 = price(sortHousesByApartments, sortHousesByHouses, sortHousesAsDesired, sortingHousesByValue, userId);
         ProfileResponse profileResponse = new ProfileResponse(profileResponse1.getId(), profileResponse1.getProfileName(), profileResponse1.getProfileContact());
         switch (sortingHousesByRating) {
             case "One" -> {

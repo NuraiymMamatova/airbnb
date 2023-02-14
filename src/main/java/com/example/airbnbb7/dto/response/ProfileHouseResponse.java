@@ -41,6 +41,12 @@ public class ProfileHouseResponse {
 
     private LocalDate checkOut;
 
+    private Long countOfFavorite;
+
+    private Long countOfBooking;
+
+    private Boolean isBlockCed;
+
     public ProfileHouseResponse(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType, Double rating, LocalDate checkIn, LocalDate checkOut) {
         this.id = id;
         this.price = price;
