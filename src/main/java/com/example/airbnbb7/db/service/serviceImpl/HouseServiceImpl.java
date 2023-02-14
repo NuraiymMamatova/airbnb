@@ -1,7 +1,6 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.converter.request.HouseRequestConverter;
-import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.entities.Booking;
@@ -24,11 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,8 +36,6 @@ public class HouseServiceImpl implements HouseService {
     private final HouseRepository houseRepository;
 
     private final HouseRequestConverter houseRequestConverter;
-
-    private final HouseResponseConverter houseResponseConverter;
 
     private final UserRepository userRepository;
 
@@ -68,6 +61,7 @@ public class HouseServiceImpl implements HouseService {
         return new SimpleResponse("House successfully updated!");
     }
 
+    @Override
     public SimpleResponse save(HouseRequest houseRequest) {
         User user = userRepository.findByEmail(userService.getEmail()).orElseThrow(() -> new NotFoundException("Email not found"));
         House house = new House(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getDescriptionOfListing(), houseRequest.getMaxOfGuests(), houseRequest.getImages(), houseRequest.getHouseType());
@@ -274,28 +268,28 @@ public class HouseServiceImpl implements HouseService {
         String[] words = location.toUpperCase().split(" ");
         System.out.println(Arrays.toString(words));
         List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>();
-        String region;
+        String region = new String();
+        String[] townOrProvinceOrAddress = new String[words.length];
+        int count = 0;
         for (String word : words) {
             if (word.equalsIgnoreCase("Bishkek") || word.equalsIgnoreCase("Osh") || word.equalsIgnoreCase("Issyk-Kul")
                     || word.equalsIgnoreCase("Jalal-Abat") || word.equalsIgnoreCase("Batken") || word.equalsIgnoreCase("Talas")
                     || word.equalsIgnoreCase("Chui") || word.equalsIgnoreCase("Naryn")) {
                 region = word;
-                houseResponseSortedPaginations.addAll(houseRepository.searchNearby(word, region));
+            } else {
+                townOrProvinceOrAddress[count] = word;
+                System.out.println(Arrays.toString(townOrProvinceOrAddress));
             }
-//            houseResponseSortedPaginations.addAll(houseRepository.searchNearby(word, region));
+            count++;
         }
-        System.out.println(houseResponseSortedPaginations);
-        if (houseResponseSortedPaginations != null) {
-            System.out.println("not nulllll");
-            for (HouseResponseSortedPagination house : houseResponseSortedPaginations) {
-                house.setImages(houseRepository.findImagesByHouseId(house.getId()));
-                house.setLocationResponse(locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+        for (House house : houseRepository.getALlByRegion(region)) {
+            if (house.getLocation().getAddress().equalsIgnoreCase(townOrProvinceOrAddress[0]) || house.getLocation().getTownOrProvince().equalsIgnoreCase(townOrProvinceOrAddress[0])) {
+
+            } else if (house.getLocation().getAddress().equalsIgnoreCase(townOrProvinceOrAddress[1]) || house.getLocation().getTownOrProvince().equalsIgnoreCase(townOrProvinceOrAddress[1])) {
+
             }
-            System.out.println("after for");
         }
-//        for (String word : words) {
-//            houseResponseSortedPaginations.addAll(houseRepository.searchNearby(word));
-//        }
+        return houseResponseSortedPaginations;
 //        System.out.println(houseResponseSortedPaginations);
 //        if (houseResponseSortedPaginations != null) {
 //            System.out.println("not nulllll");
@@ -305,7 +299,19 @@ public class HouseServiceImpl implements HouseService {
 //            }
 //            System.out.println("after for");
 //        }
-        return houseResponseSortedPaginations;
+////        for (String word : words) {
+////            houseResponseSortedPaginations.addAll(houseRepository.searchNearby(word));
+////        }
+////        System.out.println(houseResponseSortedPaginations);
+////        if (houseResponseSortedPaginations != null) {
+////            System.out.println("not nulllll");
+////            for (HouseResponseSortedPagination house : houseResponseSortedPaginations) {
+////                house.setImages(houseRepository.findImagesByHouseId(house.getId()));
+////                house.setLocationResponse(locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+////            }
+////            System.out.println("after for");
+////        }
+//        return houseResponseSortedPaginations;
+//        return null;
     }
-
 }

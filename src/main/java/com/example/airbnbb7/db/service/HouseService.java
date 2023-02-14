@@ -5,6 +5,7 @@ import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
 import com.example.airbnbb7.dto.response.HouseResponse;
+import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 
 import java.util.List;
 
