@@ -239,6 +239,9 @@ public class UserServiceImpl implements UserService {
                     profileHouseResponse.setIsBlockCed(true);
                 }
                 profileResponse.addProfileHouseResponse(profileHouseResponse);
+                if (sortHousesAsDesired.equals("In wish list")) {
+                    profileResponse.getProfileHouseResponses().sort(Comparator.comparing(ProfileHouseResponse::getRating).reversed());
+                }
             }
             return profileResponse;
         }  if (sortHousesAsDesired.equals("In wish list")) {
