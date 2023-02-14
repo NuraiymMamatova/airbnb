@@ -177,7 +177,7 @@ public class UserServiceImpl implements UserService {
                 if (profileBookingHouseResponse.getProfileHouseResponses() != null){
                     profileBookingHouseResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileBookingHouseResponse.getProfileHouseResponses()));
                 }
-                int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getProfileHouseResponses().size() / size);
+                int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getProfileHouseResponses().size()/ size);
                 profileBookingHouseResponse.setPageSize((long) sizePage);
                 profileBookingHouseResponse.setPage((long) page);
                 return profileBookingHouseResponse;
