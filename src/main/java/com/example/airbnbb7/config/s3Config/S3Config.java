@@ -21,9 +21,12 @@ public class S3Config {
     @Value("${aws.secret.key}")
     private String secretKey;
 
+    @Value("${AWS_REGION}")
+    private String REGION;
+
     @Bean
     S3Client s3Client() {
-        Region region = Region.EU_CENTRAL_1;
+        Region region = Region.of(REGION);
         return S3Client.builder()
                 .region(region)
                 .credentialsProvider(StaticCredentialsProvider
