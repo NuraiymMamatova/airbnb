@@ -28,7 +28,7 @@ public class HouseApi {
 
     @PostMapping
     @Operation(summary = "Save house", description = "Save house and location")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER')")
     public SimpleResponse saveHouse(@RequestBody HouseRequest houseRequest, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return houseService.save(houseRequest, user);
@@ -36,7 +36,6 @@ public class HouseApi {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update House", description = "Update house by id")
-    @PreAuthorize("hasRole('USER')")
     public SimpleResponse updateHouse(@PathVariable Long id,
                                       @RequestBody HouseRequest houseRequest, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
