@@ -269,24 +269,53 @@ public class HouseServiceImpl implements HouseService {
         System.out.println(Arrays.toString(words));
         List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>();
         String region = new String();
-        String[] townOrProvinceOrAddress = new String[words.length];
-        int count = 0;
-        for (String word : words) {
-            if (word.equalsIgnoreCase("Bishkek") || word.equalsIgnoreCase("Osh") || word.equalsIgnoreCase("Issyk-Kul")
-                    || word.equalsIgnoreCase("Jalal-Abat") || word.equalsIgnoreCase("Batken") || word.equalsIgnoreCase("Talas")
-                    || word.equalsIgnoreCase("Chui") || word.equalsIgnoreCase("Naryn")) {
-                region = word;
-            } else {
-                townOrProvinceOrAddress[count] = word;
-                System.out.println(Arrays.toString(townOrProvinceOrAddress));
+        String[] townOrProvinceOrAddress = new String[words.length - 1];
+        System.out.println(words.length);
+        System.out.println(townOrProvinceOrAddress.length);
+        if (words.length == 1) {
+            for (String word : words) {
+                if (word.equalsIgnoreCase("Bishkek") || word.equalsIgnoreCase("Osh") || word.equalsIgnoreCase("Issyk-Kul")
+                        || word.contains("Jalal-Abat") || word.equalsIgnoreCase("Batken") || word.equalsIgnoreCase("Talas")
+                        || word.equalsIgnoreCase("Chui") || word.equalsIgnoreCase("Naryn")) {
+                    for (House house : houseRepository.getALlByRegion(word)) {
+                        HouseResponseSortedPagination houseResponseSortedPagination = houseRepository.findHouseById(house.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+                        houseResponseSortedPagination.setLocationResponse(locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+                        houseResponseSortedPagination.setImages(house.getImages());
+                        houseResponseSortedPaginations.add(houseResponseSortedPagination);
+                    }
+                }
             }
-            count++;
-        }
-        for (House house : houseRepository.getALlByRegion(region)) {
-            if (house.getLocation().getAddress().equalsIgnoreCase(townOrProvinceOrAddress[0]) || house.getLocation().getTownOrProvince().equalsIgnoreCase(townOrProvinceOrAddress[0])) {
+        } else {
+            int count = 0;
+            for (String word : words) {
+                if (word.equalsIgnoreCase("Bishkek") || word.equalsIgnoreCase("Osh") || word.equalsIgnoreCase("Issyk-Kul")
+                        || word.contains("Jalal-Abat") || word.equalsIgnoreCase("Batken") || word.equalsIgnoreCase("Talas")
+                        || word.equalsIgnoreCase("Chui") || word.equalsIgnoreCase("Naryn")) {
+                    region = word;
+                } else if (townOrProvinceOrAddress.length != 0){
+                    System.out.println(townOrProvinceOrAddress[count].isEmpty());
+                    townOrProvinceOrAddress[count] = word;
+                    System.out.println(Arrays.toString(townOrProvinceOrAddress));
+                }
+                count++;
+            }
 
-            } else if (house.getLocation().getAddress().equalsIgnoreCase(townOrProvinceOrAddress[1]) || house.getLocation().getTownOrProvince().equalsIgnoreCase(townOrProvinceOrAddress[1])) {
-
+            for (House house : houseRepository.getALlByRegion(region)) {
+                HouseResponseSortedPagination houseResponseSortedPagination = houseRepository.findHouseById(house.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+                if (townOrProvinceOrAddress.length == 1) {
+                    if (house.getLocation().getAddress().equalsIgnoreCase(townOrProvinceOrAddress[0]) || house.getLocation().getTownOrProvince().equalsIgnoreCase(townOrProvinceOrAddress[0])) {
+                        houseResponseSortedPagination.setImages(house.getImages());
+                        houseResponseSortedPagination.setLocationResponse(locationRepository.findLocationByHouseId(house.getLocation().getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+                    }
+                } else if (townOrProvinceOrAddress.length > 1){
+                    if (house.getLocation().getAddress().equalsIgnoreCase(townOrProvinceOrAddress[1]) || house.getLocation().getTownOrProvince().equalsIgnoreCase(townOrProvinceOrAddress[1])) {
+                        houseResponseSortedPagination.setImages(house.getImages());
+                        houseResponseSortedPagination.setLocationResponse(locationRepository.findLocationByHouseId(house.getLocation().getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+                        houseResponseSortedPaginations.add(houseResponseSortedPagination);
+                    } else {
+                        houseResponseSortedPaginations.add(houseResponseSortedPagination);
+                    }
+                }
             }
         }
         return houseResponseSortedPaginations;

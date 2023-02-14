@@ -25,6 +25,9 @@ public interface HouseRepository extends JpaRepository<House, Long> {
     @Query("select new com.example.airbnbb7.dto.response.AnnouncementResponseForAdmin(h.id, h.title, h.descriptionOfListing, h.maxOfGuests, h.houseType) from House h where h.id = :houseId")
     Optional<AnnouncementResponseForAdmin> findHouseByIdForAdmin(Long houseId);
 
+    @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id, h.price, h.title,h.descriptionOfListing, h.maxOfGuests, h.houseType, h.isFavorite) from House h where h.id = :houseId")
+    Optional<HouseResponseSortedPagination> findHouseById(Long houseId);
+
     @Query(value = "select images from house_images  where house_id = :houseId", nativeQuery = true)
     List<String> findImagesByHouseId(Long houseId);
 
