@@ -1,6 +1,7 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.config.jwt.JwtTokenUtil;
+import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.repository.RoleRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
@@ -8,6 +9,7 @@ import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
+import com.example.airbnbb7.exceptions.ExceptionResponse;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -17,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -61,19 +64,25 @@ public class UserServiceImpl implements UserService {
         FirebaseApp firebaseApp = FirebaseApp.initializeApp(firebaseOptions);
     }
 
-    public LoginResponse authWithGoogle(String tokenId) throws FirebaseAuthException {
-        FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
+    public LoginResponse authWithGoogle(String tokenId) {
+        FirebaseToken firebaseToken;
+        try {
+            firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
+        } catch (FirebaseAuthException firebaseAuthException) {
+            throw new ExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, firebaseAuthException.getClass().getSimpleName(), firebaseAuthException.getMessage());
+        }
 
         User user;
+
         if (userRepository.findByEmail(firebaseToken.getEmail()).isEmpty()) {
             user = new User();
-            user.addRole(roleRepository.findByName("USER"));
+            Role role = roleRepository.findByName("USER");
+            role.addUser(user);
+            user.addRole(role);
             user.setPassword(passwordEncoder.encode(firebaseToken.getEmail()));
             user.setName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
-            setEmail(user.getEmail());
-            setId(user.getId());
-            userRepository.save(user);
+            roleRepository.save(role);
 
         }
 

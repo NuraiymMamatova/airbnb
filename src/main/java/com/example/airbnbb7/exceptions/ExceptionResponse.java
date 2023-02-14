@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
-public class ExceptionResponse {
+public class ExceptionResponse extends RuntimeException{
 
     private HttpStatus httpStatus;
 
