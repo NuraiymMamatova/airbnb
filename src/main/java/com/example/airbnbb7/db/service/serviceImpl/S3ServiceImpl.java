@@ -21,14 +21,17 @@ public class S3ServiceImpl implements S3Service {
     @Autowired
     private S3Client s3;
 
-    @Value("${aws.path}")
+    @Value("${aws.bucket.url}")
     private String BUCKET_PATH;
+
+    @Value("${aws.bucket.name}")
+    private String NAME_PATH;
 
     @Override
     public Map<String, String> uploadFile(MultipartFile multipartFile) throws IOException {
         String key = System.currentTimeMillis() + multipartFile.getOriginalFilename();
         PutObjectRequest putObjectAclRequest = PutObjectRequest.builder()
-                .bucket("airbnb")
+                .bucket(NAME_PATH)
                 .contentType("jpeg")
                 .contentType("png")
                 .key(key).build();
@@ -40,7 +43,7 @@ public class S3ServiceImpl implements S3Service {
     public Map<String, String> deleteFile(String fileLink) {
         String key = fileLink.substring(BUCKET_PATH.length());
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket("airbnb")
+                .bucket(NAME_PATH)
                 .key(key).build();
         s3.deleteObject(deleteObjectRequest);
         return Map.of("message", fileLink + " has been deleted");
