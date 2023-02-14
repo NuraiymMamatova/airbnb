@@ -1,10 +1,12 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.entities.User;
+import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
+import com.example.airbnbb7.dto.response.ApplicationResponse;
 import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +30,7 @@ public class HouseApi {
     @PostMapping
     @Operation(summary = "Save house", description = "Save house and location")
     @PreAuthorize("hasRole('USER')")
-    public HouseResponse saveHouse(@RequestBody HouseRequest houseRequest, Authentication authentication) {
+    public SimpleResponse saveHouse(@RequestBody HouseRequest houseRequest, , Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return houseService.save(houseRequest, user);
     }
@@ -36,7 +38,7 @@ public class HouseApi {
     @PutMapping("/{id}")
     @Operation(summary = "Update House", description = "Update house by id")
     @PreAuthorize("hasRole('USER')")
-    public HouseResponse updateHouse(@PathVariable Long id,
+    public SimpleResponse updateHouse(@PathVariable Long id,
                                      @RequestBody HouseRequest houseRequest, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return houseService.updateHouse(id, user.getId(), houseRequest);
@@ -44,21 +46,26 @@ public class HouseApi {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete House", description = "Delete house by id")
-    public HouseResponse deleteHouseById(@PathVariable Long id, Authentication authentication) {
+    public SimpleResponse deleteHouseById(@PathVariable Long id, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return houseService.deleteByIdHouse(id, user.getId());
     }
 
     @GetMapping("/pagination")
-    @Operation(summary = "House get all pagination", description = "This is get all pagination for houses")
-    public List<HouseResponseSortedPagination> findAllHousesPage(@RequestParam(name = "sortOrFilter", required = false) String fieldToSort,
-                                                                 @RequestParam(name = "text", required = false) String text,
-                                                                 @RequestParam int page,
-                                                                 @RequestParam int size,
-                                                                 @RequestParam(name = "priceSort", required = false) String priceSort,
-                                                                 @RequestParam(name = "region", required = false) String region,
-                                                                 @RequestParam(name = "houseType", required = false) HouseType houseType) {
-        return houseService.getAllPagination(houseType, fieldToSort, text, page, size, priceSort, region);
+    @Operation(summary = "House get all pagination", description = "sort:High to low or Low t high" +
+            "search:you can search by region address and townOrProvince" +
+            "page:how many page do you want" +
+            "size:how many houses were on one page" +
+            "region:search by region" +
+            "houseType:search by houseType")
+    public ApplicationResponse findAllHousesPage(@RequestParam(name = "sort", required = false) String sort,
+                                                 @RequestParam(name = "search", required = false) String search,
+                                                 @RequestParam int page,
+                                                 @RequestParam int size,
+                                                 @RequestParam(name = "region", required = false) String region,
+                                                 @RequestParam(name = "houseType", required = false) HouseType houseType,
+                                                 @RequestParam(name = "popularOrLatest", required = false) String popularAndLatest) {
+        return houseService.getAllPagination(houseType, sort, search, page, size, region, popularAndLatest);
     }
 
     @GetMapping("/announcement/{houseId}")

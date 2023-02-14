@@ -1,6 +1,7 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.db.customClass.Rating;
+import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.entities.FavoriteHouse;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.User;
@@ -27,7 +28,7 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
     private final FeedbackRepository feedbackRepository;
 
     @Override
-    public void saveFavoriteHouse(Long houseId, User user) {
+    public SimpleResponse saveFavoriteHouse(Long houseId, User user) {
         House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
         FavoriteHouse findFavoriteHouse = favoriteHouseRepository.getFavoriteHouseByHouseIdByUserId(house.getId(), user.getId());
         if (findFavoriteHouse == null) {
@@ -40,7 +41,9 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
         } else {
             house.setFavorite(false);
             favoriteHouseRepository.delete(findFavoriteHouse);
+            return new SimpleResponse("House successfully deleted from favorite!");
         }
+        return new SimpleResponse("House successfully added to favorite!");
     }
 
     @Override
