@@ -1,14 +1,13 @@
 package com.example.airbnbb7.api;
 
-import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.customClass.SimpleResponse;
+import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
 import com.example.airbnbb7.dto.response.HouseResponse;
-import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,7 @@ public class HouseApi {
     @PostMapping
     @Operation(summary = "Save house", description = "Save house and location")
     @PreAuthorize("hasRole('USER')")
-    public SimpleResponse saveHouse(@RequestBody HouseRequest houseRequest, , Authentication authentication) {
+    public SimpleResponse saveHouse(@RequestBody HouseRequest houseRequest, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return houseService.save(houseRequest, user);
     }
@@ -39,7 +38,7 @@ public class HouseApi {
     @Operation(summary = "Update House", description = "Update house by id")
     @PreAuthorize("hasRole('USER')")
     public SimpleResponse updateHouse(@PathVariable Long id,
-                                     @RequestBody HouseRequest houseRequest, Authentication authentication) {
+                                      @RequestBody HouseRequest houseRequest, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return houseService.updateHouse(id, user.getId(), houseRequest);
     }

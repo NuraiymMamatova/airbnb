@@ -1,7 +1,7 @@
 package com.example.airbnbb7.api;
 
-import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.customClass.SimpleResponse;
+import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.service.FavoriteHouseService;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +27,7 @@ public class FavoriteHouseApi {
             "if you click another one you can put away House from Favorite")
     public SimpleResponse saveFavorite(@PathVariable Long houseId, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-      return  favoriteHouseService.saveFavoriteHouse(houseId, user);
+        return favoriteHouseService.saveFavoriteHouse(houseId, user);
     }
 
     @GetMapping
