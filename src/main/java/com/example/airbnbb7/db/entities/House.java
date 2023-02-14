@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.bytebuddy.utility.nullability.MaybeNull;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -44,8 +43,6 @@ public class House {
     private Long maxOfGuests;
 
     private Long bookings;
-
-//    @Enumerated(EnumType.STRING)
     private HouseType houseType;
 
     private HousesStatus housesStatus;
