@@ -76,7 +76,7 @@ public class HouseApi {
 
     @GetMapping("/searchNearby")
     @Operation(summary = "Houses search nearby", description = "Any user can go through to view the houses")
-    public List<HouseResponseSortedPagination> searchNearby(@RequestParam double userLat, @RequestParam double userLon) throws IOException {
-        return houseService.searchNearby(userLat, userLon);
+    public List<HouseResponseSortedPagination> searchNearby(@RequestParam double userLatitude, @RequestParam double userLongitude) throws IOException {
+        return houseService.searchNearby(userLatitude, userLongitude);
     }
 }
