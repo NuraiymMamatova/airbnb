@@ -7,7 +7,6 @@ import com.example.airbnbb7.dto.response.ApplicationResponse;
 import com.example.airbnbb7.dto.response.HouseResponse;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface HouseService {
@@ -24,6 +23,6 @@ public interface HouseService {
 
     List<HouseResponse> globalSearch(String searchEngine);
 
-    List<HouseResponseSortedPagination> searchNearby(double userLat, double userLon)  throws IOException;
+    List<HouseResponseSortedPagination> searchNearby(double userLat, double userLon);
 
 }
