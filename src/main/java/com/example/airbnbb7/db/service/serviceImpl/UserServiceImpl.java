@@ -177,7 +177,7 @@ public class UserServiceImpl implements UserService {
                 if (profileBookingHouseResponse.getProfileHouseResponses() != null){
                     profileBookingHouseResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileBookingHouseResponse.getProfileHouseResponses()));
                 }
-                int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getMyAnnouncementSize() / size);
+                int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getProfileHouseResponses().size()/ size);
                 profileBookingHouseResponse.setPageSize((long) sizePage);
                 profileBookingHouseResponse.setPage((long) page);
                 return profileBookingHouseResponse;
@@ -239,6 +239,9 @@ public class UserServiceImpl implements UserService {
                     profileHouseResponse.setIsBlockCed(true);
                 }
                 profileResponse.addProfileHouseResponse(profileHouseResponse);
+                if (sortHousesAsDesired.equals("In wish list")) {
+                    profileResponse.getProfileHouseResponses().sort(Comparator.comparing(ProfileHouseResponse::getRating).reversed());
+                }
             }
             return profileResponse;
         }  if (sortHousesAsDesired.equals("In wish list")) {
