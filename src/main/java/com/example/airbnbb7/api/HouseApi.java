@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -75,7 +76,7 @@ public class HouseApi {
 
     @GetMapping("/searchNearby")
     @Operation(summary = "Houses search nearby", description = "Any user can go through to view the houses")
-    public List<HouseResponseSortedPagination> searchNearby(@RequestParam String location) {
-        return houseService.searchNearby(location);
+    public List<HouseResponseSortedPagination> searchNearby(@RequestParam double userLat, @RequestParam double userLon) throws IOException {
+        return houseService.searchNearby(userLat, userLon);
     }
 }
