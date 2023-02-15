@@ -38,8 +38,6 @@ public class HouseServiceImpl implements HouseService {
 
     private final HouseRequestConverter houseRequestConverter;
 
-    private final HouseResponseConverter houseResponseConverter;
-
     private final UserRepository userRepository;
 
     private final UserService userService;
