@@ -24,10 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -197,7 +194,6 @@ public class HouseServiceImpl implements HouseService {
         return responses;
     }
 
-
     @Override
     public AnnouncementService getAnnouncementById(Long houseId) {
         AnnouncementResponseForUser house = houseRepository.findHouseByIdForUser(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
@@ -230,6 +226,9 @@ public class HouseServiceImpl implements HouseService {
             return houseResponseForVendor;
         } else if (roleRepository.findRoleByUserId(userId).getNameOfRole().equals("ADMIN")) {
             AnnouncementResponseForAdmin announcementResponseForAdmin = houseRepository.findHouseByIdForAdmin(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+            House hou = houseRepository.findById(houseId).orElseThrow(()->new NotFoundException("House not found!"));
+            hou.setWatchedOrNot(true);
+            houseRepository.save(hou);
             announcementResponseForAdmin.setImages(houseRepository.findImagesByHouseId(houseId));
             announcementResponseForAdmin.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
             announcementResponseForAdmin.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
@@ -295,4 +294,31 @@ public class HouseServiceImpl implements HouseService {
         }
         return globalHouses;
     }
+
+    public ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(Long page, Long pageSize){
+        List<HouseResponseForAdmin> houseResponseForAdmins = houseRepository.getAllStatusOfTheWholeHouseOnModeration();
+        int sizePage = (int) Math.ceil((double) houseResponseForAdmins.size()/ pageSize);
+        houseResponseForAdmins.forEach(h -> {
+            House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+            Location location = house.getLocation();
+            h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(),
+                    location.getAddress(), location.getRegion()));
+            h.setHouseRating(rating.getRating(house.getFeedbacks()));
+        });
+        return new ApplicationResponseForAdmin(getProfileHouseResponse(page,pageSize,houseResponseForAdmins),page,sizePage);
+    }
+
+    public List<HouseResponseForAdmin> getProfileHouseResponse(Long page, Long size, List<HouseResponseForAdmin> profileHouseResponses) {
+        int startItem = (int) ((page - 1) * size);
+        List<HouseResponseForAdmin> list;
+
+        if (profileHouseResponses.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = (int) Math.min(startItem + size, profileHouseResponses.size());
+            list = profileHouseResponses.subList(startItem, toIndex);
+        }
+        return list;
+    }
+
 }
