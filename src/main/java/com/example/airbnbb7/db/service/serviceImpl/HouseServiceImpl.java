@@ -1,7 +1,6 @@
 package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.converter.request.HouseRequestConverter;
-import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.entities.Booking;
@@ -41,8 +40,6 @@ public class HouseServiceImpl implements HouseService {
 
     private final HouseRequestConverter houseRequestConverter;
 
-    private final HouseResponseConverter houseResponseConverter;
-
     private final UserRepository userRepository;
 
     private final LocationRepository locationRepository;
@@ -71,6 +68,7 @@ public class HouseServiceImpl implements HouseService {
         if (house.getOwner().getId() == userId) {
             house.setHousesStatus(HousesStatus.ON_MODERATION);
             houseRequestConverter.update(house, houseRequest);
+            houseRepository.save(house);
         } else {
             throw new BadCredentialsException("You can't update this announcement because it's not your announcement");
         }

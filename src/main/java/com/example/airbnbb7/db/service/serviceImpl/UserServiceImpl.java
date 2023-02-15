@@ -8,7 +8,10 @@ import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HousesStatus;
-import com.example.airbnbb7.db.repository.*;
+import com.example.airbnbb7.db.repository.FavoriteHouseRepository;
+import com.example.airbnbb7.db.repository.FeedbackRepository;
+import com.example.airbnbb7.db.repository.RoleRepository;
+import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
@@ -31,7 +34,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -162,7 +164,7 @@ public class UserServiceImpl implements UserService {
                 profileBookingHouseResponse.setBookingsSize(profileResponse.getBookingsSize());
                 profileBookingHouseResponse.setOnModerationSize(profileResponse.getOnModerationSize());
                 profileBookingHouseResponse.setMyAnnouncementSize(profileResponse.getMyAnnouncementSize());
-                if (profileBookingHouseResponse.getProfileHouseResponses() != null){
+                if (profileBookingHouseResponse.getProfileHouseResponses() != null) {
                     profileBookingHouseResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileBookingHouseResponse.getProfileHouseResponses()));
                 }
                 int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getMyAnnouncementSize() / size);
@@ -196,7 +198,7 @@ public class UserServiceImpl implements UserService {
                     ProfileHouseResponse profileHouseResponse = houseResponseConverter.view(house);
                     profileHouseResponse.setCountOfBooking(house.getBookings());
                     profileHouseResponse.setCountOfFavorite((long) favoriteHouseRepository.getCountOfFavorite(house));
-                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)){
+                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)) {
                         profileHouseResponse.setIsBlockCed(true);
                     }
                     profileResponse.addProfileHouseResponse(profileHouseResponse);
@@ -210,7 +212,7 @@ public class UserServiceImpl implements UserService {
                     ProfileHouseResponse profileHouseResponse = houseResponseConverter.view(house);
                     profileHouseResponse.setCountOfBooking(house.getBookings());
                     profileHouseResponse.setCountOfFavorite((long) favoriteHouseRepository.getCountOfFavorite(house));
-                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)){
+                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)) {
                         profileHouseResponse.setIsBlockCed(true);
                     }
                     profileResponse.addProfileHouseResponse(profileHouseResponse);
@@ -223,13 +225,14 @@ public class UserServiceImpl implements UserService {
                 ProfileHouseResponse profileHouseResponse = houseResponseConverter.view(house);
                 profileHouseResponse.setCountOfBooking(house.getBookings());
                 profileHouseResponse.setCountOfFavorite((long) favoriteHouseRepository.getCountOfFavorite(house));
-                if (house.getHousesStatus().equals(HousesStatus.BLOCKED)){
+                if (house.getHousesStatus().equals(HousesStatus.BLOCKED)) {
                     profileHouseResponse.setIsBlockCed(true);
                 }
                 profileResponse.addProfileHouseResponse(profileHouseResponse);
             }
             return profileResponse;
-        }  if (sortHousesAsDesired.equals("In wish list")) {
+        }
+        if (sortHousesAsDesired.equals("In wish list")) {
             profileResponse.getProfileHouseResponses().sort(Comparator.comparing(ProfileHouseResponse::getRating).reversed());
         }
         return profileResponse;
