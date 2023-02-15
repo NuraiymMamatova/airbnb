@@ -89,6 +89,33 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
+    public List<AccommodationResponse> getLatestAccommodation(boolean popularHouse, boolean popularApartments) {
+
+        if (popularHouse) {
+            List<AccommodationResponse> houseResponses = houseRepository.getPopularHouse();
+            for (AccommodationResponse accommodationResponse : houseResponses) {
+                accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
+            }
+            houseResponses.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
+            return houseResponses.stream().limit(3).toList();
+        }
+        if (popularApartments) {
+            List<AccommodationResponse> popularApartmentByCountOfBookedUser = houseRepository.getPopularApartment();
+            for (AccommodationResponse accommodationResponse : popularApartmentByCountOfBookedUser) {
+                accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
+            }
+            popularApartmentByCountOfBookedUser.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
+            return popularApartmentByCountOfBookedUser.stream().limit(7).toList();
+        }
+        List<AccommodationResponse> houseResponses = houseRepository.getLatestAccommodation();
+        for (AccommodationResponse houseResponse : houseResponses) {
+            House house = houseRepository.findById(houseResponse.getId()).orElseThrow(() -> new NotFoundException("House Id not found"));
+            houseResponse.setLocationResponse(locationRepository.convertToResponse(house.getLocation()));
+        }
+        return houseResponses.stream().limit(7).toList();
+    }
+
+    @Override
     public ApplicationResponse getAllPagination(HouseType houseType, String sorting, String search, int page, int countOfHouses, String region, String popularAndLatest) {
         ApplicationResponse applicationResponse = new ApplicationResponse();
         Pageable pageable = PageRequest.of(page - 1, countOfHouses);

@@ -26,7 +26,6 @@ public class HouseResponseConverter {
         this.rating = rating;
     }
 
-
     public HouseResponse viewHouse(House house) {
         if (house == null) {
             return null;
