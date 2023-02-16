@@ -34,10 +34,11 @@ public class House {
 
     private String title;
 
+    @Column(length = 1000000)
     private String descriptionOfListing;
 
     @ElementCollection(fetch = LAZY)
-    @Column(length = 100000)
+    @Column(columnDefinition="text", length = 1000000)
     private List<String> images;
 
     @Column(nullable = false)

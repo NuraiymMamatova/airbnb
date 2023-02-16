@@ -2,6 +2,7 @@ package com.example.airbnbb7.db.service;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.enums.HouseType;
+import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
@@ -25,6 +26,6 @@ public interface HouseService {
 
     AnnouncementService getAnnouncementById(Long houseId, Authentication authentication);
 
-    SimpleResponse rejectHouse(Long houseId, String message);
+    SimpleResponse changeStatusOfHouse(Long houseId, String message, HousesStatus housesStatus);
 
 }

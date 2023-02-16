@@ -17,9 +17,15 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public LocationResponse updateLocation(Location location, LocationRequest locationRequest) {
-        location.setAddress(locationRequest.getAddress());
-        location.setRegion(locationRequest.getRegion());
-        location.setTownOrProvince(locationRequest.getTownOrProvince());
+        if (locationRequest.getAddress() != null) {
+            location.setAddress(locationRequest.getAddress());
+        }
+        if (locationRequest.getRegion() != null) {
+            location.setRegion(locationRequest.getRegion());
+        }
+        if (locationRequest.getTownOrProvince() != null) {
+            location.setTownOrProvince(locationRequest.getTownOrProvince());
+        }
         locationRepository.save(location);
         return locationRepository.findLocationById(location.getId()).orElseThrow(() -> new NotFoundException("not found location id"));
     }

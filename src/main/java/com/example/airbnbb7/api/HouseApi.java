@@ -2,6 +2,7 @@ package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.enums.HouseType;
+import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
@@ -75,11 +76,14 @@ public class HouseApi {
         return houseService.getAnnouncementById(houseId, authentication);
     }
 
-    @PostMapping("rejectHouse/{houseId}")
-    @Operation(summary = "Reject house", description = "Only admin can rejected house")
+    @PostMapping("changeStatusOfHouse/{houseId}")
+    @Operation(summary = "Change status of house", description = "Only admin can change house status ")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public SimpleResponse rejectHouse(@PathVariable Long houseId, @RequestParam String message) {
-        return houseService.rejectHouse(houseId, message);
+    public SimpleResponse changeStatusOfHouse(@PathVariable Long houseId, @RequestParam(required = false) String message, @RequestParam("House status:" +
+            " BLOCKED(for unblock also used this enum), " +
+            " REJECT," +
+            " ACCEPT,") HousesStatus housesStatus) {
+        return houseService.changeStatusOfHouse(houseId, message, housesStatus);
     }
 
 }

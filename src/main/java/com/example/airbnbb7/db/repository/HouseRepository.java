@@ -38,7 +38,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.title," +
             "h.descriptionOfListing," +
             "h.maxOfGuests," +
-            "h.houseType,h.isFavorite) from House h where upper(h.title) like upper(concat('%',:search, '%')) and h.housesStatus =2 or upper(h.location.region) like  upper(concat('%',:search,'%')) and h.housesStatus =2 or upper( h.location.townOrProvince) like upper( concat('%',:search,'%')) and h.housesStatus =2 or upper( h.location.address) like upper( concat('%',:search,'%')) and h.housesStatus =2")
+            "h.houseType,h.isFavorite) from House h where upper(h.title) like upper(concat('%',:search, '%')) and h.housesStatus = 2 or upper(h.location.region) like  upper(concat('%',:search,'%')) and h.housesStatus =2 or upper( h.location.townOrProvince) like upper( concat('%',:search,'%')) and h.housesStatus =2 or upper( h.location.address) like upper( concat('%',:search,'%')) and h.housesStatus =2")
     Page<HouseResponseSortedPagination> pagination(String search, Pageable pageable);
 
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
