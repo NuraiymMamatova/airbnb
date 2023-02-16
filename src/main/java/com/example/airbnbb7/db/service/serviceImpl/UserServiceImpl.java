@@ -55,8 +55,6 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
-    private static Long id;
-
     private final HouseResponseConverter houseResponseConverter;
 
     private final Rating rating;
@@ -121,14 +119,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("not found email"));
-    }
-
-    public static Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     @Override
