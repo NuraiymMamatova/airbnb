@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -134,14 +133,14 @@ public class HouseServiceImpl implements HouseService {
         return applicationResponse;
     }
 
-    public List<HouseResponseSortedPagination> sortHouse(List<HouseResponseSortedPagination> houseResponses, String filter) {
-        List<HouseResponseSortedPagination> sort = new LinkedList<>(houseResponses);
-        if (filter == null || sort.isEmpty()) {
+    public List<HouseResponseSortedPagination> sortHouse(List<HouseResponseSortedPagination> houseResponses, String sorting) {
+        List<HouseResponseSortedPagination> sort = new ArrayList<>(houseResponses);
+        if (sorting == null || sort.isEmpty()) {
             return houseResponses;
         }
-        if ("Low to high".equals(filter)) {
+        if ("Low to high".equals(sorting)) {
             sort.sort(Comparator.comparing(HouseResponseSortedPagination::getPrice));
-        } else if ("High to low".equals(filter)) {
+        } else if ("High to low".equals(sorting)) {
             sort.sort(Comparator.comparing(HouseResponseSortedPagination::getPrice).reversed());
         }
 
