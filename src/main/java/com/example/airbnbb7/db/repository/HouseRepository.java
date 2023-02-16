@@ -1,6 +1,7 @@
 package com.example.airbnbb7.db.repository;
 
 import com.example.airbnbb7.db.entities.House;
+import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.AnnouncementResponseForAdmin;
 import com.example.airbnbb7.dto.response.AnnouncementResponseForUser;
 import com.example.airbnbb7.dto.response.AnnouncementResponseForVendor;
@@ -9,12 +10,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface HouseRepository extends JpaRepository<House, Long> {
+
+    @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.id, h.bookings, h.title, h.price) from House h order by h.dateHouseCreated desc")
+    List<AccommodationResponse> getLatestAccommodation();
+
+    @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.id, h.bookings, h.title, h.descriptionOfListing) from House h where h.houseType = 1 order by h.bookings desc")
+    List<AccommodationResponse> getPopularHouse();
+
+    @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.id, h.bookings, h.title, h.descriptionOfListing) from House h where h.houseType = 0 order by h.bookings desc")
+    List<AccommodationResponse> getPopularApartment();
 
     @Query("select new com.example.airbnbb7.dto.response.AnnouncementResponseForVendor(h.id, h.title, h.descriptionOfListing, h.maxOfGuests, h.houseType) from House h where h.id = :houseId")
     Optional<AnnouncementResponseForVendor> findHouseByIdForVendor(Long houseId);
