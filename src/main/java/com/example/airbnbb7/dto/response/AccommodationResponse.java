@@ -29,21 +29,16 @@ public class AccommodationResponse {
 
     private LocationResponse locationResponse;
 
-    private Long countOfBookedUser;
-
-    private UserResponse owner;
-
-    public AccommodationResponse(Long id, Long countOfBookedUser, String name, Double price) {
-        this.id = id;
-        this.countOfBookedUser = countOfBookedUser;
-        this.name = name;
-        this.price = price;
-    }
-
-    public AccommodationResponse(Long id, Long countOfBookedUser, String name, String description) {
+    public AccommodationResponse(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.countOfBookedUser = countOfBookedUser;
+    }
+
+    public AccommodationResponse(Long id, Double price, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
     }
 }

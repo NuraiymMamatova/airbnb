@@ -1,14 +1,12 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
-import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
-import com.example.airbnbb7.dto.response.HouseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -31,23 +29,21 @@ public class HouseApi {
     @Operation(summary = "Save house", description = "Save house and location")
     @PreAuthorize("hasAuthority('USER')")
     public SimpleResponse saveHouse(@RequestBody HouseRequest houseRequest, Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        return houseService.save(houseRequest, user);
+        return houseService.save(houseRequest, authentication);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update House", description = "Update house by id")
+    @PreAuthorize("hasAuthority('USER')")
     public SimpleResponse updateHouse(@PathVariable Long id,
                                       @RequestBody HouseRequest houseRequest, Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        return houseService.updateHouse(id, user.getId(), houseRequest);
+        return houseService.updateHouse(id, authentication, houseRequest);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete House", description = "Delete house by id")
     public SimpleResponse deleteHouseById(@PathVariable Long id, Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        return houseService.deleteByIdHouse(id, user.getId());
+        return houseService.deleteByIdHouse(id, authentication);
     }
 
     @GetMapping("/pagination")
@@ -76,13 +72,14 @@ public class HouseApi {
     @GetMapping("/announcement/{houseId}")
     @Operation(summary = "House inner page", description = "Any user can go through to view the house")
     public AnnouncementService announcementById(@PathVariable Long houseId, Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        return houseService.getAnnouncementById(houseId, user.getId());
+        return houseService.getAnnouncementById(houseId, authentication);
     }
 
-    @GetMapping("/search")
-    @Operation(summary = "Global search", description = "Global Home Search")
-    public List<HouseResponse> search(@RequestParam("search") String search) {
-        return houseService.globalSearch(search);
+    @PostMapping("rejectHouse/{houseId}")
+    @Operation(summary = "Reject house", description = "Only admin can rejected house")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public SimpleResponse rejectHouse(@PathVariable Long houseId, @RequestParam String message) {
+        return houseService.rejectHouse(houseId, message);
     }
+
 }

@@ -1,6 +1,5 @@
 package com.example.airbnbb7.api;
 
-import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.response.ProfileResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +28,6 @@ public class UserApi {
                                        @RequestParam(name = "page") int page,
                                        @RequestParam(name = "size") int size,
                                        Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        return userService.userProfile(mainInUserProfile, sortHousesByApartments, sortHousesByHouses, sortHousesAsDesired, sortingHousesByValue, sortingHousesByRating, user.getId(), page, size);
+        return userService.userProfile(mainInUserProfile, sortHousesByApartments, sortHousesByHouses, sortHousesAsDesired, sortingHousesByValue, sortingHousesByRating, authentication, page, size);
     }
 }

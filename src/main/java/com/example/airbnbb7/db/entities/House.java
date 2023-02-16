@@ -37,12 +37,14 @@ public class House {
     private String descriptionOfListing;
 
     @ElementCollection(fetch = LAZY)
+    @Column(length = 100000)
     private List<String> images;
 
     @Column(nullable = false)
     private Long maxOfGuests;
 
     private Long bookings;
+
     private HouseType houseType;
 
     private HousesStatus housesStatus;

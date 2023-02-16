@@ -11,15 +11,18 @@ import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.*;
 import com.example.airbnbb7.db.service.AnnouncementService;
+import com.example.airbnbb7.db.service.EmailService;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.*;
+import com.example.airbnbb7.exceptions.BadRequestException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -50,49 +53,65 @@ public class HouseServiceImpl implements HouseService {
 
     private final FavoriteHouseRepository favoriteHouseRepository;
 
+    private final EmailService emailService;
+
     @Override
-    public SimpleResponse deleteByIdHouse(Long houseId, Long userId) {
-        House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House id not found"));
-        if (house.getOwner().getId() == userId || roleRepository.findRoleByUserId(userId).getId() == 1) {
-            favoriteHouseRepository.deleteAll(favoriteHouseRepository.getAllFavoriteHouseByHouseId(houseId));
-            houseRepository.delete(house);
-        } else {
-            throw new BadCredentialsException("You can't delete this announcement because it's not your announcement");
+    public SimpleResponse deleteByIdHouse(Long houseId, Authentication authentication) {
+        if (authentication != null) {
+            User user = (User) authentication.getPrincipal();
+            House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House id not found"));
+            if (house.getOwner().getId() == user.getId() || roleRepository.findRoleByUserId(user.getId()).getId() == 1) {
+                favoriteHouseRepository.deleteAll(favoriteHouseRepository.getAllFavoriteHouseByHouseId(houseId));
+                houseRepository.delete(house);
+            } else {
+                throw new BadCredentialsException("You can't delete this announcement because it's not your announcement");
+            }
+            return new SimpleResponse("House successfully deleted");
         }
-        return new SimpleResponse("House successfully deleted");
+        throw new BadRequestException("Authentication cannot be null!");
+
     }
 
     @Override
-    public SimpleResponse updateHouse(Long id, Long userId, HouseRequest houseRequest) {
-        House house = houseRepository.findById(id).orElseThrow(() -> new NotFoundException("House id not found"));
-        if (house.getOwner().getId() == userId) {
+    public SimpleResponse updateHouse(Long id, Authentication authentication, HouseRequest houseRequest) {
+        if (authentication != null) {
+            User user = (User) authentication.getPrincipal();
+            House house = houseRepository.findById(id).orElseThrow(() -> new NotFoundException("House id not found"));
+            if (house.getOwner().getId() == user.getId()) {
+                house.setHousesStatus(HousesStatus.ON_MODERATION);
+                houseRequestConverter.update(house, houseRequest);
+                houseRepository.save(house);
+            } else {
+                throw new BadCredentialsException("You can't update this announcement because it's not your announcement");
+            }
+            return new SimpleResponse("House successfully updated!");
+        }
+        throw new BadRequestException("Authentication cannot be null!");
+    }
+
+    @Override
+    public SimpleResponse save(HouseRequest houseRequest, Authentication authentication) {
+        if (authentication != null) {
+            User user = (User) authentication.getPrincipal();
+            House house = new House(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getDescriptionOfListing(), houseRequest.getMaxOfGuests(), houseRequest.getImages(), houseRequest.getHouseType());
+            Location location = new Location(houseRequest.getLocation().getAddress(), houseRequest.getLocation().getTownOrProvince(), houseRequest.getLocation().getRegion());
+            location.setHouse(house);
+            house.setLocation(location);
+            house.setDateHouseCreated(LocalDate.now());
             house.setHousesStatus(HousesStatus.ON_MODERATION);
-            houseRequestConverter.update(house, houseRequest);
+            house.setOwner(user);
             houseRepository.save(house);
+
+            HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(), house.getTitle(),
+                    house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType());
+            houseResponse.setOwner(new UserResponse(house.getOwner().getId(), house.getOwner().getName(),
+                    house.getOwner().getEmail(), house.getOwner().getImage()));
+            houseResponse.setLocation(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(),
+                    house.getLocation().getAddress(), house.getLocation().getRegion()));
+            houseResponse.setImages(house.getImages());
         } else {
-            throw new BadCredentialsException("You can't update this announcement because it's not your announcement");
+            throw new BadRequestException("Authentication cannot be null!");
         }
-        return new SimpleResponse("House successfully updated!");
-    }
-
-    @Override
-    public SimpleResponse save(HouseRequest houseRequest, User user) {
-        House house = new House(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getDescriptionOfListing(), houseRequest.getMaxOfGuests(), houseRequest.getImages(), houseRequest.getHouseType());
-        Location location = new Location(houseRequest.getLocation().getAddress(), houseRequest.getLocation().getTownOrProvince(), houseRequest.getLocation().getRegion());
-        location.setHouse(house);
-        house.setLocation(location);
-        house.setDateHouseCreated(LocalDate.now());
-        house.setHousesStatus(HousesStatus.ON_MODERATION);
-        house.setOwner(user);
-        houseRepository.save(house);
-
-        HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(), house.getTitle(),
-                house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType());
-        houseResponse.setOwner(new UserResponse(house.getOwner().getId(), house.getOwner().getName(),
-                house.getOwner().getEmail(), house.getOwner().getImage()));
-        houseResponse.setLocation(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(),
-                house.getLocation().getAddress(), house.getLocation().getRegion()));
-        houseResponse.setImages(house.getImages());
         return new SimpleResponse("House successfully saved!");
     }
 
@@ -102,6 +121,8 @@ public class HouseServiceImpl implements HouseService {
         if (popularHouse) {
             List<AccommodationResponse> houseResponses = houseRepository.getPopularHouse();
             for (AccommodationResponse accommodationResponse : houseResponses) {
+                accommodationResponse.setLocationResponse(locationRepository.findLocationByHouseId(accommodationResponse.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+                accommodationResponse.setImages(houseRepository.findImagesByHouseId(accommodationResponse.getId()));
                 accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
             }
             houseResponses.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
@@ -110,6 +131,8 @@ public class HouseServiceImpl implements HouseService {
         if (popularApartments) {
             List<AccommodationResponse> popularApartmentByCountOfBookedUser = houseRepository.getPopularApartment();
             for (AccommodationResponse accommodationResponse : popularApartmentByCountOfBookedUser) {
+                accommodationResponse.setLocationResponse(locationRepository.findLocationByHouseId(accommodationResponse.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+                accommodationResponse.setImages(houseRepository.findImagesByHouseId(accommodationResponse.getId()));
                 accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
             }
             popularApartmentByCountOfBookedUser.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
@@ -118,6 +141,7 @@ public class HouseServiceImpl implements HouseService {
         List<AccommodationResponse> houseResponses = houseRepository.getLatestAccommodation();
         for (AccommodationResponse houseResponse : houseResponses) {
             House house = houseRepository.findById(houseResponse.getId()).orElseThrow(() -> new NotFoundException("House Id not found"));
+            houseResponse.setImages(house.getImages());
             houseResponse.setLocationResponse(locationRepository.convertToResponse(house.getLocation()));
         }
         return houseResponses.stream().limit(7).toList();
@@ -205,101 +229,61 @@ public class HouseServiceImpl implements HouseService {
         return responses;
     }
 
-
     @Override
-    public AnnouncementService getAnnouncementById(Long houseId, Long userId) {
+    public AnnouncementService getAnnouncementById(Long houseId, Authentication authentication) {
         AnnouncementResponseForUser house = houseRepository.findHouseByIdForUser(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
         UserResponse userResponse = userRepository.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("User not found!")).getOwner().getId());
+        User user = null;
+        if (authentication != null) {
+            user = (User) authentication.getPrincipal();
+        }
         house.setImages(houseRepository.findImagesByHouseId(houseId));
         house.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
         house.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
-        List<Booking> bookings = bookingRepository.getBookingsByUserId(userId);
-        house.setRating(rating.getRatingCount(feedbackRepository.getAllFeedbackByHouseId(houseId)));
-        for (Booking booking : bookings) {
-            if (booking.getHouse().getId() == houseId) {
-                house.setBookingResponse(bookingRepository.findBookingById(booking.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
-            }
+        if (user != null) {
+            List<Booking> bookings = bookingRepository.getBookingsByUserId(user.getId());
+            house.setRating(rating.getRatingCount(feedbackRepository.getAllFeedbackByHouseId(houseId)));
+            for (Booking booking : bookings) {
+                if (booking.getHouse().getId() == houseId) {
+                    house.setBookingResponse(bookingRepository.findBookingById(booking.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+                }
 
-        }
-        if (userResponse.getId() == userId) {
-            AnnouncementResponseForVendor houseResponseForVendor = houseRepository.findHouseByIdForVendor(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
-            houseResponseForVendor.setImages(houseRepository.findImagesByHouseId(houseId));
-            List<BookingResponse> bookingResponses = new ArrayList<>();
-            for (BookingResponse booking : bookingRepository.getBookingsByHouseId(houseId)) {
-                booking.setOwner(userRepository.findUserById(bookingRepository.getUserIdByBookingId(booking.getId())));
-                bookingResponses.add(booking);
             }
-            houseResponseForVendor.setRating(rating.getRatingCount(feedbackRepository.getAllFeedbackByHouseId(houseId)));
-            houseResponseForVendor.setBookingResponses(bookingResponses);
-            houseResponseForVendor.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
-            houseResponseForVendor.setInFavorites(userRepository.inFavorite(houseId));
-            houseResponseForVendor.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
-            return houseResponseForVendor;
-        } else if (roleRepository.findRoleByUserId(userId).getNameOfRole().equals("ADMIN")) {
-            AnnouncementResponseForAdmin announcementResponseForAdmin = houseRepository.findHouseByIdForAdmin(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
-            announcementResponseForAdmin.setImages(houseRepository.findImagesByHouseId(houseId));
-            announcementResponseForAdmin.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
-            announcementResponseForAdmin.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
-            announcementResponseForAdmin.setOwner(userResponse);
-            announcementResponseForAdmin.setRating(rating.getRatingCount(feedbackRepository.getAllFeedbackByHouseId(houseId)));
-            return announcementResponseForAdmin;
+            if (userResponse.getId() == user.getId()) {
+                AnnouncementResponseForVendor houseResponseForVendor = houseRepository.findHouseByIdForVendor(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+                houseResponseForVendor.setImages(houseRepository.findImagesByHouseId(houseId));
+                List<BookingResponse> bookingResponses = new ArrayList<>();
+                for (BookingResponse booking : bookingRepository.getBookingsByHouseId(houseId)) {
+                    booking.setOwner(userRepository.findUserById(bookingRepository.getUserIdByBookingId(booking.getId())));
+                    bookingResponses.add(booking);
+                }
+                houseResponseForVendor.setRating(rating.getRatingCount(feedbackRepository.getAllFeedbackByHouseId(houseId)));
+                houseResponseForVendor.setBookingResponses(bookingResponses);
+                houseResponseForVendor.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
+                houseResponseForVendor.setInFavorites(userRepository.inFavorite(houseId));
+                houseResponseForVendor.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
+                return houseResponseForVendor;
+            } else if (roleRepository.findRoleByUserId(user.getId()).getNameOfRole().equals("ADMIN")) {
+                AnnouncementResponseForAdmin announcementResponseForAdmin = houseRepository.findHouseByIdForAdmin(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+                announcementResponseForAdmin.setImages(houseRepository.findImagesByHouseId(houseId));
+                announcementResponseForAdmin.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
+                announcementResponseForAdmin.setFeedbacks(feedbackRepository.getFeedbacksByHouseId(houseId));
+                announcementResponseForAdmin.setOwner(userResponse);
+                announcementResponseForAdmin.setRating(rating.getRatingCount(feedbackRepository.getAllFeedbackByHouseId(houseId)));
+                return announcementResponseForAdmin;
+            }
         }
         house.setOwner(userResponse);
         return house;
     }
 
     @Override
-    public List<HouseResponse> globalSearch(String searchEngine) {
-        String[] searchEngines = searchEngine.toUpperCase().split(" ");
-        List<HouseResponse> globalHouses = new ArrayList<>();
-        List<House> houses = new ArrayList<>();
-        for (House house : houseRepository.findAll()) {
-            if (searchEngines.length == 1) {
-                if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0])) {
-                    if (!houses.contains(house)) {
-                        houses.add(house);
-                    }
-                } else if (house.getHouseType().toString().toUpperCase().contains(searchEngines[0])
-                        || house.getTitle().toUpperCase().contains(searchEngines[0]) || house.getMaxOfGuests().toString().toUpperCase().contains(searchEngines[0])) {
-                    if (!houses.contains(house)) {
-                        houses.add(house);
-                    }
-                }
-            } else if (searchEngines.length == 2) {
-                if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0]) && house.getHouseType().toString().toUpperCase().contains(searchEngines[1])) {
-                    if (!houses.contains(house)) {
-                        houses.add(house);
-                    }
-                }
-            } else if (searchEngines.length == 3) {
-                if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0]) && house.getHouseType().toString().toUpperCase().contains(searchEngines[1])
-                        && house.getTitle().toUpperCase().contains(searchEngines[2])) {
-                    if (!houses.contains(house)) {
-                        houses.add(house);
-                    }
-                }
-            } else if (searchEngines.length == 4) {
-                if (house.getLocation().getRegion().toUpperCase().contains(searchEngines[0]) && house.getHouseType().toString().toUpperCase().contains(searchEngines[1])
-                        && house.getTitle().toUpperCase().contains(searchEngines[2]) && house.getMaxOfGuests().toString().toUpperCase().contains(searchEngines[3])) {
-                    if (!houses.contains(house)) {
-                        houses.add(house);
-                    }
-                }
-            } else if (searchEngines.length > 4) {
-                throw new NotFoundException("Тo such house or apartment exists!!!");
-            }
-        }
-
-        for (House house : houses) {
-            HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(),
-                    house.getTitle(), house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType());
-            houseResponse.setOwner(new UserResponse(house.getOwner().getId(),
-                    house.getOwner().getName(), house.getOwner().getEmail(), house.getOwner().getImage()));
-            houseResponse.setLocation(new LocationResponse(house.getLocation().getId(),
-                    house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
-            houseResponse.setImages(house.getImages());
-            globalHouses.add(houseResponse);
-        }
-        return globalHouses;
+    public SimpleResponse rejectHouse(Long houseId, String message) {
+        House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+        house.setHousesStatus(HousesStatus.REJECT);
+        houseRepository.save(house);
+        emailService.sendMessage(house.getOwner().getEmail(), "House rejected :(", message);
+        return new SimpleResponse("Successfully sent :)");
     }
+
 }

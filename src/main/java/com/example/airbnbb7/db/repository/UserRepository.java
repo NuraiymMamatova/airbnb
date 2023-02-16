@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select new com.example.airbnbb7.dto.response.UserResponse(u.id, u.name, u.email, u.image) from User u where u.id = :userId")
     UserResponse findUserById(Long userId);
 
-    @Query("select f from FavoriteHouse f where f.user.id = :userId")
+    @Query("select f from FavoriteHouse f where f.house.housesStatus = 2 and f.user.id = :userId")
     List<FavoriteHouse> getFavoriteHousesByUserId(Long userId);
 
     @Query("select new com.example.airbnbb7.dto.response.UserResponseForVendor(f.user.id, f.user.name, f.user.email, f.user.image, f.addedHouseToFavorites) from FavoriteHouse f where f.house.id = :houseId")
