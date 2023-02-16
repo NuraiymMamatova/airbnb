@@ -4,6 +4,7 @@ import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.service.FeedbackService;
 import com.example.airbnbb7.dto.request.FeedbackRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,9 +15,10 @@ public class FeedbackApi {
     private final FeedbackService feedbackService;
 
     @PostMapping("/{houseId}")
-    public SimpleResponse save(@RequestBody FeedbackRequest feedbackRequest,
-                     @PathVariable Long houseId){
-        return feedbackService.saveFeedback(feedbackRequest,houseId);
+    public SimpleResponse save(Authentication authentication, @RequestBody FeedbackRequest feedbackRequest,
+                               @PathVariable Long houseId){
+
+        return feedbackService.saveFeedback(feedbackRequest,houseId,authentication);
     }
 
     @DeleteMapping("/delete/{feedbackId}")

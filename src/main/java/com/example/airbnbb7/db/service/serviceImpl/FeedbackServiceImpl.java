@@ -9,8 +9,10 @@ import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.FeedbackService;
 import com.example.airbnbb7.dto.request.FeedbackRequest;
+import com.example.airbnbb7.exceptions.BadRequestException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,14 +24,17 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final HouseRepository houseRepository;
 
     @Override
-    public SimpleResponse saveFeedback(FeedbackRequest feedbackRequest, Long houseId) {
-        User user = userRepository.findById(UserRepository.getUserId()).orElseThrow(() -> new NotFoundException("User not found!"));
-        House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
-        Feedback feedback = new Feedback(feedbackRequest.getText(), feedbackRequest.getRating(),
-                feedbackRequest.getCreatedFeedback(), feedbackRequest.getImage(),
-                feedbackRequest.getLike(), feedbackRequest.getDislike(), user, house);
-        feedbackRepository.save(feedback);
-        return new SimpleResponse("Feedback successfully saved!");
+    public SimpleResponse saveFeedback(FeedbackRequest feedbackRequest, Long houseId, Authentication authentication) {
+        if (authentication != null) {
+            User user = (User) authentication.getPrincipal();
+            House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+            Feedback feedback = new Feedback(feedbackRequest.getText(), feedbackRequest.getRating(),
+                    feedbackRequest.getCreatedFeedback(), feedbackRequest.getImage(),
+                    feedbackRequest.getLike(), feedbackRequest.getDislike(), user, house);
+            feedbackRepository.save(feedback);
+            return new SimpleResponse("Feedback successfully saved!");
+        }
+        throw new BadRequestException("Authentication can not be null!");
     }
 
     @Override
