@@ -292,14 +292,14 @@ public class HouseServiceImpl implements HouseService {
             case ACCEPT -> {
                 house.setHousesStatus(HousesStatus.ACCEPT);
                 houseRepository.save(house);
-                emailService.sendMessage(house.getOwner().getEmail(), "House accepted :)", "Moderation successfully passed!");
+                emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s accepted :)", house.getTitle()), "Moderation successfully passed!");
                 return new SimpleResponse("Accepted :)");
             }
             case REJECT -> {
                 house.setHousesStatus(HousesStatus.REJECT);
                 houseRepository.save(house);
                 if (message != null) {
-                    emailService.sendMessage(house.getOwner().getEmail(), "House rejected :(", message);
+                    emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s rejected :(", house.getTitle()), message);
                 } else {
                     throw new BadRequestException("Message cannot be null!");
                 }
@@ -309,12 +309,12 @@ public class HouseServiceImpl implements HouseService {
                 if (house.getHousesStatus().equals(HousesStatus.BLOCKED)) {
                     house.setHousesStatus(HousesStatus.ON_MODERATION);
                     houseRepository.save(house);
-                    emailService.sendMessage(house.getOwner().getEmail(), "House unblocked :)", "House unblocked :)");
+                    emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s unblocked :)", house.getTitle()), "House unblocked :)");
                     return new SimpleResponse("Unblocked :)");
                 } else {
                     house.setHousesStatus(HousesStatus.BLOCKED);
                     houseRepository.save(house);
-                    emailService.sendMessage(house.getOwner().getEmail(), "House blocked :(", "House blocked :(");
+                    emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s blocked :(", house.getTitle()), "House blocked :(");
                     return new SimpleResponse("Blocked :)");
                 }
             }
