@@ -298,7 +298,11 @@ public class HouseServiceImpl implements HouseService {
             case REJECT -> {
                 house.setHousesStatus(HousesStatus.REJECT);
                 houseRepository.save(house);
-                emailService.sendMessage(house.getOwner().getEmail(), "House rejected :(", message);
+                if (message != null) {
+                    emailService.sendMessage(house.getOwner().getEmail(), "House rejected :(", message);
+                } else {
+                    throw new BadRequestException("Message cannot be null!");
+                }
                 return new SimpleResponse("Successfully sent :)");
             }
             case BLOCKED -> {
