@@ -18,15 +18,6 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     @Query("select new com.example.airbnbb7.dto.response.LocationResponse(l.id, l.townOrProvince, l.address, l.region) from Location l where l.id = :locationId")
     Optional<LocationResponse> findLocationById(Long locationId);
 
-    @Transactional
-    @Modifying
-    @Query(value = "insert into locations(id, address, region, town_or_province, house_id)" +
-            "values (nextval('location_seq'), ?, ?, ?, ?)", nativeQuery = true)
-    void saveLocation(String address, String region, String town_or_province, int house_id);
-
-    @Query("select max(l.id) from  Location  l")
-    Long locationMaxId();
-
     @Query("select new com.example.airbnbb7.dto.response.LocationResponse(l.id,l.townOrProvince,l.address,l.region) from Location l where l = :location")
     LocationResponse convertToResponse(Location location);
 

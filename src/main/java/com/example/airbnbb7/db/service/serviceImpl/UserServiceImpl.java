@@ -8,13 +8,17 @@ import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HousesStatus;
-import com.example.airbnbb7.db.repository.*;
+import com.example.airbnbb7.db.repository.FavoriteHouseRepository;
+import com.example.airbnbb7.db.repository.FeedbackRepository;
+import com.example.airbnbb7.db.repository.RoleRepository;
+import com.example.airbnbb7.db.repository.UserRepository;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
 import com.example.airbnbb7.dto.response.ProfileHouseResponse;
 import com.example.airbnbb7.dto.response.ProfileResponse;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
+import com.example.airbnbb7.exceptions.BadRequestException;
 import com.example.airbnbb7.exceptions.ExceptionResponse;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -27,11 +31,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -51,23 +55,13 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
-    private static Long id;
-
     private final HouseResponseConverter houseResponseConverter;
 
     private final Rating rating;
 
-    private String email;
     private final FeedbackRepository feedbackRepository;
+
     private final FavoriteHouseRepository favoriteHouseRepository;
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     @PostConstruct
     void init() throws IOException {
@@ -96,17 +90,16 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(firebaseToken.getEmail()));
             user.setName(firebaseToken.getName());
             user.setEmail(firebaseToken.getEmail());
+            user.setImage(firebaseToken.getPicture());
             roleRepository.save(role);
         }
 
         user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!", firebaseToken.getEmail())));
-        setId(user.getId());
-        setEmail(user.getEmail());
         String token = jwtTokenUtil.generateToken(user);
         return new LoginResponse(user.getEmail(), token, userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
     }
 
-    public LoginResponse login(@RequestBody UserRequest request) {
+    public LoginResponse login(UserRequest request) {
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(request.getEmail(),
                         request.getPassword());
@@ -120,8 +113,6 @@ public class UserServiceImpl implements UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("invalid password");
         }
-        setEmail(user.getEmail());
-        setId(user.getId());
         return new LoginResponse(jwtTokenUtil.generateToken(user), user.getEmail(), roleRepository.findRoleByUserId(user.getId()).getNameOfRole());
     }
 
@@ -130,73 +121,70 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("not found email"));
     }
 
-    public static Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @Override
     public ProfileResponse userProfile(String mainInUserProfile, String sortHousesAsDesired, String sortHousesByApartments,
-                                       String sortHousesByHouses, String sortingHousesByValue, String sortingHousesByRating, Long userId, int page, int size) {
-        sortHousesAsDesired = (sortHousesAsDesired != null) ? sortHousesAsDesired : " ";
-        sortHousesByApartments = (sortHousesByApartments != null) ? sortHousesByApartments : " ";
-        sortHousesByHouses = (sortHousesByHouses != null) ? sortHousesByHouses : " ";
-        sortingHousesByValue = (sortingHousesByValue != null) ? sortingHousesByValue : " ";
-        sortingHousesByRating = (sortingHousesByRating != null) ? sortingHousesByRating : " ";
-        ProfileResponse profileResponse = new ProfileResponse(userId, userRepository.findById(userId).get().getName(), userRepository.findById(userId).get().getEmail());
-        profileResponse.setPage((long) page);
-        profileResponse.setBookingsSize((long) userRepository.findById(userId).get().getBookings().size());
-        profileResponse.setMyAnnouncementSize((long) userRepository.findById(userId).get().getAnnouncements().size());
-        Long counter = 0L;
-        for (House house : userRepository.findById(userId).get().getAnnouncements()) {
-            if (house.getHousesStatus().equals(HousesStatus.ON_MODERATION)) {
-                counter++;
-            }
-        }
-        profileResponse.setOnModerationSize(counter);
-        switch (mainInUserProfile) {
-            case "Bookings" -> {
-                for (Booking booking : userRepository.findById(userId).get().getBookings()) {
-                    ProfileHouseResponse profileBookingHouseResponse = houseResponseConverter.view(booking.getHouse());
-                    profileBookingHouseResponse.setCheckIn(booking.getCheckIn());
-                    profileBookingHouseResponse.setCheckOut(booking.getCheckOut());
-                    profileResponse.addProfileHouseResponse(profileBookingHouseResponse);
+                                       String sortHousesByHouses, String sortingHousesByValue, String sortingHousesByRating, Authentication authentication, int page, int size) {
+        if (authentication != null) {
+            User user = (User) authentication.getPrincipal();
+            Long userId = user.getId();
+            sortHousesAsDesired = (sortHousesAsDesired != null) ? sortHousesAsDesired : " ";
+            sortHousesByApartments = (sortHousesByApartments != null) ? sortHousesByApartments : " ";
+            sortHousesByHouses = (sortHousesByHouses != null) ? sortHousesByHouses : " ";
+            sortingHousesByValue = (sortingHousesByValue != null) ? sortingHousesByValue : " ";
+            sortingHousesByRating = (sortingHousesByRating != null) ? sortingHousesByRating : " ";
+            ProfileResponse profileResponse = new ProfileResponse(userId, userRepository.findById(userId).get().getName(), userRepository.findById(userId).get().getEmail());
+            profileResponse.setPage((long) page);
+            profileResponse.setBookingsSize((long) userRepository.findById(userId).get().getBookings().size());
+            profileResponse.setMyAnnouncementSize((long) userRepository.findById(userId).get().getAnnouncements().size());
+            Long counter = 0L;
+            for (House house : userRepository.findById(userId).get().getAnnouncements()) {
+                if (house.getHousesStatus().equals(HousesStatus.ON_MODERATION)) {
+                    counter++;
                 }
-                int sizePage = (int) Math.ceil((double) profileResponse.getBookingsSize() / size);
-                profileResponse.setPageSize((long) sizePage);
-                return profileResponse;
             }
-            case "My announcement" -> {
-                ProfileResponse profileBookingHouseResponse = star(sortHousesAsDesired, sortHousesByApartments, sortHousesByHouses, sortingHousesByValue, sortingHousesByRating, userId);
-                profileBookingHouseResponse.setBookingsSize(profileResponse.getBookingsSize());
-                profileBookingHouseResponse.setOnModerationSize(profileResponse.getOnModerationSize());
-                profileBookingHouseResponse.setMyAnnouncementSize(profileResponse.getMyAnnouncementSize());
-                if (profileBookingHouseResponse.getProfileHouseResponses() != null){
-                    profileBookingHouseResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileBookingHouseResponse.getProfileHouseResponses()));
-                }
-                int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getProfileHouseResponses().size()/ size);
-                profileBookingHouseResponse.setPageSize((long) sizePage);
-                profileBookingHouseResponse.setPage((long) page);
-                return profileBookingHouseResponse;
-            }
-            case "On moderation" -> {
-                for (House house : userRepository.findById(userId).get().getAnnouncements()) {
-                    if (house.getHousesStatus().equals(HousesStatus.ON_MODERATION)) {
-                        profileResponse.addProfileHouseResponse(houseResponseConverter.view(house));
+            profileResponse.setOnModerationSize(counter);
+            switch (mainInUserProfile) {
+                case "Bookings" -> {
+                    for (Booking booking : userRepository.findById(userId).get().getBookings()) {
+                        ProfileHouseResponse profileBookingHouseResponse = houseResponseConverter.view(booking.getHouse());
+                        profileBookingHouseResponse.setCheckIn(booking.getCheckIn());
+                        profileBookingHouseResponse.setCheckOut(booking.getCheckOut());
+                        profileResponse.addProfileHouseResponse(profileBookingHouseResponse);
                     }
+                    int sizePage = (int) Math.ceil((double) profileResponse.getBookingsSize() / size);
+                    profileResponse.setPageSize((long) sizePage);
+                    return profileResponse;
                 }
-                profileResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileResponse.getProfileHouseResponses()));
-                int sizePage = (int) Math.ceil((double) profileResponse.getOnModerationSize() / size);
-                profileResponse.setPageSize((long) sizePage);
-                return profileResponse;
-            }
-            default -> {
-                return profileResponse;
+                case "My announcement" -> {
+                    ProfileResponse profileBookingHouseResponse = star(sortHousesAsDesired, sortHousesByApartments, sortHousesByHouses, sortingHousesByValue, sortingHousesByRating, userId);
+                    profileBookingHouseResponse.setBookingsSize(profileResponse.getBookingsSize());
+                    profileBookingHouseResponse.setOnModerationSize(profileResponse.getOnModerationSize());
+                    profileBookingHouseResponse.setMyAnnouncementSize(profileResponse.getMyAnnouncementSize());
+                    if (profileBookingHouseResponse.getProfileHouseResponses() != null) {
+                        profileBookingHouseResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileBookingHouseResponse.getProfileHouseResponses()));
+                    }
+                    int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getProfileHouseResponses().size() / size);
+                    profileBookingHouseResponse.setPageSize((long) sizePage);
+                    profileBookingHouseResponse.setPage((long) page);
+                    return profileBookingHouseResponse;
+                }
+                case "On moderation" -> {
+                    for (House house : userRepository.findById(userId).get().getAnnouncements()) {
+                        if (house.getHousesStatus().equals(HousesStatus.ON_MODERATION)) {
+                            profileResponse.addProfileHouseResponse(houseResponseConverter.view(house));
+                        }
+                    }
+                    profileResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileResponse.getProfileHouseResponses()));
+                    int sizePage = (int) Math.ceil((double) profileResponse.getOnModerationSize() / size);
+                    profileResponse.setPageSize((long) sizePage);
+                    return profileResponse;
+                }
+                default -> {
+                    return profileResponse;
+                }
             }
         }
+        throw new BadRequestException("Authentication cannot be null!");
     }
 
     private ProfileResponse houseType(String sortHousesByApartments, String sortHousesByHouses, String sortHousesAsDesired, Long userId) {
@@ -208,7 +196,7 @@ public class UserServiceImpl implements UserService {
                     ProfileHouseResponse profileHouseResponse = houseResponseConverter.view(house);
                     profileHouseResponse.setCountOfBooking(house.getBookings());
                     profileHouseResponse.setCountOfFavorite((long) favoriteHouseRepository.getCountOfFavorite(house));
-                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)){
+                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)) {
                         profileHouseResponse.setIsBlockCed(true);
                     }
                     profileResponse.addProfileHouseResponse(profileHouseResponse);
@@ -222,7 +210,7 @@ public class UserServiceImpl implements UserService {
                     ProfileHouseResponse profileHouseResponse = houseResponseConverter.view(house);
                     profileHouseResponse.setCountOfBooking(house.getBookings());
                     profileHouseResponse.setCountOfFavorite((long) favoriteHouseRepository.getCountOfFavorite(house));
-                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)){
+                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)) {
                         profileHouseResponse.setIsBlockCed(true);
                     }
                     profileResponse.addProfileHouseResponse(profileHouseResponse);
@@ -235,7 +223,7 @@ public class UserServiceImpl implements UserService {
                 ProfileHouseResponse profileHouseResponse = houseResponseConverter.view(house);
                 profileHouseResponse.setCountOfBooking(house.getBookings());
                 profileHouseResponse.setCountOfFavorite((long) favoriteHouseRepository.getCountOfFavorite(house));
-                if (house.getHousesStatus().equals(HousesStatus.BLOCKED)){
+                if (house.getHousesStatus().equals(HousesStatus.BLOCKED)) {
                     profileHouseResponse.setIsBlockCed(true);
                 }
                 profileResponse.addProfileHouseResponse(profileHouseResponse);
@@ -244,7 +232,8 @@ public class UserServiceImpl implements UserService {
                 }
             }
             return profileResponse;
-        }  if (sortHousesAsDesired.equals("In wish list")) {
+        }
+        if (sortHousesAsDesired.equals("In wish list")) {
             profileResponse.getProfileHouseResponses().sort(Comparator.comparing(ProfileHouseResponse::getRating).reversed());
         }
         return profileResponse;
