@@ -30,7 +30,5 @@ public interface HouseService {
 
     SimpleResponse changeStatusOfHouse(Long houseId, String message, HousesStatus housesStatus);
 
-    List<HouseResponse> globalSearch(String searchEngine);
-
     ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(Long page, Long pageSize);
 }
