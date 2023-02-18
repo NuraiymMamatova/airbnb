@@ -160,12 +160,12 @@ public class UserServiceImpl implements UserService {
                     profileBookingHouseResponse.setBookingsSize(profileResponse.getBookingsSize());
                     profileBookingHouseResponse.setOnModerationSize(profileResponse.getOnModerationSize());
                     profileBookingHouseResponse.setMyAnnouncementSize(profileResponse.getMyAnnouncementSize());
-                    if (profileBookingHouseResponse.getProfileHouseResponses() != null) {
-                        profileBookingHouseResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileBookingHouseResponse.getProfileHouseResponses()));
-                    }
                     int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getProfileHouseResponses().size() / size);
                     profileBookingHouseResponse.setPageSize((long) sizePage);
                     profileBookingHouseResponse.setPage((long) page);
+                    if (profileBookingHouseResponse.getProfileHouseResponses() != null) {
+                        profileBookingHouseResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileBookingHouseResponse.getProfileHouseResponses()));
+                    }
                     return profileBookingHouseResponse;
                 }
                 case "On moderation" -> {
