@@ -34,15 +34,18 @@ public class House {
 
     private String title;
 
+    @Column(length = 1000000)
     private String descriptionOfListing;
 
     @ElementCollection(fetch = LAZY)
+    @Column(columnDefinition="text", length = 1000000)
     private List<String> images;
 
     @Column(nullable = false)
     private Long maxOfGuests;
 
     private Long bookings;
+
     private HouseType houseType;
 
     private HousesStatus housesStatus;
@@ -53,10 +56,10 @@ public class House {
 
     private boolean isFavorite = false;
 
-    @OneToOne(cascade = {MERGE, REFRESH, DETACH, PERSIST}, fetch = EAGER, mappedBy = "house")
+    @OneToOne(cascade = ALL, fetch = EAGER, mappedBy = "house")
     private Location location;
 
-    @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")
+    @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house", fetch = LAZY)
     private List<Booking> bookingDates;
 
     @OneToMany(cascade = {MERGE, REFRESH, DETACH, REMOVE}, mappedBy = "house")
