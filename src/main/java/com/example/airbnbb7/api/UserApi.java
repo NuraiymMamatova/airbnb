@@ -2,11 +2,14 @@ package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.response.ProfileResponse;
+import com.example.airbnbb7.dto.response.UserAdminResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,4 +33,14 @@ public class UserApi {
                                        Authentication authentication) {
         return userService.userProfile(mainInUserProfile, sortHousesByApartments, sortHousesByHouses, sortHousesAsDesired, sortingHousesByValue, sortingHousesByRating, authentication, page, size);
     }
+
+    @GetMapping("/getallusers")
+    public List<UserAdminResponse> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable("id") Long id) {
+        userService.deleteUser(id);
+}
 }
