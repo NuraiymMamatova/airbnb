@@ -160,12 +160,12 @@ public class UserServiceImpl implements UserService {
                     profileBookingHouseResponse.setBookingsSize(profileResponse.getBookingsSize());
                     profileBookingHouseResponse.setOnModerationSize(profileResponse.getOnModerationSize());
                     profileBookingHouseResponse.setMyAnnouncementSize(profileResponse.getMyAnnouncementSize());
-                    int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getProfileHouseResponses().size() / size);
-                    profileBookingHouseResponse.setPageSize((long) sizePage);
-                    profileBookingHouseResponse.setPage((long) page);
                     if (profileBookingHouseResponse.getProfileHouseResponses() != null) {
                         profileBookingHouseResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileBookingHouseResponse.getProfileHouseResponses()));
-                    }
+                        int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getProfileHouseResponses().size() / size);
+                        profileBookingHouseResponse.setPageSize((long) sizePage);
+                    }else profileBookingHouseResponse.setPageSize(0L);
+                    profileBookingHouseResponse.setPage((long) page);
                     return profileBookingHouseResponse;
                 }
                 case "On moderation" -> {
@@ -258,6 +258,7 @@ public class UserServiceImpl implements UserService {
     private ProfileResponse star(String sortHousesByApartments, String sortHousesByHouses, String sortHousesAsDesired, String sortingHousesByValue, String sortingHousesByRating, Long userId) {
         ProfileResponse profileResponse1 = price(sortHousesByApartments, sortHousesByHouses, sortHousesAsDesired, sortingHousesByValue, userId);
         ProfileResponse profileResponse = new ProfileResponse(profileResponse1.getId(), profileResponse1.getProfileName(), profileResponse1.getProfileContact());
+        if (profileResponse1.getProfileHouseResponses() == null) return profileResponse1;
         switch (sortingHousesByRating) {
             case "One" -> {
                 for (ProfileHouseResponse house : profileResponse1.getProfileHouseResponses()) {
@@ -310,7 +311,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public List<ProfileHouseResponse> getProfileHouseResponse(int page, int size, List<ProfileHouseResponse> profileHouseResponses) {
+    private List<ProfileHouseResponse> getProfileHouseResponse(int page, int size, List<ProfileHouseResponse> profileHouseResponses) {
         int startItem = (page - 1) * size;
         List<ProfileHouseResponse> list;
 
