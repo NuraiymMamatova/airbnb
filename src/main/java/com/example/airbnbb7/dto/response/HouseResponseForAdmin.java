@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class HouseResponseSortedPagination {
+public class HouseResponseForAdmin {
 
     private Long id;
 
@@ -32,17 +32,19 @@ public class HouseResponseSortedPagination {
 
     private double houseRating;
 
-    private Boolean isFavorite = false;
+    private Boolean watchedOrNot = false;
 
-    public HouseResponseSortedPagination(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType, Boolean isFavorite) {
+    private Long page;
+
+    private Long pageSize;
+
+    public HouseResponseForAdmin(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType, Boolean watchedOrNot) {
         this.id = id;
         this.price = price;
         this.title = title;
         this.descriptionOfListing = descriptionOfListing;
         this.maxOfGuests = maxOfGuests;
         this.houseType = houseType;
-        this.isFavorite = isFavorite;
+        this.watchedOrNot = watchedOrNot;
     }
-
-
 }

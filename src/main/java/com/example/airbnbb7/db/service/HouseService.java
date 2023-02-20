@@ -6,6 +6,7 @@ import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
+import com.example.airbnbb7.dto.response.ApplicationResponseForAdmin;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -28,4 +29,5 @@ public interface HouseService {
 
     SimpleResponse changeStatusOfHouse(Long houseId, String message, HousesStatus housesStatus);
 
+    ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(Long page, Long pageSize);
 }

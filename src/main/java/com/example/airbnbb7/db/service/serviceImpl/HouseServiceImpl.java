@@ -23,10 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -273,6 +270,9 @@ public class HouseServiceImpl implements HouseService {
                 return houseResponseForVendor;
             } else if (roleRepository.findRoleByUserId(user.getId()).getNameOfRole().equals("ADMIN")) {
                 AnnouncementResponseForAdmin announcementResponseForAdmin = houseRepository.findHouseByIdForAdmin(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+                House hous = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
+                hous.setWatchedOrNot(true);
+                houseRepository.save(hous);
                 announcementResponseForAdmin.setImages(houseRepository.findImagesByHouseId(houseId));
                 announcementResponseForAdmin.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
                 announcementResponseForAdmin.setFeedbacks(feedbackResponses);
@@ -320,6 +320,33 @@ public class HouseServiceImpl implements HouseService {
             }
         }
         return new SimpleResponse();
+    }
+
+    @Override
+    public ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(Long page, Long pageSize) {
+        List<HouseResponseForAdmin> houseResponseForAdmins = houseRepository.getAllStatusOfTheWholeHouseOnModeration();
+        int sizePage = (int) Math.ceil((double) houseResponseForAdmins.size() / pageSize);
+        houseResponseForAdmins.forEach(h -> {
+            House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+            Location location = house.getLocation();
+            h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(),
+                    location.getAddress(), location.getRegion()));
+            h.setHouseRating(rating.getRating(house.getFeedbacks()));
+        });
+        return new ApplicationResponseForAdmin(getProfileHouseResponse(page, pageSize, houseResponseForAdmins), page, sizePage);
+    }
+
+    private List<HouseResponseForAdmin> getProfileHouseResponse(Long page, Long size, List<HouseResponseForAdmin> profileHouseResponses) {
+        int startItem = (int) ((page - 1) * size);
+        List<HouseResponseForAdmin> list;
+
+        if (profileHouseResponses.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = (int) Math.min(startItem + size, profileHouseResponses.size());
+            list = profileHouseResponses.subList(startItem, toIndex);
+        }
+        return list;
     }
 
 }
