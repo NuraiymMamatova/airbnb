@@ -7,7 +7,6 @@ import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponseForAdmin;
-import com.example.airbnbb7.dto.response.HouseResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 

@@ -322,6 +322,7 @@ public class HouseServiceImpl implements HouseService {
         return new SimpleResponse();
     }
 
+    @Override
     public ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(Long page, Long pageSize) {
         List<HouseResponseForAdmin> houseResponseForAdmins = houseRepository.getAllStatusOfTheWholeHouseOnModeration();
         int sizePage = (int) Math.ceil((double) houseResponseForAdmins.size() / pageSize);
@@ -335,7 +336,7 @@ public class HouseServiceImpl implements HouseService {
         return new ApplicationResponseForAdmin(getProfileHouseResponse(page, pageSize, houseResponseForAdmins), page, sizePage);
     }
 
-    public List<HouseResponseForAdmin> getProfileHouseResponse(Long page, Long size, List<HouseResponseForAdmin> profileHouseResponses) {
+    private List<HouseResponseForAdmin> getProfileHouseResponse(Long page, Long size, List<HouseResponseForAdmin> profileHouseResponses) {
         int startItem = (int) ((page - 1) * size);
         List<HouseResponseForAdmin> list;
 

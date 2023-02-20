@@ -9,11 +9,9 @@ import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponseForAdmin;
-import com.example.airbnbb7.dto.response.HouseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -93,8 +91,8 @@ public class HouseApi {
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Houses on Moderation", description = "Only admin can see these houses")
     public ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(@RequestParam("Which page do you want to open?") Long page,
-                                                                               @RequestParam("How many houses do you want to see on one page?") Long pageSize){
-        return houseService.getAllStatusOfTheWholeHouseOnModeration(page,pageSize);
+                                                                               @RequestParam("How many houses do you want to see on one page?") Long pageSize) {
+        return houseService.getAllStatusOfTheWholeHouseOnModeration(page, pageSize);
     }
 
 }
