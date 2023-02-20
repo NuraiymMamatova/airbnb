@@ -68,6 +68,8 @@ public class House {
     @ManyToOne(cascade = {MERGE, REFRESH, DETACH})
     private User owner;
 
+    private Boolean watchedOrNot = false;
+
     public boolean isFavorite() {
         return isFavorite;
     }

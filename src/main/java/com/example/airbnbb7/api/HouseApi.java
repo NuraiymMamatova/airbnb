@@ -8,6 +8,7 @@ import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
+import com.example.airbnbb7.dto.response.ApplicationResponseForAdmin;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -84,6 +85,14 @@ public class HouseApi {
             " REJECT," +
             " ACCEPT,") HousesStatus housesStatus) {
         return houseService.changeStatusOfHouse(houseId, message, housesStatus);
+    }
+
+    @GetMapping("/announcementForAdmin")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(summary = "Houses on Moderation", description = "Only admin can see these houses")
+    public ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(@RequestParam("Which page do you want to open?") Long page,
+                                                                               @RequestParam("How many houses do you want to see on one page?") Long pageSize) {
+        return houseService.getAllStatusOfTheWholeHouseOnModeration(page, pageSize);
     }
 
 }
