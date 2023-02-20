@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface FavoriteHouseRepository extends JpaRepository<FavoriteHouse, Long> {
 
@@ -14,4 +16,7 @@ public interface FavoriteHouseRepository extends JpaRepository<FavoriteHouse, Lo
 
     @Query("select count(f) from FavoriteHouse f where f.house = :house")
     int getCountOfFavorite(House house);
+
+    @Query("select f from FavoriteHouse f where f.house.id = :houseId")
+    List<FavoriteHouse> getAllFavoriteHouseByHouseId(Long houseId);
 }

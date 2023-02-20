@@ -26,23 +26,6 @@ public class HouseResponseConverter {
         this.rating = rating;
     }
 
-    public HouseResponse viewHouse(House house) {
-        if (house == null) {
-            return null;
-        }
-        HouseResponse houseResponse = new HouseResponse();
-        houseResponse.setId(house.getId());
-        houseResponse.setPrice(house.getPrice());
-        houseResponse.setTitle(house.getTitle());
-        houseResponse.setDescriptionOfListing(house.getDescriptionOfListing());
-        houseResponse.setImages(house.getImages());
-        houseResponse.setMaxOfGuests(house.getMaxOfGuests());
-        houseResponse.setHouseType(house.getHouseType());
-        houseResponse.setLocation(locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("House not found")));
-        houseResponse.setOwner(userRepository.findUserById(house.getOwner().getId()));
-        houseResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())));
-        return houseResponse;
-    }
     public ProfileHouseResponse view(House house) {
         if (house == null) {
             return null;
