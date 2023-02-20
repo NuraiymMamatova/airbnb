@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.LAZY;
@@ -41,6 +42,12 @@ public class Feedback {
     @Column(name = "dislike")
     private Long dislike;
 
+    @ElementCollection
+    private Map<Long, Boolean> likes;
+
+    @ElementCollection
+    private Map<Long, Boolean> dislikes;
+
     @ManyToOne(cascade = {REFRESH, DETACH, MERGE})
     private User user;
 
@@ -54,6 +61,14 @@ public class Feedback {
         this.image = image;
         this.like = like;
         this.dislike = dislike;
+        this.user = user;
+        this.house = house;
+    }
+
+    public Feedback(String text, int rating, List<String> image, User user, House house) {
+        this.text = text;
+        this.rating = rating;
+        this.image = image;
         this.user = user;
         this.house = house;
     }
