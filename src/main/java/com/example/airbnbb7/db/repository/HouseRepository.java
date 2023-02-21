@@ -2,8 +2,6 @@ package com.example.airbnbb7.db.repository;
 
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.dto.response.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +17,8 @@ public interface HouseRepository extends JpaRepository<House, Long> {
     @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.id, h.price, h.title, h.descriptionOfListing) from House h where h.houseType = 1 and h.housesStatus = 2 order by h.bookings desc")
     List<AccommodationResponse> getPopularHouse();
 
+    @Query("select h from House h where h.housesStatus = 2 order by h.bookings desc")
+    List<House> getPopular();
     @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.id, h.title, h.descriptionOfListing) from House h where h.houseType = 0 and h.housesStatus = 2 order by h.bookings desc")
     List<AccommodationResponse> getPopularApartment();
 

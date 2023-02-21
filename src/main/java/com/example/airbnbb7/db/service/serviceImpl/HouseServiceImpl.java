@@ -205,8 +205,15 @@ public class HouseServiceImpl implements HouseService {
         if (popularOrTheLastest == null) popularOrTheLastest = "All";
         if (popularOrTheLastest.equals("All")) return sortRegion(region);
         if (popularOrTheLastest.equals("Popular")) {
-            houseResponseSortedPaginations.sort(Comparator.comparing(HouseResponseSortedPagination::getHouseRating).reversed());
-            return houseResponseSortedPaginations;
+            for (House house : houseRepository.getPopular()) {
+                for (HouseResponseSortedPagination houseSorted : houseResponseSortedPaginations) {
+                    if (house.getId() == houseSorted.getId()) {
+                        houses.add(houseSorted);
+                    }
+                }
+            }
+            houses.sort(Comparator.comparing(HouseResponseSortedPagination::getHouseRating).reversed());
+            return houses;
         } else if (popularOrTheLastest.equals("The lastest")) {
             List<House> houseList = new ArrayList<>();
             for (House house : houseRepository.findAll()) {
