@@ -167,7 +167,7 @@ public class UserServiceImpl implements UserService {
                         profileBookingHouseResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileBookingHouseResponse.getProfileHouseResponses()));
                         int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getProfileHouseResponses().size() / size);
                         profileBookingHouseResponse.setPageSize((long) sizePage);
-                    }else profileBookingHouseResponse.setPageSize(0L);
+                    } else profileBookingHouseResponse.setPageSize(0L);
                     profileBookingHouseResponse.setPage((long) page);
                     return profileBookingHouseResponse;
                 }
@@ -194,9 +194,9 @@ public class UserServiceImpl implements UserService {
     public List<UserAdminResponse> getAllUsers() {
         List<UserAdminResponse> users = userRepository.getAllUsers();
         List<UserAdminResponse> userAdminResponses = new ArrayList<>();
-        for (UserAdminResponse user: users) {
+        for (UserAdminResponse user : users) {
 
-            if(roleRepository.findRoleByUserId(user.getId()).getNameOfRole().equals("USER")) {
+            if (roleRepository.findRoleByUserId(user.getId()).getNameOfRole().equals("USER")) {
                 userAdminResponses.add(user);
             }
         }
@@ -206,7 +206,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long userId) {
-    Role role = roleRepository.findRoleByUserId(userId);
+        Role role = roleRepository.findRoleByUserId(userId);
         if (role.getNameOfRole().equals("USER")) {
             List<House> houseList = new ArrayList<>();
             for (Long id : houseRepository.deleteHouseByUserId(userId)) {

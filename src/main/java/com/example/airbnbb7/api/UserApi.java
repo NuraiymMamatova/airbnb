@@ -35,12 +35,14 @@ public class UserApi {
     }
 
     @GetMapping("/getallusers")
+    @Operation(summary = "Get all users", description = "Get all users from database")
     public List<UserAdminResponse> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete users", description = "Delete users by id from database")
     public void deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
-}
+    }
 }

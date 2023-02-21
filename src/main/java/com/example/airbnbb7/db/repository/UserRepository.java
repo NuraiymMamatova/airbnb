@@ -33,8 +33,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select new com.example.airbnbb7.dto.response.UserAdminResponse(u.id, u.name, u.email, sum(h.bookings), count(h.id)) from User u, House h where u.id = h.owner.id group by u.id, u.name, u.email")
     List<UserAdminResponse> getAllUsers();
 
-    @Query("delete from User u where u.id =:userId")
-    void deleteUserById(Long userId);
-
-
 }
