@@ -6,6 +6,7 @@ import com.example.airbnbb7.dto.response.UserAdminResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +42,7 @@ public class UserApi {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Delete users", description = "Delete users by id from database")
     public void deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);

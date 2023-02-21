@@ -27,5 +27,5 @@ public interface UserService extends UserDetailsService {
 
     List<UserAdminResponse> getAllUsers();
 
-    void deleteUser(Long userId);
+    List<UserAdminResponse> deleteUser(Long userId);
 }

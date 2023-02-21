@@ -63,6 +63,6 @@ public interface HouseRepository extends JpaRepository<House, Long> {
     List<HouseResponseForAdmin> getAllStatusOfTheWholeHouseOnModeration();
 
     @Query("select h.id from House h where h.owner.id =:userId")
-    List<Long> deleteHouseByUserId(Long userId);
+    List<Long> getAllHouseIdByUserId(Long userId);
 
 }

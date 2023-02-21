@@ -205,17 +205,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long userId) {
+    public List<UserAdminResponse> deleteUser(Long userId) {
         Role role = roleRepository.findRoleByUserId(userId);
         if (role.getNameOfRole().equals("USER")) {
             List<House> houseList = new ArrayList<>();
-            for (Long id : houseRepository.deleteHouseByUserId(userId)) {
+            for (Long id : houseRepository.getAllHouseIdByUserId(userId)) {
                 houseList.add(houseRepository.findById(id).orElseThrow(() -> new NotFoundException("House id not found")));
             }
             houseRepository.deleteAll(houseList);
             roleRepository.deleteRoleByUserId(userId);
             userRepository.deleteById(userId);
         }
+        return userRepository.getAllUsers();
     }
 
     private ProfileResponse houseType(String sortHousesByApartments, String sortHousesByHouses, String sortHousesAsDesired, Long userId) {
