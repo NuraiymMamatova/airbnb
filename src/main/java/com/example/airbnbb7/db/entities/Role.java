@@ -27,10 +27,6 @@ public class Role {
     @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     List<User> users;
 
-    public Role(String nameOfRole) {
-        this.nameOfRole = nameOfRole;
-    }
-
     public void addUser(User user) {
         if (users == null) users = new ArrayList<>();
         users.add(user);

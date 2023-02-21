@@ -36,7 +36,9 @@ public class Rating {
         for (Integer rating : ratings) {
             sum += rating;
         }
-        sum = sum / ratings.size();
+        if (ratings.size() != 0) {
+            sum = sum / ratings.size();
+        }
         String.format("%.1f", sum);
         return sum;
     }
@@ -68,11 +70,13 @@ public class Rating {
                 }
             }
         }
-        rating.setFive((rating.getFive() * 100) / countOfPeople);
-        rating.setFour((rating.getFour() * 100) / countOfPeople);
-        rating.setThree((rating.getThree() * 100) / countOfPeople);
-        rating.setTwo((rating.getTwo() * 100) / countOfPeople);
-        rating.setOne((rating.getOne() * 100) / countOfPeople);
+        if (countOfPeople != 0) {
+            rating.setFive((rating.getFive() * 100) / countOfPeople);
+            rating.setFour((rating.getFour() * 100) / countOfPeople);
+            rating.setThree((rating.getThree() * 100) / countOfPeople);
+            rating.setTwo((rating.getTwo() * 100) / countOfPeople);
+            rating.setOne((rating.getOne() * 100) / countOfPeople);
+        }
         rating.setSumOfRating(getRating(feedbacks));
         return rating;
     }
