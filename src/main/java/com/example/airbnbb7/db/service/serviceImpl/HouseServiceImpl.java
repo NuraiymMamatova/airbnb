@@ -83,12 +83,12 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public ApplicationResponse getAllPagination(String search, String region, String popularOrTheLastest, String homeType, String price, Long page, Long pageSize) {
+    public ApplicationResponse getAllPagination(String search, String region, String popularOrTheLatest, String homeType, String price, Long page, Long pageSize) {
         ApplicationResponse applicationResponse = new ApplicationResponse();
         applicationResponse.setPage(page);
         if (search != null) {
             List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>(getAllPagination(page, pageSize, houseRepository.searchByQuery(search)));
-            int sizePage = (int) Math.ceil((double) sortPrice(region, popularOrTheLastest, homeType, price).size() / pageSize);
+            int sizePage = (int) Math.ceil((double) sortPrice(region, popularOrTheLatest, homeType, price).size() / pageSize);
             applicationResponse.setPageSize((long) sizePage);
             houseResponseSortedPaginations.forEach(h -> {
                 House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
@@ -100,8 +100,8 @@ public class HouseServiceImpl implements HouseService {
             applicationResponse.setPaginationList(houseResponseSortedPaginations);
             return applicationResponse;
         } else {
-            applicationResponse.setPaginationList(getAllPagination(page, pageSize, sortPrice(region, popularOrTheLastest, homeType, price)));
-            int sizePage = (int) Math.ceil((double) sortPrice(region, popularOrTheLastest, homeType, price).size() / pageSize);
+            applicationResponse.setPaginationList(getAllPagination(page, pageSize, sortPrice(region, popularOrTheLatest, homeType, price)));
+            int sizePage = (int) Math.ceil((double) sortPrice(region, popularOrTheLatest, homeType, price).size() / pageSize);
             applicationResponse.setPageSize((long) sizePage);
             applicationResponse.setCountOfRegion(countOfRegion);
             return applicationResponse;
@@ -199,12 +199,12 @@ public class HouseServiceImpl implements HouseService {
         return houseResponses;
     }
 
-    private List<HouseResponseSortedPagination> sortPopularOrTheLastest(String region, String popularOrTheLastest) {
+    private List<HouseResponseSortedPagination> sortPopularOrTheLatest(String region, String popularOrTheLatest) {
         List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>(sortRegion(region));
         List<HouseResponseSortedPagination> houses = new ArrayList<>();
-        if (popularOrTheLastest == null) popularOrTheLastest = "All";
-        if (popularOrTheLastest.equals("All")) return sortRegion(region);
-        if (popularOrTheLastest.equals("Popular")) {
+        if (popularOrTheLatest == null) popularOrTheLatest = "All";
+        if (popularOrTheLatest.equals("All")) return sortRegion(region);
+        if (popularOrTheLatest.equals("Popular")) {
             for (House house : houseRepository.getPopular()) {
                 for (HouseResponseSortedPagination houseSorted : houseResponseSortedPaginations) {
                     if (house.getId() == houseSorted.getId()) {
@@ -214,7 +214,7 @@ public class HouseServiceImpl implements HouseService {
             }
             houses.sort(Comparator.comparing(HouseResponseSortedPagination::getHouseRating).reversed());
             return houses;
-        } else if (popularOrTheLastest.equals("The lastest")) {
+        } else if (popularOrTheLatest.equals("The latest")) {
             List<House> houseList = new ArrayList<>();
             for (House house : houseRepository.findAll()) {
                 for (HouseResponseSortedPagination houseSorted : houseResponseSortedPaginations) {
@@ -239,15 +239,15 @@ public class HouseServiceImpl implements HouseService {
     private List<HouseResponseSortedPagination> sortHomeType(String region, String popularOrTheLastest, String homeType) {
         List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>();
         if (homeType == null) homeType = "All";
-        if (homeType.equals("All")) return sortPopularOrTheLastest(region, popularOrTheLastest);
+        if (homeType.equals("All")) return sortPopularOrTheLatest(region, popularOrTheLastest);
         if (homeType.equals("Apartment")) {
-            for (HouseResponseSortedPagination house : sortPopularOrTheLastest(region, popularOrTheLastest)) {
+            for (HouseResponseSortedPagination house : sortPopularOrTheLatest(region, popularOrTheLastest)) {
                 if (house.getHouseType().equals(HouseType.APARTMENT)) {
                     houseResponseSortedPaginations.add(house);
                 }
             }
         } else if (homeType.equals("House")) {
-            for (HouseResponseSortedPagination house : sortPopularOrTheLastest(region, popularOrTheLastest)) {
+            for (HouseResponseSortedPagination house : sortPopularOrTheLatest(region, popularOrTheLastest)) {
                 if (house.getHouseType().equals(HouseType.HOUSE)) {
                     houseResponseSortedPaginations.add(house);
                 }

@@ -56,12 +56,12 @@ public class HouseApi {
             "houseType:search by houseType")
     public ApplicationResponse findAllHousesPage(@RequestParam(name = "This is a global search field",required = false)String search,
                                                  @RequestParam(name = "Sorted by Regions",required = false) String region,
-                                                 @RequestParam(name = "Sorted by Popular or The lastest",required = false)String popularOrTheLastest,
+                                                 @RequestParam(name = "Sorted by Popular or The latest",required = false)String popularOrTheLatest,
                                                  @RequestParam(name = "Sorted by types of houses",required = false)String homeType,
                                                  @RequestParam(name = "Sorted by Price",required = false)String price,
                                                  @RequestParam(name = "Here you can write which page you want to open")Long page,
                                                  @RequestParam(name = "Here you can write how many objects should be on one page")Long pageSize) {
-        return houseService.getAllPagination(search, region, popularOrTheLastest, homeType, price, page, pageSize);
+        return houseService.getAllPagination(search, region, popularOrTheLatest, homeType, price, page, pageSize);
     }
 
     @GetMapping("/popularAndLatest")
