@@ -36,6 +36,7 @@ public class UserApi {
     }
 
     @GetMapping("/getallusers")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Get all users", description = "Get all users from database")
     public List<UserAdminResponse> getAllUsers() {
         return userService.getAllUsers();
@@ -44,7 +45,7 @@ public class UserApi {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Delete users", description = "Delete users by id from database")
-    public void deleteUser(@PathVariable("id") Long id) {
-        userService.deleteUser(id);
+    public List<UserAdminResponse> deleteUser(@PathVariable("id") Long id) {
+        return userService.deleteUser(id);
     }
 }
