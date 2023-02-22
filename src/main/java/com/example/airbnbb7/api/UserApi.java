@@ -35,7 +35,7 @@ public class UserApi {
         return userService.userProfile(mainInUserProfile, sortHousesByApartments, sortHousesByHouses, sortHousesAsDesired, sortingHousesByValue, sortingHousesByRating, authentication, page, size);
     }
 
-    @GetMapping("/getallusers")
+    @GetMapping("/all")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Get all users", description = "Get all users from database")
     public List<UserAdminResponse> getAllUsers() {
