@@ -55,6 +55,9 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.watchedOrNot) from House h where h.housesStatus = 3")
     List<HouseResponseForAdmin> getAllStatusOfTheWholeHouseOnModeration();
 
+    @Query("select h.id from House h where h.owner.id =:userId")
+    List<Long> getAllHouseIdByUserId(Long userId);
+
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
             "h.price," +
             "h.title," +
