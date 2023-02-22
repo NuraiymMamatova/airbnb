@@ -19,6 +19,5 @@ public class ApplicationResponse {
 
     private Long page;
 
-    private int pageSize;
-
+    private Long pageSize;
 }
