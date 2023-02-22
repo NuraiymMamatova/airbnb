@@ -1,12 +1,13 @@
 package com.example.airbnbb7.db.service;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
-import com.example.airbnbb7.db.enums.HouseType;
+import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponseForAdmin;
+import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -30,4 +31,7 @@ public interface HouseService {
     SimpleResponse changeStatusOfHouse(Long houseId, String message, HousesStatus housesStatus);
 
     ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(Long page, Long pageSize);
+
+    List<HouseResponseSortedPagination> getAllHousing(HousesBooked housesBooked, String houseType, String price, String popularOrTheLatest);
+
 }

@@ -1,6 +1,7 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
+import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
@@ -8,6 +9,7 @@ import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponseForAdmin;
+import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -92,6 +94,16 @@ public class HouseApi {
     public ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(@RequestParam("Which page do you want to open?") Long page,
                                                                                @RequestParam("How many houses do you want to see on one page?") Long pageSize) {
         return houseService.getAllStatusOfTheWholeHouseOnModeration(page, pageSize);
+    }
+
+    @GetMapping("/all_housing")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(summary = "All housing", description = "Only admin can see these houses")
+    public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(name = "Sorted by House Booked or Not booked", required = false) HousesBooked housesBooked,
+                                                             @RequestParam(name = "Sorted by Popular or The latest",required = false) String popularOrTheLatest,
+                                                             @RequestParam(name = "Sorted by types of houses",required = false) String houseType,
+                                                             @RequestParam(name = "Sorted by Price",required = false) String price) {
+        return houseService.getAllHousing(housesBooked, houseType, price, popularOrTheLatest);
     }
 
 }
