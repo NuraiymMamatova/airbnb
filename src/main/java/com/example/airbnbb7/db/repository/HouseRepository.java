@@ -55,4 +55,17 @@ public interface HouseRepository extends JpaRepository<House, Long> {
     @Query("select count(h) from House h where h.location.region = :region")
     Long count(String region);
 
+    @Query("select new com.example.airbnbb7.dto.response.HouseResponseForAdmin(" +
+            "h.id," +
+            "h.price," +
+            "h.title," +
+            "h.descriptionOfListing," +
+            "h.maxOfGuests," +
+            "h.houseType," +
+            "h.watchedOrNot) from House h where h.housesStatus = 3")
+    List<HouseResponseForAdmin> getAllStatusOfTheWholeHouseOnModeration();
+
+    @Query("select h.id from House h where h.owner.id =:userId")
+    List<Long> getAllHouseIdByUserId(Long userId);
+
 }

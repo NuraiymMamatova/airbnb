@@ -8,15 +8,13 @@ import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HousesStatus;
-import com.example.airbnbb7.db.repository.FavoriteHouseRepository;
-import com.example.airbnbb7.db.repository.FeedbackRepository;
-import com.example.airbnbb7.db.repository.RoleRepository;
-import com.example.airbnbb7.db.repository.UserRepository;
+import com.example.airbnbb7.db.repository.*;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
 import com.example.airbnbb7.dto.response.ProfileHouseResponse;
 import com.example.airbnbb7.dto.response.ProfileResponse;
+import com.example.airbnbb7.dto.response.UserAdminResponse;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
 import com.example.airbnbb7.exceptions.BadRequestException;
 import com.example.airbnbb7.exceptions.ExceptionResponse;
@@ -39,6 +37,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -62,6 +61,10 @@ public class UserServiceImpl implements UserService {
     private final FeedbackRepository feedbackRepository;
 
     private final FavoriteHouseRepository favoriteHouseRepository;
+
+    private final HouseRepository houseRepository;
+
+    private final BookingRepository bookingRepository;
 
     @PostConstruct
     void init() throws IOException {
@@ -96,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
         user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!", firebaseToken.getEmail())));
         String token = jwtTokenUtil.generateToken(user);
-        return new LoginResponse(user.getEmail(), token, userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
+        return new LoginResponse(token, user.getEmail(), userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
     }
 
     public LoginResponse login(UserRequest request) {
@@ -162,9 +165,9 @@ public class UserServiceImpl implements UserService {
                     profileBookingHouseResponse.setMyAnnouncementSize(profileResponse.getMyAnnouncementSize());
                     if (profileBookingHouseResponse.getProfileHouseResponses() != null) {
                         profileBookingHouseResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileBookingHouseResponse.getProfileHouseResponses()));
-                    }
-                    int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getProfileHouseResponses().size() / size);
-                    profileBookingHouseResponse.setPageSize((long) sizePage);
+                        int sizePage = (int) Math.ceil((double) profileBookingHouseResponse.getProfileHouseResponses().size() / size);
+                        profileBookingHouseResponse.setPageSize((long) sizePage);
+                    } else profileBookingHouseResponse.setPageSize(0L);
                     profileBookingHouseResponse.setPage((long) page);
                     return profileBookingHouseResponse;
                 }
@@ -185,6 +188,35 @@ public class UserServiceImpl implements UserService {
             }
         }
         throw new BadRequestException("Authentication cannot be null!");
+    }
+
+    @Override
+    public List<UserAdminResponse> getAllUsers() {
+        List<UserAdminResponse> users = userRepository.getAllUsers();
+        List<UserAdminResponse> userAdminResponses = new ArrayList<>();
+        for (UserAdminResponse user : users) {
+
+            if (roleRepository.findRoleByUserId(user.getId()).getNameOfRole().equals("USER")) {
+                userAdminResponses.add(user);
+            }
+        }
+        return userAdminResponses;
+
+    }
+
+    @Override
+    public List<UserAdminResponse> deleteUser(Long userId) {
+        Role role = roleRepository.findRoleByUserId(userId);
+        if (role.getNameOfRole().equals("USER")) {
+            List<House> houseList = new ArrayList<>();
+            for (Long id : houseRepository.getAllHouseIdByUserId(userId)) {
+                houseList.add(houseRepository.findById(id).orElseThrow(() -> new NotFoundException("House id not found")));
+            }
+            houseRepository.deleteAll(houseList);
+            roleRepository.deleteRoleByUserId(userId);
+            userRepository.deleteById(userId);
+        }
+        return userRepository.getAllUsers();
     }
 
     private ProfileResponse houseType(String sortHousesByApartments, String sortHousesByHouses, String sortHousesAsDesired, Long userId) {
@@ -258,6 +290,7 @@ public class UserServiceImpl implements UserService {
     private ProfileResponse star(String sortHousesByApartments, String sortHousesByHouses, String sortHousesAsDesired, String sortingHousesByValue, String sortingHousesByRating, Long userId) {
         ProfileResponse profileResponse1 = price(sortHousesByApartments, sortHousesByHouses, sortHousesAsDesired, sortingHousesByValue, userId);
         ProfileResponse profileResponse = new ProfileResponse(profileResponse1.getId(), profileResponse1.getProfileName(), profileResponse1.getProfileContact());
+        if (profileResponse1.getProfileHouseResponses() == null) return profileResponse1;
         switch (sortingHousesByRating) {
             case "One" -> {
                 for (ProfileHouseResponse house : profileResponse1.getProfileHouseResponses()) {
@@ -310,7 +343,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public List<ProfileHouseResponse> getProfileHouseResponse(int page, int size, List<ProfileHouseResponse> profileHouseResponses) {
+    private List<ProfileHouseResponse> getProfileHouseResponse(int page, int size, List<ProfileHouseResponse> profileHouseResponses) {
         int startItem = (page - 1) * size;
         List<ProfileHouseResponse> list;
 
