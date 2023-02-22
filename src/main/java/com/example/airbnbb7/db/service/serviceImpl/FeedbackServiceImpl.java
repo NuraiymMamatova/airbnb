@@ -17,8 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -72,32 +70,6 @@ public class FeedbackServiceImpl implements FeedbackService {
                 if (feedbackRequest.getImage() != null) {
                     feedback.setImage(feedbackRequest.getImage());
                 }
-            }
-            Map<Long, Boolean> like = feedback.getLikes();
-            Map<Long, Boolean> dislike = feedback.getDislikes();
-            if (like == null) {
-                like = new HashMap<>();
-            }
-            if (like.containsKey(feedbackId)) {
-                feedback.setLike(feedback.getLike() - 1);
-                like.remove(feedbackId);
-            }
-            if (feedbackRequest.getLike() && !feedbackRequest.getDislike()) {
-                {
-                    like.put(feedbackId, feedbackRequest.getLike());
-                    feedback.setLike(feedback.getLike() + 1);
-                }
-            }
-            if (dislike == null) {
-                dislike = new HashMap<>();
-            }
-            if (dislike.containsKey(feedbackId)) {
-                feedback.setDislike(feedback.getDislike() - 1);
-                dislike.remove(feedbackId);
-            }
-            if (feedbackRequest.getDislike() && !feedbackRequest.getLike()) {
-                dislike.put(feedbackId, feedbackRequest.getDislike());
-                feedback.setDislike(feedback.getDislike() + 1);
             }
             feedbackRepository.save(feedback);
             return new SimpleResponse("Feedback successfully updated!");

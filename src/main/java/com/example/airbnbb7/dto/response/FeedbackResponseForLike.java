@@ -1,9 +1,6 @@
 package com.example.airbnbb7.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,6 +8,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class FeedbackResponseForLike {
 
     private Long id;
@@ -22,4 +20,10 @@ public class FeedbackResponseForLike {
     private Long dislike;
 
     private Boolean disliked = false;
+
+    public FeedbackResponseForLike(Long id, Long like, Long dislike) {
+        this.id = id;
+        this.like = like;
+        this.dislike = dislike;
+    }
 }

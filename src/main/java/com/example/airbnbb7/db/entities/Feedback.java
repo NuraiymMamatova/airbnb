@@ -6,8 +6,10 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.LAZY;
@@ -41,12 +43,6 @@ public class Feedback {
 
     @Column(name = "dislike")
     private Long dislike;
-
-    @ElementCollection
-    private Map<Long, Boolean> likes;
-
-    @ElementCollection
-    private Map<Long, Boolean> dislikes;
 
     @ManyToOne(cascade = {REFRESH, DETACH, MERGE})
     private User user;

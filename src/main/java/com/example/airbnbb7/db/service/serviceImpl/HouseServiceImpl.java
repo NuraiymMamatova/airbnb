@@ -164,8 +164,8 @@ public class HouseServiceImpl implements HouseService {
                         location.getAddress(), location.getRegion()));
                 h.setHouseRating(rating.getRating(house.getFeedbacks()));
             });
-
-            houseResponses = filtering(houseResponses, houseType, region);
+            System.out.println(pageable);
+            houseResponses = filtering(houseResponses, houseType, region,pageable.getPageNumber()+1,pageable.getPageSize());
             houseResponses.forEach(h -> {
                 House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
                 Location location = house.getLocation();
@@ -208,7 +208,7 @@ public class HouseServiceImpl implements HouseService {
         return sort;
     }
 
-    private List<HouseResponseSortedPagination> filtering(List<HouseResponseSortedPagination> responseSortedPaginationList, HouseType houseType, String region) {
+    private List<HouseResponseSortedPagination> filtering(List<HouseResponseSortedPagination> responseSortedPaginationList, HouseType houseType, String region, int page, int pageSize) {
         List<HouseResponseSortedPagination> responses = responseSortedPaginationList;
 
         if (houseType != null) {
@@ -226,7 +226,11 @@ public class HouseServiceImpl implements HouseService {
             responses = responses.stream().filter(x -> x.getLocationResponse().getRegion().equals(region)).toList();
         }
 
-        return responses;
+        int totalResults = responses.size();
+        int startIndex = (page - 1) * pageSize;
+        int endIndex = Math.min(startIndex + pageSize, totalResults);
+
+        return responses.stream().skip(startIndex).limit(endIndex - startIndex).toList();
     }
 
     @Override
