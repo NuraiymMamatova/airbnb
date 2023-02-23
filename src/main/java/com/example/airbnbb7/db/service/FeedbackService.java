@@ -16,7 +16,7 @@ public interface FeedbackService {
 
     SimpleResponse updateFeedback(Authentication authentication, Long feedbackId, FeedbackRequestForUpdate feedbackRequest);
 
-    void liking(Long feedbackId, User user);
+    void liking(Long feedbackId, Authentication authentication);
 
-    void disLiking(Long feedbackId,User user);
+    void disLiking(Long feedbackId,Authentication authentication);
 }

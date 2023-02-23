@@ -41,12 +41,12 @@ public class FeedbackApi {
     }
 
     @PutMapping("/like/{feedbackId}")
-    public void liking(@PathVariable Long feedbackId, User user){
-        feedbackService.liking(feedbackId,user);
+    public void liking(@PathVariable Long feedbackId, Authentication authentication){
+        feedbackService.liking(feedbackId,authentication);
     }
 
     @PutMapping("/disLike/{feedbackId}")
-    public void disLiking(@PathVariable Long feedbackId,User user){
-        feedbackService.disLiking(feedbackId,user);
+    public void disLiking(@PathVariable Long feedbackId,Authentication authentication){
+        feedbackService.disLiking(feedbackId,authentication);
     }
 }

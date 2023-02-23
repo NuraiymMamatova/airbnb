@@ -22,9 +22,9 @@ public class FeedbackRequestForUpdate {
 
     private List<String> image;
 
-    private Boolean like = false;
+    private Long like;
 
-    private Boolean dislike = false;
+    private Long dislike;
 
     public FeedbackRequestForUpdate(String text, int rating, LocalDate createdFeedback, List<String> image) {
         this.text = text;
