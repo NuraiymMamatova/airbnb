@@ -1,6 +1,7 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
+import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.service.FeedbackService;
 import com.example.airbnbb7.dto.request.FeedbackRequestForSave;
 import com.example.airbnbb7.dto.request.FeedbackRequestForUpdate;
@@ -37,5 +38,15 @@ public class FeedbackApi {
                                  @RequestBody FeedbackRequestForUpdate feedbackRequest,
                                  Authentication authentication) {
         return feedbackService.updateFeedback(authentication, feedbackId, feedbackRequest);
+    }
+
+    @PutMapping("/like/{feedbackId}")
+    public void liking(@PathVariable Long feedbackId, User user){
+        feedbackService.liking(feedbackId,user);
+    }
+
+    @PutMapping("/disLike/{feedbackId}")
+    public void disLiking(@PathVariable Long feedbackId,User user){
+        feedbackService.disLiking(feedbackId,user);
     }
 }

@@ -58,6 +58,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public SimpleResponse updateFeedback(Authentication authentication, Long feedbackId, FeedbackRequestForUpdate feedbackRequest) {
         Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(() -> new NotFoundException("Feedback not found!"));
+        feedbackRequest = new FeedbackRequestForUpdate(feedback.getText(),feedback.getRating(),LocalDate.now(),feedback.getImage());
         if (authentication != null) {
             User user = (User) authentication.getPrincipal();
             if (user == feedback.getUser()) {
@@ -70,10 +71,43 @@ public class FeedbackServiceImpl implements FeedbackService {
                 if (feedbackRequest.getImage() != null) {
                     feedback.setImage(feedbackRequest.getImage());
                 }
+                if (feedback.getLike() != 0) {
+                    liking(feedbackId,user);
+                }
+                if (feedback.getDislike() != 0) {
+                    disLiking(feedbackId,user);
+                }
             }
             feedbackRepository.save(feedback);
             return new SimpleResponse("Feedback successfully updated!");
         }
         throw new BadRequestException("Authentication cannot be null!");
+    }
+
+    public void liking(Long feedbackId,User user){
+        Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(() -> new NotFoundException("not found!"));
+            if (feedback.getLikes().containsKey(user.getId())) {
+                feedback.setLike(feedback.getLike() - 1);
+                feedback.getLikes().remove(user.getId());
+                feedbackRepository.save(feedback);
+            }else {
+                feedback.getLikes().put(user.getId(), true);
+                feedback.setLike(feedback.getLike() + 1);
+                feedbackRepository.save(feedback);
+            }
+    }
+
+
+    public void disLiking(Long feedbackId,User user){
+        Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(() -> new NotFoundException("not found!"));
+            if (feedback.getDislikes().containsKey(user.getId())) {
+                feedback.setDislike(feedback.getDislike() - 1);
+                feedback.getDislikes().remove(user.getId());
+                feedbackRepository.save(feedback);
+            }else {
+                feedback.getDislikes().put(user.getId(), true);
+                feedback.setDislike(feedback.getDislike() + 1);
+                feedbackRepository.save(feedback);
+            }
     }
 }

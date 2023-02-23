@@ -44,6 +44,12 @@ public class Feedback {
     @Column(name = "dislike")
     private Long dislike;
 
+    @ElementCollection
+    private Map<Long, Boolean> likes;
+
+    @ElementCollection
+    private Map<Long, Boolean> dislikes;
+
     @ManyToOne(cascade = {REFRESH, DETACH, MERGE})
     private User user;
 

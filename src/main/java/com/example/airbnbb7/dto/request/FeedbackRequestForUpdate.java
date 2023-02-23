@@ -22,7 +22,14 @@ public class FeedbackRequestForUpdate {
 
     private List<String> image;
 
-    private Boolean like;
+    private Boolean like = false;
 
-    private Boolean dislike;
+    private Boolean dislike = false;
+
+    public FeedbackRequestForUpdate(String text, int rating, LocalDate createdFeedback, List<String> image) {
+        this.text = text;
+        this.rating = rating;
+        this.createdFeedback = createdFeedback;
+        this.image = image;
+    }
 }
