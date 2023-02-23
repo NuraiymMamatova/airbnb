@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select new com.example.airbnbb7.dto.response.UserResponseForVendor(f.user.id, f.user.name, f.user.email, f.user.image, f.addedHouseToFavorites) from FavoriteHouse f where f.house.id = :houseId")
     List<UserResponseForVendor> inFavorite(Long houseId);
 
-    @Query("select new com.example.airbnbb7.dto.response.UserAdminResponse(u.id, u.name, u.email, sum(h.bookings), count(h.id)) from User u, House h where u.id = h.owner.id group by u.id, u.name, u.email")
+    @Query("select new com.example.airbnbb7.dto.response.UserAdminResponse(u.id, u.name, u.email, sum(h.bookings), count(h.id)) from User u left join House h on u.id = h.owner.id group by u.id, u.name, u.email, h.owner.id")
     List<UserAdminResponse> getAllUsers();
 
 }
