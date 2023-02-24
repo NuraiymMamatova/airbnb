@@ -56,7 +56,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public SimpleResponse updateFeedback(Authentication authentication, Long feedbackId, FeedbackRequestForUpdate feedbackRequest) {
+    public SimpleResponse updateFeedback(Authentication authentication, Long feedbackId, FeedbackRequestForUpdate feedbackRequest, boolean like, boolean dislike) {
         Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(() -> new NotFoundException("Feedback not found!"));
         feedbackRequest = new FeedbackRequestForUpdate(feedback.getText(),feedback.getRating(),LocalDate.now(),feedback.getImage());
         if (authentication != null) {
@@ -71,6 +71,12 @@ public class FeedbackServiceImpl implements FeedbackService {
                 if (feedbackRequest.getImage() != null) {
                     feedback.setImage(feedbackRequest.getImage());
                 }
+            }
+            if (like) {
+                liking(feedbackId, authentication);
+            }
+            if (dislike) {
+                disLiking(feedbackId, authentication);
             }
             feedbackRepository.save(feedback);
             return new SimpleResponse("Feedback successfully updated!");
@@ -93,7 +99,6 @@ public class FeedbackServiceImpl implements FeedbackService {
             }
         }
     }
-
 
     public void disLiking(Long feedbackId,Authentication authentication){
         if (authentication != null) {

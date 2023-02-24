@@ -36,17 +36,10 @@ public class FeedbackApi {
     @Operation(summary = "UPDATE FEEDBACK" , description = "THIS ENDPOINT RESPONSIBLE FOR UPDATING FEEDBACK")
     public SimpleResponse update(@PathVariable Long feedbackId,
                                  @RequestBody FeedbackRequestForUpdate feedbackRequest,
+                                 @RequestParam(required = false) boolean like,
+                                 @RequestParam(required = false) boolean dislike,
                                  Authentication authentication) {
-        return feedbackService.updateFeedback(authentication, feedbackId, feedbackRequest);
+        return feedbackService.updateFeedback(authentication, feedbackId, feedbackRequest, like, dislike);
     }
 
-    @PutMapping("/like/{feedbackId}")
-    public void liking(@PathVariable Long feedbackId, Authentication authentication){
-        feedbackService.liking(feedbackId,authentication);
-    }
-
-    @PutMapping("/disLike/{feedbackId}")
-    public void disLiking(@PathVariable Long feedbackId,Authentication authentication){
-        feedbackService.disLiking(feedbackId,authentication);
-    }
 }
