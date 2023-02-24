@@ -64,8 +64,6 @@ public class UserServiceImpl implements UserService {
 
     private final HouseRepository houseRepository;
 
-    private final BookingRepository bookingRepository;
-
     @PostConstruct
     void init() throws IOException {
         GoogleCredentials googleCredentials =
