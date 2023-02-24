@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/auth")
 @Tag(name = "Auth API", description = "Authentication API")
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthApi {
 
     private final UserService userService;

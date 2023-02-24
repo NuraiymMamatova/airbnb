@@ -1,7 +1,6 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
-import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
@@ -21,9 +20,9 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/houses")
 @Tag(name = "House Api", description = "House Api")
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class HouseApi {
 
     private final HouseService houseService;
@@ -56,14 +55,14 @@ public class HouseApi {
             "size:how many houses were on one page" +
             "region:search by region" +
             "houseType:search by houseType")
-    public ApplicationResponse findAllHousesPage(@RequestParam(name = "sort", required = false) String sort,
-                                                 @RequestParam(name = "search", required = false) String search,
-                                                 @RequestParam int page,
-                                                 @RequestParam int size,
-                                                 @RequestParam(name = "region", required = false) String region,
-                                                 @RequestParam(name = "houseType", required = false) HouseType houseType,
-                                                 @RequestParam(name = "popularOrLatest", required = false) String popularAndLatest) {
-        return houseService.getAllPagination(houseType, sort, search, page, size, region, popularAndLatest);
+    public ApplicationResponse findAllHousesPage(@RequestParam(name = "search",required = false)String search,
+                                                 @RequestParam(name = "region",required = false) String region,
+                                                 @RequestParam(name = "popularOrLatest",required = false)String popularOrTheLatest,
+                                                 @RequestParam(name = "houseType",required = false)String homeType,
+                                                 @RequestParam(name = "sort",required = false)String price,
+                                                 @RequestParam(name = "page")Long page,
+                                                 @RequestParam(name = "size")Long pageSize) {
+        return houseService.getAllPagination(search, region, popularOrTheLatest, homeType, price, page, pageSize);
     }
 
     @GetMapping("/popularAndLatest")
