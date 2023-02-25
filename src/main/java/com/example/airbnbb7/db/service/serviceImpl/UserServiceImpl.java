@@ -221,7 +221,7 @@ public class UserServiceImpl implements UserService {
     public AnnouncementService getUserByIdDeleteAndBlock(Long userId, Long houseId, String bookingOrAnnouncement, String allBlock, String deleteOrBlock) {
         if (userId != null) {
             if (houseId != null) bookingOrAnnouncement = null;
-            ProfileAdminResponse  profileAdminResponse = userRepository.getUserByIdForAdmin(userId);
+            ProfileAdminResponse profileAdminResponse = userRepository.getUserByIdForAdmin(userId);
             if (bookingOrAnnouncement != null && bookingOrAnnouncement.equals("Bookings")) {
                 List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getBooking(userId);
                 houseResponseForAdminUsers.forEach(h -> {
@@ -282,7 +282,7 @@ public class UserServiceImpl implements UserService {
             }
             return profileAdminResponse;
         }
-        return null;
+        return new BadRequestException("Invalid request!!!");
     }
 
     private ProfileResponse houseType(String sortHousesByApartments, String sortHousesByHouses, String sortHousesAsDesired, Long userId) {

@@ -2,7 +2,6 @@ package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.UserService;
-import com.example.airbnbb7.dto.response.HouseResponseForAdminUsers;
 import com.example.airbnbb7.dto.response.ProfileResponse;
 import com.example.airbnbb7.dto.response.UserAdminResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,6 +58,6 @@ public class UserApi {
                                                          @RequestParam(required = false) String bookingsOrAnnouncement,
                                                          @RequestParam(required = false) String blockAllAnnouncement,
                                                          @RequestParam(required = false) String deleteOrBlock) {
-        return userService.getUserByIdDeleteAndBlock(userId,houseId,bookingsOrAnnouncement,blockAllAnnouncement,deleteOrBlock);
+        return userService.getUserByIdDeleteAndBlock(userId, houseId, bookingsOrAnnouncement, blockAllAnnouncement, deleteOrBlock);
     }
 }
