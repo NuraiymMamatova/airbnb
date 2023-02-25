@@ -79,30 +79,38 @@ public class HouseApi {
     }
 
     @PostMapping("changeStatusOfHouse/{houseId}")
-    @Operation(summary = "Change status of house", description = "Only admin can change house status ")
+    @Operation(summary = "Change status of house", description = """
+            Only admin can change house status
+            House status:
+            #BLOCKED(for unblock also used this enum)
+            #REJECT
+            #ACCEPT""")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public SimpleResponse changeStatusOfHouse(@PathVariable Long houseId, @RequestParam(required = false) String message, @RequestParam("House status:" +
-            " BLOCKED(for unblock also used this enum), " +
-            " REJECT," +
-            " ACCEPT,") HousesStatus housesStatus) {
+    public SimpleResponse changeStatusOfHouse(@PathVariable Long houseId, @RequestParam(required = false) String message, @RequestParam() HousesStatus housesStatus) {
         return houseService.changeStatusOfHouse(houseId, message, housesStatus);
     }
 
     @GetMapping("/announcementForAdmin")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(summary = "Houses on Moderation", description = "Only admin can see these houses")
-    public ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(@RequestParam("Which page do you want to open?") Long page,
-                                                                               @RequestParam("How many houses do you want to see on one page?") Long pageSize) {
+    @Operation(summary = "Houses on Moderation", description = "Only admin can see these houses" +
+            "page: Which page do you want to open?" +
+            "pageSize: How many houses do you want to see on one page?")
+    public ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(@RequestParam Long page,
+                                                                               @RequestParam Long pageSize) {
         return houseService.getAllStatusOfTheWholeHouseOnModeration(page, pageSize);
     }
 
-    @GetMapping("/all_housing")
+    @GetMapping("/allHousing")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(summary = "All housing", description = "Only admin can see these houses")
-    public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(name = "Sorted by House Booked or Not booked", required = false) HousesBooked housesBooked,
-                                                             @RequestParam(name = "Sorted by Popular or The latest",required = false) String popularOrTheLatest,
-                                                             @RequestParam(name = "Sorted by types of houses",required = false) String houseType,
-                                                             @RequestParam(name = "Sorted by Price",required = false) String price) {
+    @Operation(summary = "All housing", description = "Only admin can see these houses: " +
+            "1 Booked or Not booked" +
+            "2 Popular or The latest" +
+            "3 Apartment or House" +
+            "4 High to low or Low to high")
+    public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(name = "1", required = false) HousesBooked housesBooked,
+                                                             @RequestParam(name = "2", required = false) String popularOrTheLatest,
+                                                             @RequestParam(name = "3",required = false) String houseType,
+                                                             @RequestParam(name = "4",required = false) String price) {
         return houseService.getAllHousing(housesBooked, houseType, price, popularOrTheLatest);
     }
 

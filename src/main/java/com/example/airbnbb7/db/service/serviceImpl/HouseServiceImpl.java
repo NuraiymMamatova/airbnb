@@ -96,6 +96,7 @@ public class HouseServiceImpl implements HouseService {
                 Location location = house.getLocation();
                 h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(),
                         location.getAddress(), location.getRegion()));
+                h.setImages(house.getImages());
                 h.setHouseRating(rating.getRating(house.getFeedbacks()));
             });
             applicationResponse.setPaginationList(houseResponseSortedPaginations);
