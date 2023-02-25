@@ -32,10 +32,6 @@ public class HouseResponseForAdminUsers {
 
     private double houseRating;
 
-    private Long page;
-
-    private Long pageSize;
-
     public HouseResponseForAdminUsers(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
         this.id = id;
         this.price = price;

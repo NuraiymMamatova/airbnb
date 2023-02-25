@@ -31,7 +31,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select new com.example.airbnbb7.dto.response.UserAdminResponse(u.id, u.name, u.email, sum(h.bookings), count(h.id)) from User u, House h where u.id = h.owner.id group by u.id, u.name, u.email")
     List<UserAdminResponse> getAllUsers();
 
-    @Query("select new com.example.airbnbb7.dto.response.ProfileAdminResponse(u.id, u.name, u.email) from User u")
+    @Query("select new com.example.airbnbb7.dto.response.ProfileAdminResponse(u.id, u.name, u.email) from User u where u.id =:userId")
     ProfileAdminResponse getUserByIdForAdmin(Long userId);
 
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseForAdminUsers(h.id, h.price, h.title, " +
@@ -39,4 +39,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "from House h JOIN h.bookingDates b JOIN b.users u WHERE u.id = :userId ")
     List<HouseResponseForAdminUsers> getBooking(Long userId);
 
+    @Query("select new com.example.airbnbb7.dto.response.HouseResponseForAdminUsers(h.id, h.price, h.title, " +
+            "h.descriptionOfListing, h.maxOfGuests, h.houseType)" +
+            "from House h where h.owner.id = :userId")
+    List<HouseResponseForAdminUsers> getUserByAnnouncement(Long userId);
 }

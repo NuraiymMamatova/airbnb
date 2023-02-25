@@ -1,5 +1,6 @@
 package com.example.airbnbb7.api;
 
+import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.response.HouseResponseForAdminUsers;
 import com.example.airbnbb7.dto.response.ProfileResponse;
@@ -48,5 +49,16 @@ public class UserApi {
     @Operation(summary = "Delete users", description = "Delete users by id from database")
     public List<UserAdminResponse> deleteUser(@PathVariable("id") Long id) {
         return userService.deleteUser(id);
+    }
+
+    @GetMapping("/profileForAdmin")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(summary = "Get user by id ", description = "User profile for administrator")
+    public AnnouncementService getUserByIdDeleteAndBlock(@RequestParam Long userId,
+                                                         @RequestParam(required = false) Long houseId,
+                                                         @RequestParam(required = false) String bookingsOrAnnouncement,
+                                                         @RequestParam(required = false) String blockAllAnnouncement,
+                                                         @RequestParam(required = false) String deleteOrBlock) {
+        return userService.getUserByIdDeleteAndBlock(userId,houseId,bookingsOrAnnouncement,blockAllAnnouncement,deleteOrBlock);
     }
 }
