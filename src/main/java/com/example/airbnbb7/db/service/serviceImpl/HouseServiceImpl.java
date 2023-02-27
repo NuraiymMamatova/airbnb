@@ -5,6 +5,7 @@ import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.entities.*;
 import com.example.airbnbb7.db.enums.HouseType;
+import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.*;
 import com.example.airbnbb7.db.service.AnnouncementService;
@@ -95,6 +96,7 @@ public class HouseServiceImpl implements HouseService {
                 Location location = house.getLocation();
                 h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(),
                         location.getAddress(), location.getRegion()));
+                h.setImages(house.getImages());
                 h.setHouseRating(rating.getRating(house.getFeedbacks()));
             });
             applicationResponse.setPaginationList(houseResponseSortedPaginations);
@@ -223,7 +225,11 @@ public class HouseServiceImpl implements HouseService {
                     }
                 }
             }
-            houseList.sort(Comparator.comparing(House::getDateHouseCreated).reversed());
+            try {
+                houseList.sort(Comparator.comparing(House::getDateHouseCreated).reversed());
+            } catch (Exception e) {
+
+            }
             for (House house : houseList) {
                 HouseResponseSortedPagination houseResponseSortedPagination = new HouseResponseSortedPagination(house.getId(), house.getPrice(), house.getTitle(),
                         house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType(), house.isFavorite());
@@ -402,6 +408,30 @@ public class HouseServiceImpl implements HouseService {
             list = profileHouseResponses.subList(startItem, toIndex);
         }
         return list;
+    }
+
+    @Override
+    public List<HouseResponseSortedPagination> getAllHousing(HousesBooked housesBooked, String houseType, String price, String popularOrTheLatest) {
+        List<House> allHouses = houseRepository.findAll();
+        List<HouseResponseSortedPagination> sortHouses = new ArrayList<>();
+        for (HouseResponseSortedPagination houseResponse : sortPrice(null, popularOrTheLatest, houseType, price)) {
+            for (House entityHouse : allHouses) {
+                if (housesBooked != null) {
+                    if (entityHouse.getId() == houseResponse.getId() && entityHouse.getHousesBooked().equals(housesBooked) && entityHouse.getHousesStatus().equals(HousesStatus.ACCEPT)) {
+                        houseResponse.setImages(entityHouse.getImages());
+                        houseResponse.setLocationResponse(locationRepository.findLocationByHouseId(entityHouse.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+                        houseResponse.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(entityHouse.getId())));
+                        sortHouses.add(houseResponse);
+                    }
+                } else if (entityHouse.getId() == houseResponse.getId() && entityHouse.getHousesStatus().equals(HousesStatus.ACCEPT)) {
+                    houseResponse.setImages(entityHouse.getImages());
+                    houseResponse.setLocationResponse(locationRepository.findLocationByHouseId(entityHouse.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+                    houseResponse.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(entityHouse.getId())));
+                    sortHouses.add(houseResponse);
+                }
+            }
+        }
+        return sortHouses;
     }
 
 }
