@@ -3,11 +3,14 @@ package com.example.airbnbb7.db.service.serviceImpl;
 import com.example.airbnbb7.config.jwt.JwtTokenUtil;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.customClass.Rating;
-import com.example.airbnbb7.db.customClass.SimpleResponse;
-import com.example.airbnbb7.db.entities.*;
+import com.example.airbnbb7.db.entities.Booking;
+import com.example.airbnbb7.db.entities.House;
+import com.example.airbnbb7.db.entities.Role;
+import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.*;
 import com.example.airbnbb7.db.service.AnnouncementService;
+import com.example.airbnbb7.db.service.EmailService;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.*;
@@ -60,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     private final HouseRepository houseRepository;
 
-    private final LocationRepository locationRepository;
+    private final EmailService emailService;
 
     @PostConstruct
     void init() throws IOException {
@@ -219,9 +222,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AnnouncementService getUserByIdDeleteAndBlock(Long userId, Long houseId, String bookingOrAnnouncement, String allBlock, String deleteOrBlock) {
+    public AnnouncementService getUserByIdBookingOrAnnouncement(Long userId, String bookingOrAnnouncement) {
         if (userId != null) {
-            if (houseId != null) bookingOrAnnouncement = null;
             ProfileAdminResponse profileAdminResponse = userRepository.getUserByIdForAdmin(userId);
             if (bookingOrAnnouncement != null && bookingOrAnnouncement.equals("Bookings")) {
                 List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getBooking(userId);
@@ -241,49 +243,18 @@ public class UserServiceImpl implements UserService {
                     h.setHouseRating(rating.getRating(house.getFeedbacks()));
                 });
                 profileAdminResponse.setHouseResponseForAdminUsers(houseResponseForAdminUsers);
-                if (allBlock != null && allBlock.equals("BLOCK ALL ANNOUNCEMENT")) {
-                    for (HouseResponseForAdminUsers houses : houseResponseForAdminUsers) {
-                        House house = houseRepository.findById(houses.getId()).get();
-                        house.setHousesStatus(HousesStatus.BLOCKED);
-                        houseRepository.save(house);
-                    }
-                }
-            } else if (houseId != null) {
-                UserResponse userResponse = userRepository.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("User not found!")).getOwner().getId());
-                List<FeedbackResponse> feedbackResponses = new ArrayList<>();
-                List<Feedback> feedbacks = feedbackRepository.getAllFeedbackByHouseId(houseId);
-                for (Feedback feedback : feedbacks) {
-                    FeedbackResponse feedbackResponse = feedbackRepository.findFeedbackByFeedbackId(feedback.getId());
-                    feedbackResponse.setOwner(feedbackRepository.findOwnerFeedbackByFeedbackId(feedback.getId()));
-                    feedbackResponses.add(feedbackResponse);
-                }
-                AnnouncementResponseForAdmin announcementResponseForAdmin = houseRepository.findHouseByIdForAdmin(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
-                announcementResponseForAdmin.setImages(houseRepository.findImagesByHouseId(houseId));
-                announcementResponseForAdmin.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
-                announcementResponseForAdmin.setFeedbacks(feedbackResponses);
-                announcementResponseForAdmin.setOwner(userResponse);
-                announcementResponseForAdmin.setRating(rating.getRatingCount(feedbacks));
-                if (deleteOrBlock != null && deleteOrBlock.equals("DELETE")) {
-                    House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House id not found"));
-                    favoriteHouseRepository.deleteAll(favoriteHouseRepository.getAllFavoriteHouseByHouseId(houseId));
-                    houseRepository.delete(house);
-                } else if (deleteOrBlock != null && deleteOrBlock.equals("BLOCK")) {
-                    House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House id not found"));
-                    if (house.getHousesStatus() != HousesStatus.BLOCKED) {
-                        house.setHousesStatus(HousesStatus.BLOCKED);
-                        houseRepository.save(house);
-                        return new SimpleResponse("The house was successfully blocked");
-                    } else {
-                        house.setHousesStatus(HousesStatus.ON_MODERATION);
-                        houseRepository.save(house);
-                        return new SimpleResponse("The house has been successfully unlocked");
-                    }
-                }
-                return announcementResponseForAdmin;
             }
             return profileAdminResponse;
         }
-        return new BadRequestException("Invalid request!!!");
+        throw new BadRequestException("Invalid request!!!");
+    }
+
+    @Override
+    public void allBlocked(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found!"));
+        user.getAnnouncements().forEach(h -> h.setHousesStatus(HousesStatus.BLOCKED));
+        userRepository.save(user);
+        emailService.sendMessage(user.getEmail(), "%s, new message from airbnb" + user.getName(), "Your all houses are blocked!");
     }
 
     private ProfileResponse houseType(String sortHousesByApartments, String sortHousesByHouses, String sortHousesAsDesired, Long userId) {

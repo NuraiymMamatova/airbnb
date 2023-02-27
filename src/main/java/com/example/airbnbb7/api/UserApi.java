@@ -63,11 +63,15 @@ public class UserApi {
     @GetMapping("/profileForAdmin")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Get user by id ", description = "User profile for administrator")
-    public AnnouncementService getUserByIdDeleteAndBlock(@RequestParam Long userId,
-                                                         @RequestParam(required = false) Long houseId,
-                                                         @RequestParam(required = false) String bookingsOrAnnouncement,
-                                                         @RequestParam(required = false) String blockAllAnnouncement,
-                                                         @RequestParam(required = false) String deleteOrBlock) {
-        return userService.getUserByIdDeleteAndBlock(userId, houseId, bookingsOrAnnouncement, blockAllAnnouncement, deleteOrBlock);
+    public AnnouncementService getUserByIdBookingOrAnnouncement(@RequestParam Long userId,
+                                                         @RequestParam(required = false) String bookingsOrAnnouncement) {
+        return userService.getUserByIdBookingOrAnnouncement(userId, bookingsOrAnnouncement);
+    }
+
+    @PostMapping("/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(summary = "All blocked", description = "This method blocks all user's homes")
+    public void allBlocked(@PathVariable("userId") Long userId){
+        userService.allBlocked(userId);
     }
 }
