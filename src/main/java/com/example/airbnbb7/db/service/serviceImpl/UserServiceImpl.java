@@ -67,11 +67,8 @@ public class UserServiceImpl implements UserService {
 
     @PostConstruct
     void init() throws IOException {
-        GoogleCredentials googleCredentials =
-                GoogleCredentials.fromStream(new ClassPathResource("airbnb-b7.json").getInputStream());
-        FirebaseOptions firebaseOptions = FirebaseOptions.builder()
-                .setCredentials(googleCredentials)
-                .build();
+        GoogleCredentials googleCredentials = GoogleCredentials.fromStream(new ClassPathResource("airbnb-b7.json").getInputStream());
+        FirebaseOptions firebaseOptions = FirebaseOptions.builder().setCredentials(googleCredentials).build();
         FirebaseApp firebaseApp = FirebaseApp.initializeApp(firebaseOptions);
     }
 
@@ -104,13 +101,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponse login(UserRequest request) {
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(request.getEmail(),
-                        request.getPassword());
-        User user = userRepository.findByEmail(token.getName()).orElseThrow(
-                () -> {
-                    throw new NotFoundException("the user with this email was not found");
-                });
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+        User user = userRepository.findByEmail(token.getName()).orElseThrow(() -> {
+            throw new NotFoundException("the user with this email was not found");
+        });
         if (request.getPassword() == null) {
             throw new NotFoundException("Password must not be empty");
         }
@@ -126,8 +120,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ProfileResponse userProfile(String mainInUserProfile, String sortHousesAsDesired, String sortHousesByApartments,
-                                       String sortHousesByHouses, String sortingHousesByValue, String sortingHousesByRating, Authentication authentication, int page, int size) {
+    public ProfileResponse userProfile(String mainInUserProfile, String sortHousesAsDesired, String sortHousesByApartments, String sortHousesByHouses, String sortingHousesByValue, String sortingHousesByRating, Authentication authentication, int page, int size) {
         if (authentication != null) {
             User user = (User) authentication.getPrincipal();
             Long userId = user.getId();
@@ -229,8 +222,7 @@ public class UserServiceImpl implements UserService {
                 List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getBooking(userId);
                 houseResponseForAdminUsers.forEach(h -> {
                     House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
-                    h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(),
-                            house.getLocation().getAddress(), house.getLocation().getRegion()));
+                    h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
                     h.setHouseRating(rating.getRating(house.getFeedbacks()));
                 });
                 profileAdminResponse.setHouseResponseForAdminUsers(houseResponseForAdminUsers);
@@ -238,8 +230,7 @@ public class UserServiceImpl implements UserService {
                 List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getUserByAnnouncement(userId);
                 houseResponseForAdminUsers.forEach(h -> {
                     House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
-                    h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(),
-                            house.getLocation().getAddress(), house.getLocation().getRegion()));
+                    h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
                     h.setHouseRating(rating.getRating(house.getFeedbacks()));
                 });
                 profileAdminResponse.setHouseResponseForAdminUsers(houseResponseForAdminUsers);
@@ -332,8 +323,7 @@ public class UserServiceImpl implements UserService {
         switch (sortingHousesByRating) {
             case "One" -> {
                 for (ProfileHouseResponse house : profileResponse1.getProfileHouseResponses()) {
-                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 0 &&
-                            rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 1) {
+                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 0 && rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 1) {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
@@ -341,8 +331,7 @@ public class UserServiceImpl implements UserService {
             }
             case "Two" -> {
                 for (ProfileHouseResponse house : profileResponse1.getProfileHouseResponses()) {
-                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 1 &&
-                            rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 2) {
+                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 1 && rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 2) {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
@@ -350,8 +339,7 @@ public class UserServiceImpl implements UserService {
             }
             case "Three" -> {
                 for (ProfileHouseResponse house : profileResponse1.getProfileHouseResponses()) {
-                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 2 &&
-                            rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 3) {
+                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 2 && rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 3) {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
@@ -359,8 +347,7 @@ public class UserServiceImpl implements UserService {
             }
             case "Four" -> {
                 for (ProfileHouseResponse house : profileResponse1.getProfileHouseResponses()) {
-                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 3 &&
-                            rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 4) {
+                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 3 && rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 4) {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
@@ -368,8 +355,7 @@ public class UserServiceImpl implements UserService {
             }
             case "Five" -> {
                 for (ProfileHouseResponse house : profileResponse1.getProfileHouseResponses()) {
-                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 4 &&
-                            rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 5) {
+                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 4 && rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 5) {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }

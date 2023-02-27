@@ -1,9 +1,7 @@
 package com.example.airbnbb7.db.service;
 
-import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
-import com.example.airbnbb7.dto.response.ProfileAdminResponse;
 import com.example.airbnbb7.dto.response.ProfileResponse;
 import com.example.airbnbb7.dto.response.UserAdminResponse;
 import com.google.firebase.auth.FirebaseAuthException;
