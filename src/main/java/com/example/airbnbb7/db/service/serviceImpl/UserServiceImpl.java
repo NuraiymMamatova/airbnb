@@ -198,6 +198,7 @@ public class UserServiceImpl implements UserService {
                 userAdminResponses.add(user);
             }
         }
+
         return userAdminResponses;
 
     }
