@@ -19,6 +19,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
 
     @Query("select h from House h where h.housesStatus = 2 order by h.bookings desc")
     List<House> getPopular();
+
     @Query("select new com.example.airbnbb7.dto.response.AccommodationResponse(h.id, h.title, h.descriptionOfListing) from House h where h.houseType = 0 and h.housesStatus = 2 order by h.bookings desc")
     List<AccommodationResponse> getPopularApartment();
 
@@ -41,9 +42,6 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.maxOfGuests," +
             "h.houseType,h.isFavorite) from House h where h.housesStatus = 2")
     List<HouseResponseSortedPagination> getAllResponse();
-
-    @Query("select count(h) from House h where h.location.region = :region")
-    Long count(String region);
 
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseForAdmin(" +
             "h.id," +
