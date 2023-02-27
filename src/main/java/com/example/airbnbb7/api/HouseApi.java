@@ -78,7 +78,7 @@ public class HouseApi {
         return houseService.getAnnouncementById(houseId, authentication);
     }
 
-    @PostMapping("changeStatusOfHouse/{houseId}")
+    @PostMapping("/changeStatusOfHouse/{houseId}")
     @Operation(summary = "Change status of house", description = """
             Only admin can change house status
             House status:
