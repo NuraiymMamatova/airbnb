@@ -1,7 +1,6 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
-import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.service.FeedbackService;
 import com.example.airbnbb7.dto.request.FeedbackRequestForSave;
 import com.example.airbnbb7.dto.request.FeedbackRequestForUpdate;
@@ -19,7 +18,7 @@ public class FeedbackApi {
     private final FeedbackService feedbackService;
 
     @PostMapping("/{houseId}")
-    @Operation(summary = "SAVE FEEDBACK" , description = "THIS ENDPOINT RESPONSIBLE FOR SAVING FEEDBACK")
+    @Operation(summary = "SAVE FEEDBACK", description = "THIS ENDPOINT RESPONSIBLE FOR SAVING FEEDBACK")
     public SimpleResponse save(Authentication authentication, @RequestBody FeedbackRequestForSave feedbackRequestForSave,
                                @PathVariable Long houseId) {
 
@@ -27,13 +26,13 @@ public class FeedbackApi {
     }
 
     @DeleteMapping("/delete/{feedbackId}")
-    @Operation(summary = "DELETE FEEDBACK" , description = "THIS ENDPOINT RESPONSIBLE FOR DELETING FEEDBACK")
+    @Operation(summary = "DELETE FEEDBACK", description = "THIS ENDPOINT RESPONSIBLE FOR DELETING FEEDBACK")
     public SimpleResponse delete(@PathVariable Long feedbackId, Authentication authentication) {
         return feedbackService.deleteFeedback(authentication, feedbackId);
     }
 
     @PutMapping("/update/{feedbackId}")
-    @Operation(summary = "UPDATE FEEDBACK" , description = "THIS ENDPOINT RESPONSIBLE FOR UPDATING FEEDBACK")
+    @Operation(summary = "UPDATE FEEDBACK", description = "THIS ENDPOINT RESPONSIBLE FOR UPDATING FEEDBACK")
     public SimpleResponse update(@PathVariable Long feedbackId,
                                  @RequestBody FeedbackRequestForUpdate feedbackRequest,
                                  @RequestParam(required = false) boolean like,

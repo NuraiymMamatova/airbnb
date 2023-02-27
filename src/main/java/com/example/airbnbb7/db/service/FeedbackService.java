@@ -1,7 +1,6 @@
 package com.example.airbnbb7.db.service;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
-import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.dto.request.FeedbackRequestForSave;
 import com.example.airbnbb7.dto.request.FeedbackRequestForUpdate;
 import org.springframework.security.core.Authentication;

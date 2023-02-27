@@ -6,10 +6,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.LAZY;
@@ -63,14 +61,6 @@ public class Feedback {
         this.image = image;
         this.like = like;
         this.dislike = dislike;
-        this.user = user;
-        this.house = house;
-    }
-
-    public Feedback(String text, int rating, List<String> image, User user, House house) {
-        this.text = text;
-        this.rating = rating;
-        this.image = image;
         this.user = user;
         this.house = house;
     }

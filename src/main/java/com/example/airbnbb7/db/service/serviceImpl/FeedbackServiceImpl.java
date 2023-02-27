@@ -58,7 +58,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public SimpleResponse updateFeedback(Authentication authentication, Long feedbackId, FeedbackRequestForUpdate feedbackRequest, boolean like, boolean dislike) {
         Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(() -> new NotFoundException("Feedback not found!"));
-        feedbackRequest = new FeedbackRequestForUpdate(feedback.getText(),feedback.getRating(),LocalDate.now(),feedback.getImage());
+        feedbackRequest = new FeedbackRequestForUpdate(feedback.getText(), feedback.getRating(), LocalDate.now(), feedback.getImage());
         if (authentication != null) {
             User user = (User) authentication.getPrincipal();
             if (user == feedback.getUser()) {
@@ -84,7 +84,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         throw new BadRequestException("Authentication cannot be null!");
     }
 
-    public void liking(Long feedbackId,Authentication authentication){
+    private void liking(Long feedbackId, Authentication authentication) {
         if (authentication != null) {
             User user = (User) authentication.getPrincipal();
             Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(() -> new NotFoundException("not found!"));
@@ -92,7 +92,7 @@ public class FeedbackServiceImpl implements FeedbackService {
                 feedback.setLike(feedback.getLike() - 1);
                 feedback.getLikes().remove(user.getId());
                 feedbackRepository.save(feedback);
-            }else {
+            } else {
                 feedback.getLikes().put(user.getId(), true);
                 feedback.setLike(feedback.getLike() + 1);
                 feedbackRepository.save(feedback);
@@ -100,7 +100,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
     }
 
-    public void disLiking(Long feedbackId,Authentication authentication){
+    private void disLiking(Long feedbackId, Authentication authentication) {
         if (authentication != null) {
             User user = (User) authentication.getPrincipal();
             Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(() -> new NotFoundException("not found!"));
