@@ -2,7 +2,7 @@ package com.example.airbnbb7.dto.response;
 
 import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.enums.HouseType;
-import com.example.airbnbb7.db.service.AnnouncementService;
+import com.example.airbnbb7.db.service.MasterInterface;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @Component
 @NoArgsConstructor
-public class AnnouncementResponseForUser implements AnnouncementService {
+public class AnnouncementResponseForUser implements MasterInterface {
 
     private Long id;
 

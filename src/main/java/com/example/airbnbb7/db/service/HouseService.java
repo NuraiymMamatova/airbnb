@@ -26,7 +26,7 @@ public interface HouseService {
 
     List<AccommodationResponse> getLatestAccommodation(boolean popularHouse, boolean popularApartments);
 
-    AnnouncementService getAnnouncementById(Long houseId, Authentication authentication);
+    MasterInterface getAnnouncementById(Long houseId, Authentication authentication);
 
     SimpleResponse changeStatusOfHouse(Long houseId, String message, HousesStatus housesStatus);
 

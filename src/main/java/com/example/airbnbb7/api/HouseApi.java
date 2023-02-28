@@ -3,7 +3,7 @@ package com.example.airbnbb7.api;
 import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
-import com.example.airbnbb7.db.service.AnnouncementService;
+import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
@@ -74,7 +74,7 @@ public class HouseApi {
 
     @GetMapping("/announcement/{houseId}")
     @Operation(summary = "House inner page", description = "Any user can go through to view the house")
-    public AnnouncementService announcementById(@PathVariable Long houseId, Authentication authentication) {
+    public MasterInterface announcementById(@PathVariable Long houseId, Authentication authentication) {
         return houseService.getAnnouncementById(houseId, authentication);
     }
 

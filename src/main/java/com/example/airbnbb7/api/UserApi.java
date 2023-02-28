@@ -1,5 +1,7 @@
 package com.example.airbnbb7.api;
 
+import com.example.airbnbb7.db.customClass.SimpleResponse;
+import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.response.ProfileResponse;
 import com.example.airbnbb7.dto.response.UserAdminResponse;
@@ -23,11 +25,11 @@ public class UserApi {
 
     @GetMapping
     @Operation(summary = "User Profile", description = """
-            With this method, you can see your houses and booked houses. Houses that are already being checked by the administrator.
-            1 Select one of these Lists Bookings, My announcement, On moderation
-            2 Here you can sort as you wish(In wish list)
-            3 Here you can sort the apartment(Apartment)
-            4 Here you can sort the house(House)
+            With this method, you can see your houses and booked houses. Houses on moderation.
+            1 Select one from this list Bookings, My announcement, On moderation
+            2 Here you can sort as you wish (In wish list)
+            3 Here you can sort the apartments (Apartment)
+            4 Here you can sort the houses (House)
             5 Here you can sort by price
             6 Here you can sort by rating
             7 Here you can write which page you want to open
@@ -55,7 +57,23 @@ public class UserApi {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Delete users", description = "Delete users by id from database")
-    public List<UserAdminResponse> deleteUser(@PathVariable("id") Long id) {
+    public SimpleResponse deleteUser(@PathVariable("id") Long id) {
         return userService.deleteUser(id);
+    }
+
+    @GetMapping("/profile")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(summary = "Get user by id ", description = "User profile for administrator" +
+            ", bookingsOrAnnouncement = 'Bookings' or 'My announcement'")
+    public MasterInterface getUserById(@RequestParam Long userId,
+                                                            @RequestParam(required = false) String bookingsOrAnnouncement) {
+        return userService.getUserById(userId, bookingsOrAnnouncement);
+    }
+
+    @PostMapping("/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(summary = "All blocked", description = "This method blocks all user's homes")
+    public SimpleResponse allBlocked(@PathVariable("userId") Long userId){
+       return userService.allBlocked(userId);
     }
 }
