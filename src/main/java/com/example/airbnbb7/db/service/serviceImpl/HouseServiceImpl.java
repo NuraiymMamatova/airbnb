@@ -8,7 +8,7 @@ import com.example.airbnbb7.db.enums.HouseType;
 import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.*;
-import com.example.airbnbb7.db.service.AnnouncementService;
+import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.db.service.EmailService;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
@@ -288,7 +288,7 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public AnnouncementService getAnnouncementById(Long houseId, Authentication authentication) {
+    public MasterInterface getAnnouncementById(Long houseId, Authentication authentication) {
         AnnouncementResponseForUser house = houseRepository.findHouseByIdForUser(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
         UserResponse userResponse = userRepository.findUserById(houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("User not found!")).getOwner().getId());
         User user = null;

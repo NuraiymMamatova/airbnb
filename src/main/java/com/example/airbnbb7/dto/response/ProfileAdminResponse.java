@@ -1,19 +1,18 @@
 package com.example.airbnbb7.dto.response;
 
-import com.example.airbnbb7.db.service.AnnouncementService;
+import com.example.airbnbb7.db.service.MasterInterface;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProfileAdminResponse implements AnnouncementService {
+public class ProfileAdminResponse implements MasterInterface {
     private Long id;
 
     private String profileName;

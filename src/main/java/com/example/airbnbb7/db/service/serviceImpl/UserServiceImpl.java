@@ -10,7 +10,7 @@ import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.*;
-import com.example.airbnbb7.db.service.AnnouncementService;
+import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.db.service.EmailService;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
@@ -201,7 +201,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserAdminResponse> deleteUser(Long userId) {
+    public SimpleResponse deleteUser(Long userId) {
         Role role = roleRepository.findRoleByUserId(userId);
         if (role.getNameOfRole().equals("USER")) {
             List<House> houseList = new ArrayList<>();
@@ -212,11 +212,11 @@ public class UserServiceImpl implements UserService {
             roleRepository.deleteRoleByUserId(userId);
             userRepository.delete(userRepository.findById(userId).get());
         }
-        return userRepository.getAllUsers();
+        return new SimpleResponse("The user successfully deleted :)");
     }
 
     @Override
-    public AnnouncementService getUserByIdBookingOrAnnouncement(Long userId, String bookingOrAnnouncement) {
+    public MasterInterface getUserById(Long userId, String bookingOrAnnouncement) {
         if (userId != null) {
             ProfileAdminResponse profileAdminResponse = userRepository.getUserByIdForAdmin(userId);
             if (bookingOrAnnouncement != null && bookingOrAnnouncement.equals("Bookings")) {

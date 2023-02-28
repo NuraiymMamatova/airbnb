@@ -1,6 +1,5 @@
 package com.example.airbnbb7.exceptions;
 
-import com.example.airbnbb7.db.service.AnnouncementService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

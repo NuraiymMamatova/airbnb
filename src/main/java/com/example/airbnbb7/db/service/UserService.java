@@ -28,9 +28,9 @@ public interface UserService extends UserDetailsService {
 
     List<UserAdminResponse> getAllUsers();
 
-    List<UserAdminResponse> deleteUser(Long userId);
+    SimpleResponse deleteUser(Long userId);
 
-    AnnouncementService getUserByIdBookingOrAnnouncement(Long userId, String bookingOrAnnouncement);
+    MasterInterface getUserById(Long userId, String bookingOrAnnouncement);
 
     SimpleResponse allBlocked(Long userId);
 }
