@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.List;
 
+@Component
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@Component
-@NoArgsConstructor
-@AllArgsConstructor
 public class FeedbackResponse {
 
     private Long id;
