@@ -13,8 +13,8 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/file")
-@CrossOrigin
 @Tag(name = "S3Client", description = "S3 upload")
 public class S3Api {
     private final S3Service service;

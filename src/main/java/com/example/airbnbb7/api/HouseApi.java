@@ -21,9 +21,9 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/houses")
 @Tag(name = "House Api", description = "House Api")
-@CrossOrigin
 public class HouseApi {
 
     private final HouseService houseService;
