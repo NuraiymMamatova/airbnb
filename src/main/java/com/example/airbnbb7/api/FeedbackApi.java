@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/feedback")
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class FeedbackApi {
 
     private final FeedbackService feedbackService;
