@@ -49,6 +49,7 @@ public class HouseApi {
         return houseService.deleteByIdHouse(id, authentication);
     }
 
+    @CrossOrigin
     @GetMapping("/pagination")
     @Operation(summary = "House get all pagination", description = "sort:High to low or Low t high" +
             "search:you can search by region address and townOrProvince" +
