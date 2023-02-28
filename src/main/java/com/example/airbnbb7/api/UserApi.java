@@ -1,5 +1,6 @@
 package com.example.airbnbb7.api;
 
+import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.response.ProfileResponse;
@@ -60,7 +61,7 @@ public class UserApi {
         return userService.deleteUser(id);
     }
 
-    @GetMapping("/profileForAdmin")
+    @GetMapping("/profile")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Get user by id ", description = "User profile for administrator")
     public AnnouncementService getUserByIdBookingOrAnnouncement(@RequestParam Long userId,
@@ -71,7 +72,7 @@ public class UserApi {
     @PostMapping("/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "All blocked", description = "This method blocks all user's homes")
-    public void allBlocked(@PathVariable("userId") Long userId){
-        userService.allBlocked(userId);
+    public SimpleResponse allBlocked(@PathVariable("userId") Long userId){
+       return userService.allBlocked(userId);
     }
 }

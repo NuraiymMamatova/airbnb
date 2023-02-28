@@ -1,5 +1,6 @@
 package com.example.airbnbb7.db.service;
 
+import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.LoginResponse;
 import com.example.airbnbb7.dto.response.ProfileResponse;
@@ -31,5 +32,5 @@ public interface UserService extends UserDetailsService {
 
     AnnouncementService getUserByIdBookingOrAnnouncement(Long userId, String bookingOrAnnouncement);
 
-    void allBlocked(Long userId);
+    SimpleResponse allBlocked(Long userId);
 }

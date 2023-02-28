@@ -3,6 +3,7 @@ package com.example.airbnbb7.db.service.serviceImpl;
 import com.example.airbnbb7.config.jwt.JwtTokenUtil;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.customClass.Rating;
+import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.entities.Booking;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Role;
@@ -209,7 +210,7 @@ public class UserServiceImpl implements UserService {
             }
             houseRepository.deleteAll(houseList);
             roleRepository.deleteRoleByUserId(userId);
-            userRepository.deleteById(userId);
+            userRepository.delete(userRepository.findById(userId).get());
         }
         return userRepository.getAllUsers();
     }
@@ -241,11 +242,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void allBlocked(Long userId) {
+    public SimpleResponse allBlocked(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found!"));
         user.getAnnouncements().forEach(h -> h.setHousesStatus(HousesStatus.BLOCKED));
         userRepository.save(user);
         emailService.sendMessage(user.getEmail(), "%s, new message from airbnb" + user.getName(), "Your all houses are blocked!");
+        return new SimpleResponse("All Houses are successfully blocked :)");
     }
 
     private ProfileResponse houseType(String sortHousesByApartments, String sortHousesByHouses, String sortHousesAsDesired, Long userId) {
