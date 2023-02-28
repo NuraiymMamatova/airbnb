@@ -56,14 +56,16 @@ public class HouseApi {
             "size:how many houses were on one page" +
             "region:search by region" +
             "houseType:search by houseType")
-    public ApplicationResponse findAllHousesPage(@RequestParam(name = "search",required = false)String search,
-                                                 @RequestParam(name = "region",required = false) String region,
-                                                 @RequestParam(name = "popularOrLatest",required = false)String popularOrTheLatest,
-                                                 @RequestParam(name = "houseType",required = false)String homeType,
-                                                 @RequestParam(name = "sort",required = false)String price,
-                                                 @RequestParam(name = "page")Long page,
-                                                 @RequestParam(name = "size")Long pageSize) {
-        return houseService.getAllPagination(search, region, popularOrTheLatest, homeType, price, page, pageSize);
+    public ApplicationResponse findAllHousesPage(@RequestParam(name = "search", required = false) String search,
+                                                 @RequestParam(name = "region", required = false) String region,
+                                                 @RequestParam(name = "popularOrLatest", required = false) String popularOrTheLatest,
+                                                 @RequestParam(name = "houseType", required = false) String homeType,
+                                                 @RequestParam(name = "sort", required = false) String price,
+                                                 @RequestParam(name = "page") Long page,
+                                                 @RequestParam(name = "size") Long pageSize,
+                                                 @RequestParam(required = false, defaultValue = "0") double userLatitude,
+                                                 @RequestParam(required = false, defaultValue = "0") double userLongitude) {
+        return houseService.getAllPagination(search, region, popularOrTheLatest, homeType, price, page, pageSize, userLatitude, userLongitude);
     }
 
     @GetMapping("/popularAndLatest")
@@ -109,12 +111,11 @@ public class HouseApi {
             "4 High to low or Low to high")
     public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(name = "1", required = false) HousesBooked housesBooked,
                                                              @RequestParam(name = "2", required = false) String popularOrTheLatest,
-                                                             @RequestParam(name = "3",required = false) String houseType,
-                                                             @RequestParam(name = "4",required = false) String price) {
+                                                             @RequestParam(name = "3", required = false) String houseType,
+                                                             @RequestParam(name = "4", required = false) String price) {
         return houseService.getAllHousing(housesBooked, houseType, price, popularOrTheLatest);
     }
 
-}
     @GetMapping("/searchNearby")
     @Operation(summary = "Houses search nearby", description = "Any user can go through to view the houses")
     public List<HouseResponseSortedPagination> searchNearby(@RequestParam double userLatitude, @RequestParam double userLongitude) {
