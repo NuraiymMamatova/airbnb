@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.*;
@@ -38,7 +39,7 @@ public class House {
     private String descriptionOfListing;
 
     @ElementCollection(fetch = LAZY)
-    @Column(columnDefinition="text", length = 1000000)
+    @Column(columnDefinition = "text", length = 1000000)
     private List<String> images;
 
     @Column(nullable = false)
@@ -70,14 +71,6 @@ public class House {
 
     private Boolean watchedOrNot = false;
 
-    public boolean isFavorite() {
-        return isFavorite;
-    }
-
-    public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
-    }
-
     public House(Double price, String title, String descriptionOfListing, Long maxOfGuests, List<String> images, HouseType houseType) {
         this.price = price;
         this.title = title;
@@ -86,6 +79,20 @@ public class House {
         this.maxOfGuests = maxOfGuests;
         this.houseType = houseType;
 
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    public void addBooking(Booking booking) {
+        if (bookingDates == null)
+            bookingDates = new ArrayList<>();
+        bookingDates.add(booking);
     }
 
 }

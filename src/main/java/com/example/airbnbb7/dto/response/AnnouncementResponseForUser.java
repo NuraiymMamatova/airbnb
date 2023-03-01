@@ -20,6 +20,8 @@ public class AnnouncementResponseForUser implements AnnouncementService {
 
     private String title;
 
+    private Double price;
+
     private String descriptionOfListing;
 
     private List<String> images;
@@ -38,9 +40,10 @@ public class AnnouncementResponseForUser implements AnnouncementService {
 
     private List<FeedbackResponse> feedbacks;
 
-    public AnnouncementResponseForUser(Long id, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
+    public AnnouncementResponseForUser(Long id, String title, Double price, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
         this.id = id;
         this.title = title;
+        this.price = price;
         this.descriptionOfListing = descriptionOfListing;
         this.maxOfGuests = maxOfGuests;
         this.houseType = houseType;
