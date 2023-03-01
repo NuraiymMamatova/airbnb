@@ -5,6 +5,11 @@ values (1, 'Airbnb', 'airbnbhomesweethome1@gmail.com', '$2a$12$HJmsalvo/0.5G2oh1
 insert into users(id, name, email, password, image, count_of_booked_house)
 values (2, 'Nuraiym', 'nuraiym@gmail.com', '$2a$12$QxFJ6yYms8SqIVlOR5R3G.oLzOuC3mVALF6GWzoFbCa0W37usfPkS', null, null);
 
+insert into users(id, name, email, password, image, count_of_booked_house)
+values (3, 'Nuraiym', 'nuraiym1@gmail.com', '$2a$12$QxFJ6yYms8SqIVlOR5R3G.oLzOuC3mVALF6GWzoFbCa0W37usfPkS', null, null);
+
+
+
 insert into role(id, name_of_role)
 values (1, 'ADMIN');
 
