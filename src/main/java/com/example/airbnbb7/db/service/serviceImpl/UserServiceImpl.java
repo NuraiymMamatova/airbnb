@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,6 +45,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -81,6 +83,7 @@ public class UserServiceImpl implements UserService {
         try {
             firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
         } catch (FirebaseAuthException firebaseAuthException) {
+            log.error("");
             throw new ExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, firebaseAuthException.getClass().getSimpleName(), firebaseAuthException.getMessage());
         }
 
@@ -98,6 +101,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user = userRepository.findByEmail(firebaseToken.getEmail()).orElseThrow(() -> new NotFoundException(String.format("User %s not found!", firebaseToken.getEmail())));
+        log.error("User %s not found!", firebaseToken.getEmail());
         String token = jwtTokenUtil.generateToken(user);
         return new LoginResponse(token, user.getEmail(), userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
     }
@@ -111,9 +115,11 @@ public class UserServiceImpl implements UserService {
                     throw new NotFoundException("the user with this email was not found");
                 });
         if (request.getPassword() == null) {
+            log.error("The email {} password not found", user.getEmail());
             throw new NotFoundException("Password must not be empty");
         }
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            log.error("The user {} invalid password", user.getEmail());
             throw new BadCredentialsException("invalid password");
         }
         return new LoginResponse(jwtTokenUtil.generateToken(user), user.getEmail(), roleRepository.findRoleByUserId(user.getId()).getNameOfRole());
@@ -187,6 +193,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
+        log.error("The Authentication {} null", authentication.getPrincipal());
         throw new BadRequestException("Authentication cannot be null!");
     }
 

@@ -12,6 +12,7 @@ import com.example.airbnbb7.exceptions.BadCredentialsException;
 import com.example.airbnbb7.exceptions.BadRequestException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FavoriteHouseServiceImpl implements FavoriteHouseService {
 
     private final FavoriteHouseRepository favoriteHouseRepository;
@@ -55,9 +57,11 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
                     return new SimpleResponse("House successfully deleted from favorite!");
                 }
             } else {
+                log.error("can't added house {} to favorite", house.getId());
                 throw new BadCredentialsException("You can't added house to favorite because it's your announcement!");
             }
         } else {
+            log.error("The Authentication {} null", authentication.getPrincipal());
             throw new BadRequestException("Authentication cannot be null!");
         }
         return new SimpleResponse("House successfully added to favorite!");
@@ -85,6 +89,7 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
             }
             return houseResponseSortedPaginationList;
         } else {
+            log.error("The Authentication {} null", authentication.getPrincipal());
             throw new BadRequestException("Authentication cannot be null!");
         }
     }

@@ -15,6 +15,7 @@ import com.example.airbnbb7.dto.response.*;
 import com.example.airbnbb7.exceptions.BadRequestException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HouseServiceImpl implements HouseService {
 
     private final BookingRepository bookingRepository;
@@ -57,10 +59,12 @@ public class HouseServiceImpl implements HouseService {
                 favoriteHouseRepository.deleteAll(favoriteHouseRepository.getAllFavoriteHouseByHouseId(houseId));
                 houseRepository.delete(house);
             } else {
+                log.error("can't delete {} announcement because it's not {} announcement", house.getId(), user.getAnnouncements());
                 throw new BadCredentialsException("You can't delete this announcement because it's not your announcement");
             }
             return new SimpleResponse("House successfully deleted");
         }
+        log.error("The Authentication {} null", authentication.getPrincipal());
         throw new BadRequestException("Authentication cannot be null!");
 
     }
@@ -75,10 +79,12 @@ public class HouseServiceImpl implements HouseService {
                 houseRequestConverter.update(house, houseRequest);
                 houseRepository.save(house);
             } else {
+                log.error("can't delete {} announcement because it's not {} announcement", house.getId(), user.getAnnouncements());
                 throw new BadCredentialsException("You can't update this announcement because it's not your announcement");
             }
             return new SimpleResponse("House successfully updated!");
         }
+        log.error("The Authentication {} null", authentication.getPrincipal());
         throw new BadRequestException("Authentication cannot be null!");
     }
 
@@ -130,9 +136,11 @@ public class HouseServiceImpl implements HouseService {
                         house.getLocation().getAddress(), house.getLocation().getRegion()));
                 houseResponse.setImages(house.getImages());
             } else {
+                log.error("Location {} cannot be null", house.getId());
                 throw new BadRequestException("Location cannot be null!");
             }
         } else {
+            log.error("The Authentication {} null", authentication.getPrincipal());
             throw new BadRequestException("Authentication cannot be null!");
         }
         return new SimpleResponse("House successfully saved!");
@@ -356,6 +364,7 @@ public class HouseServiceImpl implements HouseService {
                 if (message != null) {
                     emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s rejected :(", house.getTitle()), message);
                 } else {
+                    log.error("Message {} cannot be null", message.toString());
                     throw new BadRequestException("Message cannot be null!");
                 }
                 return new SimpleResponse("Successfully sent :)");
