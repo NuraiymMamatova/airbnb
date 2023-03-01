@@ -3,7 +3,7 @@ package com.example.airbnbb7.api;
 import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
-import com.example.airbnbb7.db.service.AnnouncementService;
+import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/houses")
 @Tag(name = "House Api", description = "House Api")
 public class HouseApi {
@@ -49,6 +49,7 @@ public class HouseApi {
         return houseService.deleteByIdHouse(id, authentication);
     }
 
+    @CrossOrigin
     @GetMapping("/pagination")
     @Operation(summary = "House get all pagination", description = "sort:High to low or Low t high" +
             "search:you can search by region address and townOrProvince" +
@@ -74,7 +75,7 @@ public class HouseApi {
 
     @GetMapping("/announcement/{houseId}")
     @Operation(summary = "House inner page", description = "Any user can go through to view the house")
-    public AnnouncementService announcementById(@PathVariable Long houseId, Authentication authentication) {
+    public MasterInterface announcementById(@PathVariable Long houseId, Authentication authentication) {
         return houseService.getAnnouncementById(houseId, authentication);
     }
 
