@@ -50,10 +50,12 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
                     favoriteHouse.setAddedHouseToFavorites(LocalDate.now());
                     favoriteHouse.setHouse(house);
                     favoriteHouse.setUser(user);
+                    log.info("successfully save favorite house");
                     favoriteHouseRepository.save(favoriteHouse);
                 } else {
                     house.setFavorite(false);
                     favoriteHouseRepository.delete(findFavoriteHouse);
+                    log.info("House id {} successfully deleted from favorite", house.getId());
                     return new SimpleResponse("House successfully deleted from favorite!");
                 }
             } else {
@@ -87,6 +89,7 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
                 houseResponseSortedPagination.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())));
                 houseResponseSortedPaginationList.add(houseResponseSortedPagination);
             }
+            log.info("sorted house");
             return houseResponseSortedPaginationList;
         } else {
             log.error("The Authentication {} null", authentication.getPrincipal());

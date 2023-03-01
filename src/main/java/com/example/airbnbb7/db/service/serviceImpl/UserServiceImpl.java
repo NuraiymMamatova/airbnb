@@ -202,7 +202,7 @@ public class UserServiceImpl implements UserService {
                 userAdminResponses.add(user);
             }
         }
-
+    log.info("users successfully show");
         return userAdminResponses;
 
     }
@@ -219,6 +219,7 @@ public class UserServiceImpl implements UserService {
             roleRepository.deleteRoleByUserId(userId);
             userRepository.delete(userRepository.findById(userId).get());
         }
+        log.info("user {} successfully deleted", userId);
         return new SimpleResponse("The user successfully deleted :)");
     }
 
@@ -243,6 +244,7 @@ public class UserServiceImpl implements UserService {
                 });
                 profileAdminResponse.setHouseResponseForAdminUsers(houseResponseForAdminUsers);
             }
+            log.info("Shoe admin profile" );
             return profileAdminResponse;
         }
         throw new BadRequestException("Invalid request!!!");
@@ -254,6 +256,7 @@ public class UserServiceImpl implements UserService {
         user.getAnnouncements().forEach(h -> h.setHousesStatus(HousesStatus.BLOCKED));
         userRepository.save(user);
         emailService.sendMessage(user.getEmail(), "%s, new message from airbnb" + user.getName(), "Your all houses are blocked!");
+        log.info("All Houses are successfully blocked");
         return new SimpleResponse("All Houses are successfully blocked :)");
     }
 
@@ -306,6 +309,7 @@ public class UserServiceImpl implements UserService {
         if (sortHousesAsDesired.equals("In wish list")) {
             profileResponse.getProfileHouseResponses().sort(Comparator.comparing(ProfileHouseResponse::getRating).reversed());
         }
+        log.info("Show profile");
         return profileResponse;
     }
 
@@ -319,9 +323,11 @@ public class UserServiceImpl implements UserService {
                 profileResponse.getProfileHouseResponses().sort(Comparator.comparing(ProfileHouseResponse::getPrice).reversed());
             }
             default -> {
+                log.info("Show profile");
                 return profileResponse;
             }
         }
+        log.info("Show profile");
         return profileResponse;
     }
 
@@ -336,6 +342,7 @@ public class UserServiceImpl implements UserService {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
+                log.info("Show profile");
                 return profileResponse;
             }
             case "Two" -> {
@@ -344,6 +351,7 @@ public class UserServiceImpl implements UserService {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
+                log.info("Show profile");
                 return profileResponse;
             }
             case "Three" -> {
@@ -352,6 +360,7 @@ public class UserServiceImpl implements UserService {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
+                log.info("Show profile");
                 return profileResponse;
             }
             case "Four" -> {
@@ -360,6 +369,7 @@ public class UserServiceImpl implements UserService {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
+                log.info("Show profile");
                 return profileResponse;
             }
             case "Five" -> {
@@ -368,9 +378,11 @@ public class UserServiceImpl implements UserService {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
+                log.info("Show profile");
                 return profileResponse;
             }
             default -> {
+                log.info("Show profile");
                 return profileResponse1;
             }
         }
@@ -386,6 +398,7 @@ public class UserServiceImpl implements UserService {
             int toIndex = Math.min(startItem + size, profileHouseResponses.size());
             list = profileHouseResponses.subList(startItem, toIndex);
         }
+        log.info("Show profile house");
         return list;
     }
 
