@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FeedbackRequest {
+public class FeedbackRequestForUpdate {
 
     private String text;
 
@@ -26,4 +26,10 @@ public class FeedbackRequest {
 
     private Long dislike;
 
+    public FeedbackRequestForUpdate(String text, int rating, LocalDate createdFeedback, List<String> image) {
+        this.text = text;
+        this.rating = rating;
+        this.createdFeedback = createdFeedback;
+        this.image = image;
+    }
 }

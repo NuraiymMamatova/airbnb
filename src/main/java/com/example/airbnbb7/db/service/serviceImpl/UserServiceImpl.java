@@ -3,18 +3,18 @@ package com.example.airbnbb7.db.service.serviceImpl;
 import com.example.airbnbb7.config.jwt.JwtTokenUtil;
 import com.example.airbnbb7.converter.response.HouseResponseConverter;
 import com.example.airbnbb7.db.customClass.Rating;
+import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.entities.Booking;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.*;
+import com.example.airbnbb7.db.service.MasterInterface;
+import com.example.airbnbb7.db.service.EmailService;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
-import com.example.airbnbb7.dto.response.LoginResponse;
-import com.example.airbnbb7.dto.response.ProfileHouseResponse;
-import com.example.airbnbb7.dto.response.ProfileResponse;
-import com.example.airbnbb7.dto.response.UserAdminResponse;
+import com.example.airbnbb7.dto.response.*;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
 import com.example.airbnbb7.exceptions.BadRequestException;
 import com.example.airbnbb7.exceptions.ExceptionResponse;
@@ -66,18 +66,16 @@ public class UserServiceImpl implements UserService {
 
     private final HouseRepository houseRepository;
 
-    private final BookingRepository bookingRepository;
+    private final EmailService emailService;
 
     @PostConstruct
     void init() throws IOException {
-        GoogleCredentials googleCredentials =
-                GoogleCredentials.fromStream(new ClassPathResource("airbnb-b7.json").getInputStream());
-        FirebaseOptions firebaseOptions = FirebaseOptions.builder()
-                .setCredentials(googleCredentials)
-                .build();
+        GoogleCredentials googleCredentials = GoogleCredentials.fromStream(new ClassPathResource("airbnb-b7.json").getInputStream());
+        FirebaseOptions firebaseOptions = FirebaseOptions.builder().setCredentials(googleCredentials).build();
         FirebaseApp firebaseApp = FirebaseApp.initializeApp(firebaseOptions);
     }
 
+    @Override
     public LoginResponse authWithGoogle(String tokenId) {
         FirebaseToken firebaseToken;
         try {
@@ -106,14 +104,12 @@ public class UserServiceImpl implements UserService {
         return new LoginResponse(token, user.getEmail(), userRepository.findRoleByUserEmail(user.getEmail()).getNameOfRole());
     }
 
+    @Override
     public LoginResponse login(UserRequest request) {
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(request.getEmail(),
-                        request.getPassword());
-        User user = userRepository.findByEmail(token.getName()).orElseThrow(
-                () -> {
-                    throw new NotFoundException("the user with this email was not found");
-                });
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+        User user = userRepository.findByEmail(token.getName()).orElseThrow(() -> {
+            throw new NotFoundException("the user with this email was not found");
+        });
         if (request.getPassword() == null) {
             log.error("The email {} password not found", user.getEmail());
             throw new NotFoundException("Password must not be empty");
@@ -131,8 +127,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ProfileResponse userProfile(String mainInUserProfile, String sortHousesAsDesired, String sortHousesByApartments,
-                                       String sortHousesByHouses, String sortingHousesByValue, String sortingHousesByRating, Authentication authentication, int page, int size) {
+    public ProfileResponse userProfile(String mainInUserProfile, String sortHousesAsDesired, String sortHousesByApartments, String sortHousesByHouses, String sortingHousesByValue, String sortingHousesByRating, Authentication authentication, int page, int size) {
         if (authentication != null) {
             User user = (User) authentication.getPrincipal();
             Long userId = user.getId();
@@ -207,12 +202,13 @@ public class UserServiceImpl implements UserService {
                 userAdminResponses.add(user);
             }
         }
+
         return userAdminResponses;
 
     }
 
     @Override
-    public List<UserAdminResponse> deleteUser(Long userId) {
+    public SimpleResponse deleteUser(Long userId) {
         Role role = roleRepository.findRoleByUserId(userId);
         if (role.getNameOfRole().equals("USER")) {
             List<House> houseList = new ArrayList<>();
@@ -221,9 +217,44 @@ public class UserServiceImpl implements UserService {
             }
             houseRepository.deleteAll(houseList);
             roleRepository.deleteRoleByUserId(userId);
-            userRepository.deleteById(userId);
+            userRepository.delete(userRepository.findById(userId).get());
         }
-        return userRepository.getAllUsers();
+        return new SimpleResponse("The user successfully deleted :)");
+    }
+
+    @Override
+    public MasterInterface getUserById(Long userId, String bookingOrAnnouncement) {
+        if (userId != null) {
+            ProfileAdminResponse profileAdminResponse = userRepository.getUserByIdForAdmin(userId);
+            if (bookingOrAnnouncement != null && bookingOrAnnouncement.equals("Bookings")) {
+                List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getBooking(userId);
+                houseResponseForAdminUsers.forEach(h -> {
+                    House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+                    h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
+                    h.setHouseRating(rating.getRating(house.getFeedbacks()));
+                });
+                profileAdminResponse.setHouseResponseForAdminUsers(houseResponseForAdminUsers);
+            } else if (bookingOrAnnouncement != null && bookingOrAnnouncement.equals("My announcement")) {
+                List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getUserByAnnouncement(userId);
+                houseResponseForAdminUsers.forEach(h -> {
+                    House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+                    h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
+                    h.setHouseRating(rating.getRating(house.getFeedbacks()));
+                });
+                profileAdminResponse.setHouseResponseForAdminUsers(houseResponseForAdminUsers);
+            }
+            return profileAdminResponse;
+        }
+        throw new BadRequestException("Invalid request!!!");
+    }
+
+    @Override
+    public SimpleResponse allBlocked(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found!"));
+        user.getAnnouncements().forEach(h -> h.setHousesStatus(HousesStatus.BLOCKED));
+        userRepository.save(user);
+        emailService.sendMessage(user.getEmail(), "%s, new message from airbnb" + user.getName(), "Your all houses are blocked!");
+        return new SimpleResponse("All Houses are successfully blocked :)");
     }
 
     private ProfileResponse houseType(String sortHousesByApartments, String sortHousesByHouses, String sortHousesAsDesired, Long userId) {
@@ -301,8 +332,7 @@ public class UserServiceImpl implements UserService {
         switch (sortingHousesByRating) {
             case "One" -> {
                 for (ProfileHouseResponse house : profileResponse1.getProfileHouseResponses()) {
-                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 0 &&
-                            rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 1) {
+                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 0 && rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 1) {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
@@ -310,8 +340,7 @@ public class UserServiceImpl implements UserService {
             }
             case "Two" -> {
                 for (ProfileHouseResponse house : profileResponse1.getProfileHouseResponses()) {
-                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 1 &&
-                            rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 2) {
+                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 1 && rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 2) {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
@@ -319,8 +348,7 @@ public class UserServiceImpl implements UserService {
             }
             case "Three" -> {
                 for (ProfileHouseResponse house : profileResponse1.getProfileHouseResponses()) {
-                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 2 &&
-                            rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 3) {
+                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 2 && rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 3) {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
@@ -328,8 +356,7 @@ public class UserServiceImpl implements UserService {
             }
             case "Four" -> {
                 for (ProfileHouseResponse house : profileResponse1.getProfileHouseResponses()) {
-                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 3 &&
-                            rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 4) {
+                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 3 && rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 4) {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
@@ -337,8 +364,7 @@ public class UserServiceImpl implements UserService {
             }
             case "Five" -> {
                 for (ProfileHouseResponse house : profileResponse1.getProfileHouseResponses()) {
-                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 4 &&
-                            rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 5) {
+                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 4 && rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 5) {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }
@@ -362,4 +388,6 @@ public class UserServiceImpl implements UserService {
         }
         return list;
     }
+
+
 }

@@ -1,22 +1,22 @@
 package com.example.airbnbb7.dto.response;
 
-import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.enums.HouseType;
-import com.example.airbnbb7.db.service.MasterInterface;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 @Getter
 @Setter
-@Component
 @NoArgsConstructor
-public class AnnouncementResponseForAdmin implements MasterInterface {
+@AllArgsConstructor
+@ToString
+public class HouseResponseForAdminUsers {
 
     private Long id;
+
+    private Double price;
 
     private String title;
 
@@ -26,18 +26,15 @@ public class AnnouncementResponseForAdmin implements MasterInterface {
 
     private Long maxOfGuests;
 
-    private Rating rating;
-
     private HouseType houseType;
 
-    private LocationResponse location;
+    private LocationResponse locationResponse;
 
-    private UserResponse owner;
+    private double houseRating;
 
-    private List<FeedbackResponse> feedbacks;
-
-    public AnnouncementResponseForAdmin(Long id, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
+    public HouseResponseForAdminUsers(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
         this.id = id;
+        this.price = price;
         this.title = title;
         this.descriptionOfListing = descriptionOfListing;
         this.maxOfGuests = maxOfGuests;

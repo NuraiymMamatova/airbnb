@@ -1,13 +1,15 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
+import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
-import com.example.airbnbb7.db.service.AnnouncementService;
+import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponseForAdmin;
+import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,7 @@ import java.util.logging.Logger;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/houses")
 @Tag(name = "House Api", description = "House Api")
 public class HouseApi {
@@ -50,6 +52,7 @@ public class HouseApi {
         return houseService.deleteByIdHouse(id, authentication);
     }
 
+    @CrossOrigin
     @GetMapping("/pagination")
     @Operation(summary = "House get all pagination", description = "sort:High to low or Low t high" +
             "search:you can search by region address and townOrProvince" +
@@ -75,26 +78,44 @@ public class HouseApi {
 
     @GetMapping("/announcement/{houseId}")
     @Operation(summary = "House inner page", description = "Any user can go through to view the house")
-    public AnnouncementService announcementById(@PathVariable Long houseId, Authentication authentication) {
+    public MasterInterface announcementById(@PathVariable Long houseId, Authentication authentication) {
         return houseService.getAnnouncementById(houseId, authentication);
     }
 
-    @PostMapping("changeStatusOfHouse/{houseId}")
-    @Operation(summary = "Change status of house", description = "Only admin can change house status ")
+    @PostMapping("/changeStatusOfHouse/{houseId}")
+    @Operation(summary = "Change status of house", description = """
+            Only admin can change house status
+            House status:
+            #BLOCKED(for unblock also used this enum)
+            #REJECT
+            #ACCEPT""")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public SimpleResponse changeStatusOfHouse(@PathVariable Long houseId, @RequestParam(required = false) String message, @RequestParam("House status:" +
-            " BLOCKED(for unblock also used this enum), " +
-            " REJECT," +
-            " ACCEPT,") HousesStatus housesStatus) {
+    public SimpleResponse changeStatusOfHouse(@PathVariable Long houseId, @RequestParam(required = false) String message, @RequestParam() HousesStatus housesStatus) {
         return houseService.changeStatusOfHouse(houseId, message, housesStatus);
     }
 
     @GetMapping("/announcementForAdmin")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(summary = "Houses on Moderation", description = "Only admin can see these houses")
-    public ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(@RequestParam("Which page do you want to open?") Long page,
-                                                                               @RequestParam("How many houses do you want to see on one page?") Long pageSize) {
+    @Operation(summary = "Houses on Moderation", description = "Only admin can see these houses" +
+            "page: Which page do you want to open?" +
+            "pageSize: How many houses do you want to see on one page?")
+    public ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(@RequestParam Long page,
+                                                                               @RequestParam Long pageSize) {
         return houseService.getAllStatusOfTheWholeHouseOnModeration(page, pageSize);
+    }
+
+    @GetMapping("/allHousing")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(summary = "All housing", description = "Only admin can see these houses: " +
+            "1 Booked or Not booked" +
+            "2 Popular or The latest" +
+            "3 Apartment or House" +
+            "4 High to low or Low to high")
+    public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(name = "1", required = false) HousesBooked housesBooked,
+                                                             @RequestParam(name = "2", required = false) String popularOrTheLatest,
+                                                             @RequestParam(name = "3",required = false) String houseType,
+                                                             @RequestParam(name = "4",required = false) String price) {
+        return houseService.getAllHousing(housesBooked, houseType, price, popularOrTheLatest);
     }
 
 }
