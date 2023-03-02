@@ -46,6 +46,9 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.houseType,h.isFavorite) from House h where h.housesStatus = 2")
     List<HouseResponseSortedPagination> getAllResponse();
 
+    @Query("select h from House h where h.housesStatus = 2")
+    List<House> findAllAnnouncements();
+
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseForAdmin(" +
             "h.id," +
             "h.price," +

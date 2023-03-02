@@ -42,7 +42,7 @@ public class UserApi {
                                        @RequestParam(name = "7") int page,
                                        @RequestParam(name = "8") int size,
                                        Authentication authentication) {
-        return userService.userProfile(mainInUserProfile, sortHousesByApartments, sortHousesByHouses, sortHousesAsDesired, sortingHousesByValue, sortingHousesByRating, authentication, page, size);
+        return userService.userProfile(mainInUserProfile, sortHousesAsDesired, sortHousesByApartments, sortHousesByHouses, sortingHousesByValue, sortingHousesByRating, authentication, page, size);
     }
 
     @GetMapping("/all")

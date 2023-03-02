@@ -50,12 +50,13 @@ public class HouseApi {
     }
 
     @GetMapping("/pagination")
-    @Operation(summary = "House get all pagination", description = "sort:High to low or Low t high" +
-            "search:you can search by region address and townOrProvince" +
-            "page:how many page do you want" +
-            "size:how many houses were on one page" +
-            "region:search by region" +
-            "houseType:search by houseType")
+    @Operation(summary = "House get all pagination", description = """
+            sort:High to low or Low t high
+            search:you can search by region address and townOrProvince
+            page:how many page do you want
+            size:how many houses were on one page
+            region:search by region
+            houseType:search by houseType""")
     public ApplicationResponse findAllHousesPage(@RequestParam(name = "search", required = false) String search,
                                                  @RequestParam(name = "region", required = false) String region,
                                                  @RequestParam(name = "popularOrLatest", required = false) String popularOrTheLatest,

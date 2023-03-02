@@ -159,7 +159,7 @@ public class UserServiceImpl implements UserService {
                     return profileResponse;
                 }
                 case "My announcement" -> {
-                    ProfileResponse profileBookingHouseResponse = star(sortHousesAsDesired, sortHousesByApartments, sortHousesByHouses, sortingHousesByValue, sortingHousesByRating, userId);
+                    ProfileResponse profileBookingHouseResponse = star(sortHousesByApartments, sortHousesByHouses, sortHousesAsDesired, sortingHousesByValue, sortingHousesByRating, userId);
                     profileBookingHouseResponse.setBookingsSize(profileResponse.getBookingsSize());
                     profileBookingHouseResponse.setOnModerationSize(profileResponse.getOnModerationSize());
                     profileBookingHouseResponse.setMyAnnouncementSize(profileResponse.getMyAnnouncementSize());
