@@ -119,8 +119,8 @@ public class HouseApi {
 
     @GetMapping("/searchNearby")
     @Operation(summary = "Houses search nearby", description = "Any user can go through to view the houses")
-    public List<HouseResponseSortedPagination> searchNearby(@RequestParam double userLatitude, @RequestParam double userLongitude) {
-        return houseService.searchNearby(userLatitude, userLongitude);
+    public List<HouseResponseSortedPagination> searchNearby(@RequestParam double userLatitude, @RequestParam double userLongitude, @RequestParam(required = false, defaultValue = "100") int radius) {
+        return houseService.searchNearby(userLatitude, userLongitude, radius);
     }
 
 }

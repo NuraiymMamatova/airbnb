@@ -28,7 +28,7 @@ public interface HouseService {
 
     AnnouncementService getAnnouncementById(Long houseId, Authentication authentication);
 
-    List<HouseResponseSortedPagination> searchNearby(double userLatitude, double userLongitude);
+    List<HouseResponseSortedPagination> searchNearby(double userLatitude, double userLongitude, int radius);
 
     SimpleResponse changeStatusOfHouse(Long houseId, String message, HousesStatus housesStatus);
 

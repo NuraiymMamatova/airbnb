@@ -313,13 +313,13 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public List<HouseResponseSortedPagination> searchNearby(double userLatitude, double userLongitude) {
+    public List<HouseResponseSortedPagination> searchNearby(double userLatitude, double userLongitude, int radius) {
         List<HouseResponseSortedPagination> nearbyHouses = new ArrayList<>();
         for (HouseResponseSortedPagination house : houseRepository.getAllResponse()) {
             LocationResponse locationResponse = locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("Location is not found!"));
-            double[] coordinates = getCoordinates(locationResponse.getAddress());
+            double[] coordinates = getCoordinates(locationResponse.getAddress() + " " + locationResponse.getTownOrProvince());
             double distance = distance(userLatitude, userLongitude, coordinates[0], coordinates[1]);
-            if (distance <= 100) {
+            if (distance <= radius) {
                 house.setImages(houseRepository.findImagesByHouseId(house.getId()));
                 house.setLocationResponse(locationResponse);
                 nearbyHouses.add(house);
@@ -346,7 +346,7 @@ public class HouseServiceImpl implements HouseService {
                 houseResponseSortedPagination.setImages(houseRepository.findImagesByHouseId(houseResponseSortedPagination.getId()));
                 houseResponseSortedPaginations.add(houseResponseSortedPagination);
             }
-            List<HouseResponseSortedPagination> allNearbyHouses = getAllNearbyHouses(houseResponseSortedPaginations, searchNearby(coordinates[0], coordinates[1]));
+            List<HouseResponseSortedPagination> allNearbyHouses = getAllNearbyHouses(houseResponseSortedPaginations, searchNearby(coordinates[0], coordinates[1], 100));
             houseResponseSortedPaginations.addAll(allNearbyHouses);
         }
         if (region.equals("All")) {
