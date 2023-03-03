@@ -50,19 +50,20 @@ public class HouseApi {
     }
 
     @GetMapping("/pagination")
-    @Operation(summary = "House get all pagination", description = "sort:High to low or Low t high" +
-            "search:you can search by region address and townOrProvince" +
-            "page:how many page do you want" +
-            "size:how many houses were on one page" +
-            "region:search by region" +
-            "houseType:search by houseType")
-    public ApplicationResponse findAllHousesPage(@RequestParam(name = "search",required = false)String search,
-                                                 @RequestParam(name = "region",required = false) String region,
-                                                 @RequestParam(name = "popularOrLatest",required = false)String popularOrTheLatest,
-                                                 @RequestParam(name = "houseType",required = false)String homeType,
-                                                 @RequestParam(name = "sort",required = false)String price,
-                                                 @RequestParam(name = "page")Long page,
-                                                 @RequestParam(name = "size")Long pageSize) {
+    @Operation(summary = "House get all pagination", description =
+            "search: you can search by region address and townOrProvince" +
+                    "region: search by region" +
+                    "houseType: search by houseType" +
+                    "price: High to low or Low t high" +
+                    "page: how many page do you want" +
+                    "size: how many houses were on one page")
+    public ApplicationResponse findAllHousesPage(@RequestParam(required = false) String search,
+                                                 @RequestParam(required = false) String region,
+                                                 @RequestParam(required = false) String popularOrTheLatest,
+                                                 @RequestParam(required = false) String homeType,
+                                                 @RequestParam(required = false) String price,
+                                                 @RequestParam Long page,
+                                                 @RequestParam Long pageSize) {
         return houseService.getAllPagination(search, region, popularOrTheLatest, homeType, price, page, pageSize);
     }
 
@@ -103,14 +104,14 @@ public class HouseApi {
     @GetMapping("/allHousing")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "All housing", description = "Only admin can see these houses: " +
-            "1 Booked or Not booked" +
-            "2 Popular or The latest" +
-            "3 Apartment or House" +
-            "4 High to low or Low to high")
-    public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(name = "1", required = false) HousesBooked housesBooked,
-                                                             @RequestParam(name = "2", required = false) String popularOrTheLatest,
-                                                             @RequestParam(name = "3",required = false) String houseType,
-                                                             @RequestParam(name = "4",required = false) String price) {
+            "1) housesBooked = Booked or Not booked" +
+            "2) popularOrTheLatest = Popular or The latest" +
+            "3) houseType = Apartment or House" +
+            "4) price = High to low or Low to high")
+    public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(required = false) HousesBooked housesBooked,
+                                                             @RequestParam(required = false) String popularOrTheLatest,
+                                                             @RequestParam(required = false) String houseType,
+                                                             @RequestParam(required = false) String price) {
         return houseService.getAllHousing(housesBooked, houseType, price, popularOrTheLatest);
     }
 
