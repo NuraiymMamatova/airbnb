@@ -13,11 +13,13 @@ import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,11 +30,12 @@ public class HouseApi {
 
     private final HouseService houseService;
 
+
     @PostMapping
     @Operation(summary = "Save house", description = "Save house and location")
     @PreAuthorize("hasAuthority('USER')")
     public SimpleResponse saveHouse(@RequestBody HouseRequest houseRequest, Authentication authentication) {
-        return houseService.save(houseRequest, authentication);
+            return houseService.save(houseRequest, authentication);
     }
 
     @PutMapping("/{id}")
@@ -49,6 +52,7 @@ public class HouseApi {
         return houseService.deleteByIdHouse(id, authentication);
     }
 
+    @CrossOrigin
     @GetMapping("/pagination")
     @Operation(summary = "House get all pagination", description =
             "search: you can search by region address and townOrProvince" +
