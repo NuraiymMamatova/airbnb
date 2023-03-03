@@ -16,6 +16,7 @@ import com.example.airbnbb7.dto.response.*;
 import com.example.airbnbb7.exceptions.BadRequestException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HouseServiceImpl implements HouseService {
 
     private final BookingRepository bookingRepository;
@@ -58,10 +60,12 @@ public class HouseServiceImpl implements HouseService {
                 favoriteHouseRepository.deleteAll(favoriteHouseRepository.getAllFavoriteHouseByHouseId(houseId));
                 houseRepository.delete(house);
             } else {
+                log.error("can't delete {} announcement because it's not {} announcement", house.getId(), user.getAnnouncements());
                 throw new BadCredentialsException("You can't delete this announcement because it's not your announcement");
             }
             return new SimpleResponse("House successfully deleted");
         }
+        log.error("The Authentication {} null", authentication.getPrincipal());
         throw new BadRequestException("Authentication cannot be null!");
 
     }
@@ -76,10 +80,13 @@ public class HouseServiceImpl implements HouseService {
                 houseRequestConverter.update(house, houseRequest);
                 houseRepository.save(house);
             } else {
+                log.error("can't delete {} announcement because it's not {} announcement", house.getId(), user.getAnnouncements());
                 throw new BadCredentialsException("You can't update this announcement because it's not your announcement");
             }
+            log.info("House {} successfully updated", house.getId());
             return new SimpleResponse("House successfully updated!");
         }
+        log.error("The Authentication {} null", authentication.getPrincipal());
         throw new BadRequestException("Authentication cannot be null!");
     }
 
@@ -106,6 +113,7 @@ public class HouseServiceImpl implements HouseService {
             int sizePage = (int) Math.ceil((double) sortPrice(region, popularOrTheLatest, homeType, price).size() / pageSize);
             applicationResponse.setPageSize((long) sizePage);
             applicationResponse.setCountOfRegion(countOfRegion);
+            log.info("show application");
             return applicationResponse;
         }
     }
@@ -132,11 +140,14 @@ public class HouseServiceImpl implements HouseService {
                         house.getLocation().getAddress(), house.getLocation().getRegion()));
                 houseResponse.setImages(house.getImages());
             } else {
+                log.error("Location {} cannot be null", house.getId());
                 throw new BadRequestException("Location cannot be null!");
             }
         } else {
+            log.error("The Authentication {} null", authentication.getPrincipal());
             throw new BadRequestException("Authentication cannot be null!");
         }
+        log.info("house title {} successfully saved", houseRequest.getTitle() );
         return new SimpleResponse("House successfully saved!");
     }
 
@@ -151,6 +162,7 @@ public class HouseServiceImpl implements HouseService {
                 accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
             }
             houseResponses.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
+            log.info("show house");
             return houseResponses.stream().limit(3).toList();
         }
         if (popularApartments) {
@@ -161,6 +173,7 @@ public class HouseServiceImpl implements HouseService {
                 accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
             }
             popularApartmentByCountOfBookedUser.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
+          log.info("show popular apartment");
             return popularApartmentByCountOfBookedUser.stream().limit(7).toList();
         }
         List<AccommodationResponse> houseResponses = houseRepository.getLatestAccommodation();
@@ -169,6 +182,7 @@ public class HouseServiceImpl implements HouseService {
             houseResponse.setImages(house.getImages());
             houseResponse.setLocationResponse(locationRepository.convertToResponse(house.getLocation()));
         }
+        log.info("show house");
         return houseResponses.stream().limit(7).toList();
     }
 
@@ -190,6 +204,7 @@ public class HouseServiceImpl implements HouseService {
         }
         if (region.equals("All")) {
             houseResponses.addAll(houseResponseSortedPaginations);
+            log.info("show house by sort region");
             return houseResponses;
         }
         for (HouseResponseSortedPagination house : houseResponseSortedPaginations) {
@@ -198,6 +213,7 @@ public class HouseServiceImpl implements HouseService {
                 this.countOfRegion = (long) houseResponses.size();
             }
         }
+        log.info("show house by sort region");
         return houseResponses;
     }
 
@@ -215,6 +231,7 @@ public class HouseServiceImpl implements HouseService {
                 }
             }
             houses.sort(Comparator.comparing(HouseResponseSortedPagination::getHouseRating).reversed());
+            log.info("show house by sort popular");
             return houses;
         } else if (popularOrTheLatest.equals("The latest")) {
             List<House> houseList = new ArrayList<>();
@@ -239,6 +256,7 @@ public class HouseServiceImpl implements HouseService {
                 houses.add(houseResponseSortedPagination);
             }
         }
+        log.info("show house by sort popular");
         return houses;
     }
 
@@ -259,6 +277,7 @@ public class HouseServiceImpl implements HouseService {
                 }
             }
         }
+        log.info("show house by sort type house");
         return houseResponseSortedPaginations;
     }
 
@@ -271,6 +290,7 @@ public class HouseServiceImpl implements HouseService {
         } else if (price.equals("High to low")) {
             houseResponseSortedPaginations.sort(Comparator.comparing(HouseResponseSortedPagination::getPrice).reversed());
         }
+        log.info("show house by sort price");
         return houseResponseSortedPaginations;
     }
 
@@ -284,6 +304,7 @@ public class HouseServiceImpl implements HouseService {
             int toIndex = (int) Math.min(startItem + size, houseResponseSortedPaginations.size());
             list = houseResponseSortedPaginations.subList(startItem, toIndex);
         }
+        log.info("show all house");
         return list;
     }
 
@@ -328,6 +349,7 @@ public class HouseServiceImpl implements HouseService {
                 houseResponseForVendor.setFeedbacks(feedbackResponses);
                 houseResponseForVendor.setInFavorites(userRepository.inFavorite(houseId));
                 houseResponseForVendor.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
+                log.info("show house for vendor");
                 return houseResponseForVendor;
             } else if (roleRepository.findRoleByUserId(user.getId()).getNameOfRole().equals("ADMIN")) {
                 AnnouncementResponseForAdmin announcementResponseForAdmin = houseRepository.findHouseByIdForAdmin(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
@@ -339,10 +361,12 @@ public class HouseServiceImpl implements HouseService {
                 announcementResponseForAdmin.setFeedbacks(feedbackResponses);
                 announcementResponseForAdmin.setOwner(userResponse);
                 announcementResponseForAdmin.setRating(rating.getRatingCount(feedbacks));
+                log.info("announcement for admin");
                 return announcementResponseForAdmin;
             }
         }
         house.setOwner(userResponse);
+        log.info("show house");
         return house;
     }
 
@@ -354,6 +378,7 @@ public class HouseServiceImpl implements HouseService {
                 house.setHousesStatus(HousesStatus.ACCEPT);
                 houseRepository.save(house);
                 emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s accepted :)", house.getTitle()), "Moderation successfully passed!");
+                log.info("successfully  accepted house id {}", house.getId());
                 return new SimpleResponse("Accepted :)");
             }
             case REJECT -> {
@@ -362,8 +387,10 @@ public class HouseServiceImpl implements HouseService {
                 if (message != null) {
                     emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s rejected :(", house.getTitle()), message);
                 } else {
+                    log.error("Message {} cannot be null", message.toString());
                     throw new BadRequestException("Message cannot be null!");
                 }
+                log.info("successfully sent house id {}", house.getId());
                 return new SimpleResponse("Successfully sent :)");
             }
             case BLOCKED -> {
@@ -371,15 +398,18 @@ public class HouseServiceImpl implements HouseService {
                     house.setHousesStatus(HousesStatus.ON_MODERATION);
                     houseRepository.save(house);
                     emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s unblocked :)", house.getTitle()), "House unblocked :)");
+                    log.info("successfully unblocked house id {}", house.getId());
                     return new SimpleResponse("Unblocked :)");
                 } else {
                     house.setHousesStatus(HousesStatus.BLOCKED);
                     houseRepository.save(house);
                     emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s blocked :(", house.getTitle()), "House blocked :(");
+                    log.info("successfully blocked house id {}", house.getId());
                     return new SimpleResponse("Blocked :)");
                 }
             }
         }
+        log.info("show house id {}", house.getId());
         return new SimpleResponse();
     }
 
@@ -394,6 +424,7 @@ public class HouseServiceImpl implements HouseService {
                     location.getAddress(), location.getRegion()));
             h.setHouseRating(rating.getRating(house.getFeedbacks()));
         });
+        log.info("apllication for admin");
         return new ApplicationResponseForAdmin(getProfileHouseResponse(page, pageSize, houseResponseForAdmins), page, sizePage);
     }
 
@@ -407,6 +438,7 @@ public class HouseServiceImpl implements HouseService {
             int toIndex = (int) Math.min(startItem + size, profileHouseResponses.size());
             list = profileHouseResponses.subList(startItem, toIndex);
         }
+        log.info("show house");
         return list;
     }
 
@@ -431,6 +463,7 @@ public class HouseServiceImpl implements HouseService {
                 }
             }
         }
+        log.info("show house by sort");
         return sortHouses;
     }
 

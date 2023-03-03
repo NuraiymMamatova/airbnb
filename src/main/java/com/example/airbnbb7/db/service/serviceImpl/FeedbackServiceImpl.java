@@ -13,6 +13,7 @@ import com.example.airbnbb7.exceptions.BadCredentialsException;
 import com.example.airbnbb7.exceptions.BadRequestException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FeedbackServiceImpl implements FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
@@ -34,10 +36,13 @@ public class FeedbackServiceImpl implements FeedbackService {
             if (user.getId() != house.getOwner().getId()) {
                 Feedback feedback = new Feedback(feedbackRequestForSave.getText(), feedbackRequestForSave.getRating(), LocalDate.now(), feedbackRequestForSave.getImage(), 0L, 0L, user, house);
                 feedbackRepository.save(feedback);
+                log.info("Feedback by user {} successfully saved!", feedback.getUser());
                 return new SimpleResponse("Feedback successfully saved!");
             }
+            log.warn("You can't leave feedback for your house by id {} ", house.getId());
             return new SimpleResponse("You can't leave feedback for your house!");
         }
+        log.warn("Authentication {} can not be null!", authentication.getPrincipal());
         throw new BadRequestException("Authentication can not be null!");
     }
 
@@ -48,10 +53,13 @@ public class FeedbackServiceImpl implements FeedbackService {
             Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(() -> new NotFoundException("Feedback not found!"));
             if (feedback.getUser().getId() == user.getId()) {
                 feedbackRepository.delete(feedbackRepository.findById(feedbackId).orElseThrow(() -> new NotFoundException("Feedback not found!")));
+               log.info("feedback by user {} successfully deleted ", feedback.getUser());
                 return new SimpleResponse("Feedback successfully deleted!");
             }
+            log.warn("You can't delete other people's comments");
             throw new BadRequestException("You can't delete other people's comments!");
         }
+        log.warn("delete forbidden");
         throw new BadCredentialsException("Forbidden!");
     }
 
@@ -79,8 +87,10 @@ public class FeedbackServiceImpl implements FeedbackService {
                 disLiking(feedbackId, authentication);
             }
             feedbackRepository.save(feedback);
+            log.info("Feedback by user {} successfully updated", feedback.getUser());
             return new SimpleResponse("Feedback successfully updated!");
         }
+        log.warn("Authentication cannot be null");
         throw new BadRequestException("Authentication cannot be null!");
     }
 
@@ -97,6 +107,7 @@ public class FeedbackServiceImpl implements FeedbackService {
                 feedback.setLike(feedback.getLike() + 1);
                 feedbackRepository.save(feedback);
             }
+            log.info("successfully liked");
         }
     }
 
@@ -113,6 +124,7 @@ public class FeedbackServiceImpl implements FeedbackService {
                 feedback.setDislike(feedback.getDislike() + 1);
                 feedbackRepository.save(feedback);
             }
+            log.info("successfully disliked");
         }
     }
 }
