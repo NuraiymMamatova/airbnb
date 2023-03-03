@@ -7,10 +7,12 @@ import com.example.airbnbb7.dto.request.LocationRequest;
 import com.example.airbnbb7.dto.response.LocationResponse;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LocationServiceImpl implements LocationService {
 
     private final LocationRepository locationRepository;
@@ -27,7 +29,9 @@ public class LocationServiceImpl implements LocationService {
             location.setTownOrProvince(locationRequest.getTownOrProvince());
         }
         locationRepository.save(location);
-        return locationRepository.findLocationById(location.getId()).orElseThrow(() -> new NotFoundException("not found location id"));
+        log.info("find location by id {}", location.getId());
+        return locationRepository.findLocationById(location.getId()).orElseThrow(() ->
+                new NotFoundException("not found location id"));
     }
 
 }

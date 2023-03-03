@@ -131,10 +131,10 @@ insert into houses(id, price, title, description_of_listing, max_of_guests, book
 values (20, 20, 'Flutter', 'Very good house', 3, 0, 0, 2,false, 0, '2023-09-13 18:20:03', 5);
 
 insert into locations(id, address, region, town_or_province, house_id)
-values (1,'84B, Masalieva ave.邮政编码: 723500','Osh','Ozgon',1);
+values (1,'84B, Masalieva','Osh','Ozgon',1);
 
 insert into locations(id, address, region, town_or_province, house_id)
-values (2,'5FPR+6G, Кызыл-Коргон','Osh','Ош',2);
+values (2,'Кызыл-Коргон','Osh','Ош',2);
 
 insert into locations(id, address, region, town_or_province, house_id)
 values (3,'16 ул. Чынгыза Айтматова','Talas','Talas',3);
@@ -146,7 +146,7 @@ insert into locations(id, address, region, town_or_province, house_id)
 values (5,'Подгорная ул.83 Ул. Аманбека Сыдыгалиев','Talas','Talas',5);
 
 insert into locations(id, address, region, town_or_province, house_id)
-values (6,'FWMM+JMG, Бакай Ата, р','Talas','Bakai-Ata',6);
+values (6,'Бакай Ата, р','Talas','Bakai-Ata',6);
 
 insert into locations(id, address, region, town_or_province, house_id)
 values (7,'улица Усенбаева д.1','Talas','Talas',7);
@@ -165,7 +165,7 @@ insert into locations(id, address, region, town_or_province, house_id)
 values (11,'ул Нурбек Асанов','Jalal-Abad','Jalal-Abad',11);
 
 insert into locations(id, address, region, town_or_province, house_id)
-values (12,'8WQ7+R7Q, Арстанбап','Jalal-Abad','Арстанбап',12);
+values (12,'Арстанбап','Jalal-Abad','Арстанбап',12);
 
 
 insert into locations(id, address, region, town_or_province, house_id)
@@ -175,17 +175,17 @@ insert into locations(id, address, region, town_or_province, house_id)
 values (14,'1 ул. Баяпинова','Osh','Ош',14);
 
 insert into locations(id, address, region, town_or_province, house_id)
-values (15,'8C8X+6W8, Боконбаев көчөсү','Osh','Гүлчө',15);
+values (15,'Боконбаев көчөсү','Osh','Гүлчө',15);
 
 
 insert into locations(id, address, region, town_or_province, house_id)
-values (16,'2RX9+F49, ул.Жусупова','Batken','Баткен',16);
+values (16,'ул.Жусупова','Batken','Баткен',16);
 
 insert into locations(id, address, region, town_or_province, house_id)
 values (17,'Самат Сыдыков 8','Batken','Баткен',17);
 
 insert into locations(id, address, region, town_or_province, house_id)
-values (18,'2RVH+2C8, Unnamed Road','Batken','Баткен',18);
+values (18,'Unnamed Road','Batken','Баткен',18);
 
 insert into locations(id, address, region, town_or_province, house_id)
 values (19,'ул. Файзуллаева 76','Batken','Баткен',19);
