@@ -16,12 +16,15 @@ import com.example.airbnbb7.dto.response.*;
 import com.example.airbnbb7.exceptions.BadRequestException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -31,6 +34,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HouseServiceImpl implements HouseService {
 
     private final BookingRepository bookingRepository;
@@ -122,12 +126,13 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public ApplicationResponse getAllPagination(String search, String region, String popularOrTheLatest, String homeType, String price, Long page, Long pageSize, double userLatitude, double userLongitude) {
+    public ApplicationResponse getAllPagination(String search, String region, String popularOrTheLatest, String homeType, String price, Long page, Long pageSize, double userLatitude, double userLongitude) throws IOException {
         ApplicationResponse applicationResponse = new ApplicationResponse();
         applicationResponse.setPage(page);
         double[] coordinates = {userLatitude, userLongitude};
         int sizePage = (int) Math.ceil((double) sortPrice(region, popularOrTheLatest, homeType, price, coordinates).size() / pageSize);
         applicationResponse.setPageSize((long) sizePage);
+
         if (search != null) {
             List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>(getAllPagination(page, pageSize, houseRepository.searchByQuery(search)));
 
@@ -140,6 +145,7 @@ public class HouseServiceImpl implements HouseService {
             applicationResponse.setPaginationList(houseResponseSortedPaginations);
             return applicationResponse;
         } else {
+            log.debug("0 getAllPagination get all pagination");
             applicationResponse.setPaginationList(getAllPagination(page, pageSize, sortPrice(region, popularOrTheLatest, homeType, price, coordinates)));
             applicationResponse.setCountOfRegion(countOfRegion);
             return applicationResponse;
@@ -257,7 +263,7 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public List<HouseResponseSortedPagination> getAllHousing(HousesBooked housesBooked, String houseType, String price, String popularOrTheLatest) {
+    public List<HouseResponseSortedPagination> getAllHousing(HousesBooked housesBooked, String houseType, String price, String popularOrTheLatest) throws IOException {
         List<House> allHouses = houseRepository.findAll();
         List<HouseResponseSortedPagination> sortHouses = new ArrayList<>();
         for (HouseResponseSortedPagination houseResponse : sortPrice(null, popularOrTheLatest, houseType, price, null)) {
@@ -313,45 +319,69 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public List<HouseResponseSortedPagination> searchNearby(double userLatitude, double userLongitude, int radius) {
+    public List<HouseResponseSortedPagination> searchNearby(double userLatitude, double userLongitude) throws IOException {
         List<HouseResponseSortedPagination> nearbyHouses = new ArrayList<>();
         for (HouseResponseSortedPagination house : houseRepository.getAllResponse()) {
             LocationResponse locationResponse = locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("Location is not found!"));
-            double[] coordinates = getCoordinates(locationResponse.getAddress() + " " + locationResponse.getTownOrProvince());
+            double[] coordinates = getCoordinates(locationResponse.getAddress() + ", " + locationResponse.getTownOrProvince());
             double distance = distance(userLatitude, userLongitude, coordinates[0], coordinates[1]);
-            if (distance <= radius) {
+            if (distance <= 100) {
+                house.setImages(houseRepository.findImagesByHouseId(house.getId()));
+                house.setLocationResponse(locationResponse);
+                nearbyHouses.add(house);
+            } else if (nearbyHouses == null && distance <= 200) {
+                house.setImages(houseRepository.findImagesByHouseId(house.getId()));
+                house.setLocationResponse(locationResponse);
+                nearbyHouses.add(house);
+            } else if (nearbyHouses == null && distance <= 300) {
+                house.setImages(houseRepository.findImagesByHouseId(house.getId()));
+                house.setLocationResponse(locationResponse);
+                nearbyHouses.add(house);
+            } else if (nearbyHouses == null && distance <= 400) {
+                house.setImages(houseRepository.findImagesByHouseId(house.getId()));
+                house.setLocationResponse(locationResponse);
+                nearbyHouses.add(house);
+            } else if (nearbyHouses == null && distance <= 500) {
                 house.setImages(houseRepository.findImagesByHouseId(house.getId()));
                 house.setLocationResponse(locationResponse);
                 nearbyHouses.add(house);
             }
         }
+        log.debug("1 searchNearby in search nearby method " + nearbyHouses.size());
         return nearbyHouses;
     }
 
-    private List<HouseResponseSortedPagination> sortRegion(String region, double[] coordinates) {
+    private List<HouseResponseSortedPagination> sortRegion(String region, double[] coordinates) throws IOException {
         if (region == null) region = "All";
-        List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>();
-        List<HouseResponseSortedPagination> houseResponses = new ArrayList<>();
-        if (coordinates[0] == 0 && coordinates[1] == 0) {
-            for (HouseResponseSortedPagination houses : houseRepository.getAllResponse()) {
-                for (House house : houseRepository.findAllAnnouncements()) {
-                    if (house.getId() == houses.getId()) {
-                        houseResponseSortedPaginations.add(convertHouseToHouseResponseSortedPagination(house));
+        Set<HouseResponseSortedPagination> houseResponseSortedPaginations = new LinkedHashSet<>();
+        Set<HouseResponseSortedPagination> houseResponses = new LinkedHashSet<>();
+            if (coordinates[0] == 0 && coordinates[1] == 0) {
+                log.debug("2 sortRegion in if statement coordinates == 0");
+                for (HouseResponseSortedPagination houses : houseRepository.getAllResponse()) {
+                    for (House house : houseRepository.findAllAnnouncements()) {
+                        if (house.getId() == houses.getId()) {
+                            houseResponseSortedPaginations.add(convertHouseToHouseResponseSortedPagination(house));
+                        }
                     }
                 }
             }
-        } else {
+        else {
+            log.debug("3 sortRegion get all pagination sort region");
             for (HouseResponseSortedPagination houseResponseSortedPagination : houseRepository.getAllResponse()) {
                 houseResponseSortedPagination.setLocationResponse(locationRepository.findLocationByHouseId(houseResponseSortedPagination.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
                 houseResponseSortedPagination.setImages(houseRepository.findImagesByHouseId(houseResponseSortedPagination.getId()));
                 houseResponseSortedPaginations.add(houseResponseSortedPagination);
             }
-            List<HouseResponseSortedPagination> allNearbyHouses = getAllNearbyHouses(houseResponseSortedPaginations, searchNearby(coordinates[0], coordinates[1], 100));
+            log.debug("4 sortRegion before all nearby houses");
+            List<HouseResponseSortedPagination> allNearbyHouses = getAllNearbyHouses(houseResponseSortedPaginations, searchNearby(coordinates[0], coordinates[1]));
+            log.debug("5 sortRegion after all nearby houses " + allNearbyHouses.stream().findFirst());
             houseResponseSortedPaginations.addAll(allNearbyHouses);
+            log.debug("6 sortRegion after houseResponseSortedPaginations.addAll(allNearbyHouses); " + houseResponseSortedPaginations.size());
         }
+        log.debug("7 sortRegion just in get all " + houseResponseSortedPaginations.stream().findFirst());
         if (region.equals("All")) {
-            houseResponses.addAll(houseResponseSortedPaginations);
-            return houseResponses;
+            log.debug("8 sortRegion In get all " + houseResponseSortedPaginations.stream().findFirst());
+            return houseResponseSortedPaginations.stream().toList();
         }
         for (HouseResponseSortedPagination house : houseResponseSortedPaginations) {
             if (house.getLocationResponse().getRegion().equals(region)) {
@@ -359,13 +389,12 @@ public class HouseServiceImpl implements HouseService {
                 this.countOfRegion = (long) houseResponses.size();
             }
         }
-        if (houseResponses == null) {
-            houseResponses.addAll(houseResponseSortedPaginations);
-        }
-        return houseResponses;
+        String finalRegion = region;
+        this.countOfRegion = houseResponseSortedPaginations.stream().filter(x -> x.getLocationResponse().getRegion().equals(finalRegion)).count();
+        return houseResponseSortedPaginations.stream().filter(x -> x.getLocationResponse().getRegion().equals(finalRegion)).toList();
     }
 
-    private List<HouseResponseSortedPagination> sortPopularOrTheLatest(String region, String popularOrTheLatest, double[] coordinates) {
+    private List<HouseResponseSortedPagination> sortPopularOrTheLatest(String region, String popularOrTheLatest, double[] coordinates) throws IOException {
         List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>(sortRegion(region, coordinates));
         List<HouseResponseSortedPagination> houses = new ArrayList<>();
         if (popularOrTheLatest == null) popularOrTheLatest = "All";
@@ -409,7 +438,7 @@ public class HouseServiceImpl implements HouseService {
         return houseResponseSortedPagination;
     }
 
-    private List<HouseResponseSortedPagination> sortHomeType(String region, String popularOrTheLastest, String homeType, double[] coordinates) {
+    private List<HouseResponseSortedPagination> sortHomeType(String region, String popularOrTheLastest, String homeType, double[] coordinates) throws IOException {
         List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>();
         List<HouseResponseSortedPagination> popularOrTheLatest = sortPopularOrTheLatest(region, popularOrTheLastest, coordinates);
         if (homeType == null) homeType = "All";
@@ -430,7 +459,7 @@ public class HouseServiceImpl implements HouseService {
         return houseResponseSortedPaginations;
     }
 
-    private List<HouseResponseSortedPagination> sortPrice(String region, String popularOrTheLastest, String homeType, String price, double[] coordinates) {
+    private List<HouseResponseSortedPagination> sortPrice(String region, String popularOrTheLastest, String homeType, String price, double[] coordinates) throws IOException {
         List<HouseResponseSortedPagination> houseResponseSortedPaginations = new LinkedList<>(sortHomeType(region, popularOrTheLastest, homeType, coordinates));
         if (price == null) price = "All";
         if (price.equals("All")) return houseResponseSortedPaginations;
@@ -467,7 +496,7 @@ public class HouseServiceImpl implements HouseService {
         return list;
     }
 
-    private List<HouseResponseSortedPagination> getAllNearbyHouses(List<HouseResponseSortedPagination> houseResponseSortedPaginations, List<HouseResponseSortedPagination> nearbyHouses) {
+    private List<HouseResponseSortedPagination> getAllNearbyHouses(Set<HouseResponseSortedPagination> houseResponseSortedPaginations, List<HouseResponseSortedPagination> nearbyHouses) {
         Set<HouseResponseSortedPagination> houseResponseSortedPaginations1 = new LinkedHashSet<>();
         for (HouseResponseSortedPagination sortedPagination : houseResponseSortedPaginations) {
             for (HouseResponseSortedPagination nearbyHouse : nearbyHouses) {
@@ -476,6 +505,7 @@ public class HouseServiceImpl implements HouseService {
                 }
             }
         }
+        log.debug("1 getAllNearbyHouses get all nearby houses " + houseResponseSortedPaginations1.size());
         for (HouseResponseSortedPagination sortedPagination : houseResponseSortedPaginations) {
             for (HouseResponseSortedPagination nearbyHouse : nearbyHouses) {
                 if (sortedPagination.getId() != nearbyHouse.getId()) {
@@ -483,30 +513,34 @@ public class HouseServiceImpl implements HouseService {
                 }
             }
         }
+        log.debug("2 getAllNearbyHouses in get all nearby houses before " + houseResponseSortedPaginations1.size());
+        log.debug("3 getAllNearbyHouses in get all nearby houses before return " + houseResponseSortedPaginations1.stream().findFirst());
         return new LinkedList<>(houseResponseSortedPaginations1);
     }
 
-    private double[] getCoordinates(String address) {
+    private double[] getCoordinates(String address) throws IOException {
         double latitude = 0;
         double longitude = 0;
-        try {
-            String urlString = "https://nominatim.openstreetmap.org/search?q=" + URLEncoder.encode(address, StandardCharsets.UTF_8) + "&format=json&addressdetails=1&limit=1";
-            URL url = new URL(urlString);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            StringBuilder jsonBuilder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                jsonBuilder.append(line);
-            }
-            reader.close();
-            String jsonString = jsonBuilder.toString();
-            jsonString = jsonString.substring(jsonString.indexOf("{"));
-            JSONObject json = new JSONObject(jsonString.trim());
+
+        String urlString = "https://nominatim.openstreetmap.org/search?q=" + URLEncoder.encode(address, StandardCharsets.UTF_8) + "&format=json&addressdetails=1&limit=1";
+        URL url = new URL(urlString);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+        StringBuilder jsonBuilder = new StringBuilder();
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            jsonBuilder.append(line);
+        }
+        reader.close();
+
+        String jsonString = jsonBuilder.toString();
+        JSONArray jsonArray = new JSONArray(jsonString);
+        if (jsonArray.length() > 0) {
+            JSONObject json = jsonArray.getJSONObject(0);
             latitude = json.getDouble("lat");
             longitude = json.getDouble("lon");
-        } catch (Exception e) {
-            e.getStackTrace();
         }
+
         return new double[]{latitude, longitude};
     }
 
