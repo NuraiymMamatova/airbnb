@@ -33,10 +33,10 @@ public class House {
     @Column(nullable = false)
     private Double price;
 
-    @Column(length = 1000000,columnDefinition = "text")
+    @Column(length = 1000000, columnDefinition = "text")
     private String title;
 
-    @Column(length = 1000000,columnDefinition = "text")
+    @Column(length = 1000000, columnDefinition = "text")
     private String descriptionOfListing;
 
     @ElementCollection(fetch = LAZY)
