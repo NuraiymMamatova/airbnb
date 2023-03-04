@@ -12,6 +12,7 @@ import com.example.airbnbb7.exceptions.BadCredentialsException;
 import com.example.airbnbb7.exceptions.BadRequestException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FavoriteHouseServiceImpl implements FavoriteHouseService {
 
     private final FavoriteHouseRepository favoriteHouseRepository;
@@ -48,16 +50,20 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
                     favoriteHouse.setAddedHouseToFavorites(LocalDate.now());
                     favoriteHouse.setHouse(house);
                     favoriteHouse.setUser(user);
+                    log.info("successfully save favorite house");
                     favoriteHouseRepository.save(favoriteHouse);
                 } else {
                     house.setFavorite(false);
                     favoriteHouseRepository.delete(findFavoriteHouse);
+                    log.info("House id {} successfully deleted from favorite", house.getId());
                     return new SimpleResponse("House successfully deleted from favorite!");
                 }
             } else {
+                log.error("can't added house {} to favorite", house.getId());
                 throw new BadCredentialsException("You can't added house to favorite because it's your announcement!");
             }
         } else {
+            log.error("The Authentication {} null", authentication.getPrincipal());
             throw new BadRequestException("Authentication cannot be null!");
         }
         return new SimpleResponse("House successfully added to favorite!");
@@ -83,8 +89,10 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
                 houseResponseSortedPagination.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())));
                 houseResponseSortedPaginationList.add(houseResponseSortedPagination);
             }
+            log.info("sorted house");
             return houseResponseSortedPaginationList;
         } else {
+            log.error("The Authentication {} null", authentication.getPrincipal());
             throw new BadRequestException("Authentication cannot be null!");
         }
     }

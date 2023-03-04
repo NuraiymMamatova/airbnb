@@ -1,5 +1,7 @@
 package com.example.airbnbb7.api;
 
+import com.example.airbnbb7.db.customClass.SimpleResponse;
+import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.response.ProfileResponse;
 import com.example.airbnbb7.dto.response.UserAdminResponse;
@@ -14,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/users")
 @Tag(name = "User Api", description = "User Api")
 public class UserApi {
@@ -23,24 +25,24 @@ public class UserApi {
 
     @GetMapping
     @Operation(summary = "User Profile", description = """
-            With this method, you can see your houses and booked houses. Houses that are already being checked by the administrator.
-            1 Select one of these Lists Bookings, My announcement, On moderation
-            2 Here you can sort as you wish(In wish list)
-            3 Here you can sort the apartment(Apartment)
-            4 Here you can sort the house(House)
-            5 Here you can sort by price
-            6 Here you can sort by rating
-            7 Here you can write which page you want to open
-            8 Here you can write how many objects should be on one page
+            With this method, you can see your houses and booked houses. Houses on moderation. 
+            1) mainInUserProfile = Select one from this list Bookings, My announcement, On moderation 
+            2) sortHousesAsDesired = Here you can sort as you wish (In wish list) 
+            3) sortHousesByApartments = Here you can sort the apartments (Apartment) 
+            4) sortHousesByHouses = Here you can sort the houses (House) 
+            5) sortingHousesByValue = Here you can sort by price 
+            6) sortingHousesByRating = Here you can sort by rating 
+            7) page = Here you can write which page you want to open 
+            8) size = Here you can write how many objects should be on one page 
             """)
-    public ProfileResponse userProfile(@RequestParam(name = "1", required = false) String mainInUserProfile,
-                                       @RequestParam(name = "2", required = false) String sortHousesAsDesired,
-                                       @RequestParam(name = "3", required = false) String sortHousesByApartments,
-                                       @RequestParam(name = "4", required = false) String sortHousesByHouses,
-                                       @RequestParam(name = "5", required = false) String sortingHousesByValue,
-                                       @RequestParam(name = "6", required = false) String sortingHousesByRating,
-                                       @RequestParam(name = "7") int page,
-                                       @RequestParam(name = "8") int size,
+    public ProfileResponse userProfile(@RequestParam(required = false) String mainInUserProfile,
+                                       @RequestParam(required = false) String sortHousesAsDesired,
+                                       @RequestParam(required = false) String sortHousesByApartments,
+                                       @RequestParam(required = false) String sortHousesByHouses,
+                                       @RequestParam(required = false) String sortingHousesByValue,
+                                       @RequestParam(required = false) String sortingHousesByRating,
+                                       @RequestParam int page,
+                                       @RequestParam int size,
                                        Authentication authentication) {
         return userService.userProfile(mainInUserProfile, sortHousesAsDesired, sortHousesByApartments, sortHousesByHouses, sortingHousesByValue, sortingHousesByRating, authentication, page, size);
     }
@@ -52,10 +54,26 @@ public class UserApi {
         return userService.getAllUsers();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Delete users", description = "Delete users by id from database")
-    public List<UserAdminResponse> deleteUser(@PathVariable("id") Long id) {
-        return userService.deleteUser(id);
+    public SimpleResponse deleteUser(@PathVariable("userId") Long userId) {
+        return userService.deleteUser(userId);
+    }
+
+    @GetMapping("/profile")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(summary = "Get user by id ", description = "User profile for administrator" +
+            ", bookingsOrAnnouncement = 'Bookings' or 'My announcement'")
+    public MasterInterface getUserById(@RequestParam Long userId,
+                                       @RequestParam(required = false) String bookingsOrAnnouncement) {
+        return userService.getUserById(userId, bookingsOrAnnouncement);
+    }
+
+    @PostMapping("/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(summary = "All blocked", description = "This method blocks all user's homes")
+    public SimpleResponse allBlocked(@PathVariable("userId") Long userId) {
+        return userService.allBlocked(userId);
     }
 }

@@ -27,7 +27,7 @@ public interface HouseService {
 
     List<AccommodationResponse> getLatestAccommodation(boolean popularHouse, boolean popularApartments);
 
-    AnnouncementService getAnnouncementById(Long houseId, Authentication authentication);
+    MasterInterface getAnnouncementById(Long houseId, Authentication authentication);
 
     List<HouseResponseSortedPagination> searchNearby(double userLatitude, double userLongitude) throws IOException;
 

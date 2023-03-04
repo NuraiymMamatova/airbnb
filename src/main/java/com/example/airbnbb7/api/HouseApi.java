@@ -3,7 +3,6 @@ package com.example.airbnbb7.api;
 import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
-import com.example.airbnbb7.db.service.AnnouncementService;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
@@ -22,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/houses")
 @Tag(name = "House Api", description = "House Api")
 public class HouseApi {
@@ -50,21 +49,22 @@ public class HouseApi {
         return houseService.deleteByIdHouse(id, authentication);
     }
 
+    @CrossOrigin
     @GetMapping("/pagination")
-    @Operation(summary = "House get all pagination", description = """
-            sort:High to low or Low t high
-            search:you can search by region address and townOrProvince
-            page:how many page do you want
-            size:how many houses were on one page
-            region:search by region
-            houseType:search by houseType""")
-    public ApplicationResponse findAllHousesPage(@RequestParam(name = "search", required = false) String search,
-                                                 @RequestParam(name = "region", required = false) String region,
-                                                 @RequestParam(name = "popularOrLatest", required = false) String popularOrTheLatest,
-                                                 @RequestParam(name = "houseType", required = false) String homeType,
-                                                 @RequestParam(name = "sort", required = false) String price,
-                                                 @RequestParam(name = "page") Long page,
-                                                 @RequestParam(name = "size") Long pageSize,
+    @Operation(summary = "House get all pagination", description =
+            "search: you can search by region address and townOrProvince" +
+                    "region: search by region" +
+                    "houseType: search by houseType" +
+                    "price: High to low or Low t high" +
+                    "page: how many page do you want" +
+                    "size: how many houses were on one page")
+    public ApplicationResponse findAllHousesPage(@RequestParam(required = false) String search,
+                                                 @RequestParam(required = false) String region,
+                                                 @RequestParam(required = false) String popularOrTheLatest,
+                                                 @RequestParam(required = false) String homeType,
+                                                 @RequestParam(required = false) String price,
+                                                 @RequestParam Long page,
+                                                 @RequestParam Long pageSize,
                                                  @RequestParam(required = false, defaultValue = "0") double userLatitude,
                                                  @RequestParam(required = false, defaultValue = "0") double userLongitude) throws IOException {
         return houseService.getAllPagination(search, region, popularOrTheLatest, homeType, price, page, pageSize, userLatitude, userLongitude);
@@ -78,7 +78,7 @@ public class HouseApi {
 
     @GetMapping("/announcement/{houseId}")
     @Operation(summary = "House inner page", description = "Any user can go through to view the house")
-    public AnnouncementService announcementById(@PathVariable Long houseId, Authentication authentication) {
+    public MasterInterface announcementById(@PathVariable Long houseId, Authentication authentication) {
         return houseService.getAnnouncementById(houseId, authentication);
     }
 
@@ -107,14 +107,14 @@ public class HouseApi {
     @GetMapping("/allHousing")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "All housing", description = "Only admin can see these houses: " +
-            "1 Booked or Not booked" +
-            "2 Popular or The latest" +
-            "3 Apartment or House" +
-            "4 High to low or Low to high")
+            "1) housesBooked = Booked or Not booked" +
+            "2) popularOrTheLatest = Popular or The latest" +
+            "3) houseType = Apartment or House" +
+            "4) price = High to low or Low to high")
     public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(required = false) HousesBooked housesBooked,
                                                              @RequestParam(required = false) String popularOrTheLatest,
                                                              @RequestParam(required = false) String houseType,
-                                                             @RequestParam(required = false) String price) throws IOException {
+                                                             @RequestParam(required = false) String price) {
         return houseService.getAllHousing(housesBooked, houseType, price, popularOrTheLatest);
     }
 
