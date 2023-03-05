@@ -19,9 +19,9 @@ public interface HouseService {
 
     SimpleResponse deleteByIdHouse(Long houseId, Authentication authentication);
 
-    SimpleResponse save(HouseRequest houseRequest, Authentication authentication);
+    SimpleResponse save(HouseRequest houseRequest, Authentication authentication) throws IOException;
 
-    SimpleResponse updateHouse(Long id, Authentication authentication, HouseRequest houseRequest);
+    SimpleResponse updateHouse(Long id, Authentication authentication, HouseRequest houseRequest) throws IOException;
 
     ApplicationResponse getAllPagination(String search, String region, String popularOrTheLatest, String homeType, String price, Long page, Long pageSize, double userLatitude, double userLongitude) throws IOException;
 

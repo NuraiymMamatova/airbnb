@@ -4,6 +4,7 @@ import com.example.airbnbb7.db.customClass.SimpleResponse;
 import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.service.HouseService;
+import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
@@ -31,7 +32,7 @@ public class HouseApi {
     @PostMapping
     @Operation(summary = "Save house", description = "Save house and location")
     @PreAuthorize("hasAuthority('USER')")
-    public SimpleResponse saveHouse(@RequestBody HouseRequest houseRequest, Authentication authentication) {
+    public SimpleResponse saveHouse(@RequestBody HouseRequest houseRequest, Authentication authentication) throws IOException {
         return houseService.save(houseRequest, authentication);
     }
 
@@ -39,7 +40,7 @@ public class HouseApi {
     @Operation(summary = "Update House", description = "Update house by id")
     @PreAuthorize("hasAuthority('USER')")
     public SimpleResponse updateHouse(@PathVariable Long id,
-                                      @RequestBody HouseRequest houseRequest, Authentication authentication) {
+                                      @RequestBody HouseRequest houseRequest, Authentication authentication) throws IOException {
         return houseService.updateHouse(id, authentication, houseRequest);
     }
 
@@ -114,7 +115,7 @@ public class HouseApi {
     public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(required = false) HousesBooked housesBooked,
                                                              @RequestParam(required = false) String popularOrTheLatest,
                                                              @RequestParam(required = false) String houseType,
-                                                             @RequestParam(required = false) String price) {
+                                                             @RequestParam(required = false) String price) throws IOException {
         return houseService.getAllHousing(housesBooked, houseType, price, popularOrTheLatest);
     }
 
