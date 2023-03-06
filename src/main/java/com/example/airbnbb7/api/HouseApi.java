@@ -1,10 +1,9 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
-import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
-import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.db.service.HouseService;
+import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
@@ -13,13 +12,11 @@ import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +32,7 @@ public class HouseApi {
     @Operation(summary = "Save house", description = "Save house and location")
     @PreAuthorize("hasAuthority('USER')")
     public SimpleResponse saveHouse(@RequestBody HouseRequest houseRequest, Authentication authentication) {
-            return houseService.save(houseRequest, authentication);
+        return houseService.save(houseRequest, authentication);
     }
 
     @PutMapping("/{id}")
@@ -107,12 +104,13 @@ public class HouseApi {
 
     @GetMapping("/allHousing")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(summary = "All housing", description = "Only admin can see these houses: " +
-            "1) housesBooked = Booked or Not booked" +
-            "2) popularOrTheLatest = Popular or The latest" +
-            "3) houseType = Apartment or House" +
-            "4) price = High to low or Low to high")
-    public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(required = false) HousesBooked housesBooked,
+    @Operation(summary = "All housing", description = """
+            Only admin can see these houses:
+            1) housesBooked = 'Booked' or 'Not booked'
+            2) popularOrTheLatest = 'Popular' or 'The latest'
+            3) houseType = 'Apartment' or 'House'
+            4) price = 'High to low' or 'Low to high'""")
+    public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(required = false) String housesBooked,
                                                              @RequestParam(required = false) String popularOrTheLatest,
                                                              @RequestParam(required = false) String houseType,
                                                              @RequestParam(required = false) String price) {
