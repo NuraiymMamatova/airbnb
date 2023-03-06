@@ -96,7 +96,12 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
         </dependency>
-    </dependencies>
+        <dependency>
+            <groupId>io.logz.logback</groupId>
+            <artifactId>logzio-logback-appender</artifactId>
+            <version>v1.0.25</version>
+        </dependency>
+        </dependencies>
 
     <build>
         <plugins>
