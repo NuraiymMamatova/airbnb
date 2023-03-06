@@ -3,7 +3,7 @@ values (1, 'Airbnb', 'airbnbhomesweethome1@gmail.com', '$2a$12$HJmsalvo/0.5G2oh1
         0);
 
 insert into users(id, name, email, password, image, count_of_booked_house)
-values (2, 'Nuraiym', 'mnurajym9@gmail.com', '$2a$12$QxFJ6yYms8SqIVlOR5R3G.oLzOuC3mVALF6GWzoFbCa0W37usfPkS', 'https://www.google.com/imgres?imgurl=https%3A%2F%2Fw0.peakpx.com%2Fwallpaper%2F979%2[…]%20images&ved=2ahUKEwiA-YzOibj9AhUHsSoKHU6NA9sQMygregUIARCmAg', 0);
+values (2, 'Nuraiym', 'nuraiym@gmail.com', '$2a$12$QxFJ6yYms8SqIVlOR5R3G.oLzOuC3mVALF6GWzoFbCa0W37usfPkS', 'https://www.google.com/imgres?imgurl=https%3A%2F%2Fw0.peakpx.com%2Fwallpaper%2F979%2[…]%20images&ved=2ahUKEwiA-YzOibj9AhUHsSoKHU6NA9sQMygregUIARCmAg', 0);
 
 insert into users(id, name, email, password, image, count_of_booked_house)
 values (3, 'Eldiar', 'eldiarro2004@gmail.com', '$2a$12$15g.2RvWMyfahTy6aqiXouDFiVvtgQ/bYQaYLYMS3ALdnUUlIUsAu', 'https://i.ytimg.com/vi/Y76mH_qDh5w/sddefault.jpg', 0);
