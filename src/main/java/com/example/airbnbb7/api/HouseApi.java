@@ -1,7 +1,6 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
-import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.db.service.MasterInterface;
@@ -107,12 +106,13 @@ public class HouseApi {
 
     @GetMapping("/allHousing")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @Operation(summary = "All housing", description = "Only admin can see these houses: " +
-            "1) housesBooked = Booked or Not booked" +
-            "2) popularOrTheLatest = Popular or The latest" +
-            "3) houseType = Apartment or House" +
-            "4) price = High to low or Low to high")
-    public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(required = false) HousesBooked housesBooked,
+    @Operation(summary = "All housing", description = """
+            Only admin can see these houses:
+            1) housesBooked = 'Booked' or 'Not booked'
+            2) popularOrTheLatest = 'Popular' or 'The latest'
+            3) houseType = 'Apartment' or 'House'
+            4) price = 'High to low' or 'Low to high'""")
+    public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(required = false) String housesBooked,
                                                              @RequestParam(required = false) String popularOrTheLatest,
                                                              @RequestParam(required = false) String houseType,
                                                              @RequestParam(required = false) String price) throws IOException {

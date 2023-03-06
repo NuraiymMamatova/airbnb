@@ -335,13 +335,21 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public List<HouseResponseSortedPagination> getAllHousing(HousesBooked housesBooked, String houseType, String price, String popularOrTheLatest) throws IOException {
+    public List<HouseResponseSortedPagination> getAllHousing(String stringHousesBooked, String houseType, String price, String popularOrTheLatest) throws IOException {
         List<House> allHouses = houseRepository.findAll();
         List<HouseResponseSortedPagination> sortHouses = new ArrayList<>();
+        HousesBooked housesBookedEnum = null;
+        if (stringHousesBooked != null) {
+            if (stringHousesBooked.equalsIgnoreCase("Booked")) {
+                housesBookedEnum = HousesBooked.BOOKED;
+            } else if (stringHousesBooked.equalsIgnoreCase("Not booked")) {
+                housesBookedEnum = HousesBooked.NOT_BOOKED;
+            }
+        }
         for (HouseResponseSortedPagination houseResponse : sortPrice(null, popularOrTheLatest, houseType, price, null)) {
             for (House entityHouse : allHouses) {
-                if (housesBooked != null) {
-                    if (entityHouse.getId() == houseResponse.getId() && entityHouse.getHousesBooked().equals(housesBooked) && entityHouse.getHousesStatus().equals(ACCEPT)) {
+                if (stringHousesBooked != null) {
+                    if (entityHouse.getId() == houseResponse.getId() && entityHouse.getHousesBooked().equals(housesBookedEnum) && entityHouse.getHousesStatus().equals(HousesStatus.ACCEPT)) {
                         houseResponse.setImages(entityHouse.getImages());
                         houseResponse.setLocationResponse(locationRepository.findLocationByHouseId(entityHouse.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
                         houseResponse.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(entityHouse.getId())));

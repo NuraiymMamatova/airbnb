@@ -1,7 +1,6 @@
 package com.example.airbnbb7.db.service;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
-import com.example.airbnbb7.db.enums.HousesBooked;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
@@ -35,6 +34,6 @@ public interface HouseService {
 
     ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(Long page, Long pageSize);
 
-    List<HouseResponseSortedPagination> getAllHousing(HousesBooked housesBooked, String houseType, String price, String popularOrTheLatest) throws IOException;
+    List<HouseResponseSortedPagination> getAllHousing(String housesBooked, String houseType, String price, String popularOrTheLatest);
 
 }
