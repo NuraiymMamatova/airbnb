@@ -34,6 +34,6 @@ public interface HouseService {
 
     ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(Long page, Long pageSize);
 
-    List<HouseResponseSortedPagination> getAllHousing(String housesBooked, String houseType, String price, String popularOrTheLatest);
+    List<HouseResponseSortedPagination> getAllHousing(String housesBooked, String houseType, String price, String popularOrTheLatest) throws IOException;
 
 }
