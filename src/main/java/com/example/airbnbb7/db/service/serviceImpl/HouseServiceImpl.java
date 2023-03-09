@@ -329,7 +329,8 @@ public class HouseServiceImpl implements HouseService {
             House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
             Location location = house.getLocation();
             h.setImages(house.getImages());
-            h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(), location.getAddress(), location.getRegion()));
+            h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(),
+                    location.getAddress(), location.getRegion()));
             h.setHouseRating(rating.getRating(house.getFeedbacks()));
         });
         log.info("apllication for admin");
