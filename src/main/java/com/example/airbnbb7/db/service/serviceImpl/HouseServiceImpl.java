@@ -323,6 +323,7 @@ public class HouseServiceImpl implements HouseService {
         for (Feedback feedback : feedbacks) {
             FeedbackResponse feedbackResponse = feedbackRepository.findFeedbackByFeedbackId(feedback.getId());
             feedbackResponse.setOwner(feedbackRepository.findOwnerFeedbackByFeedbackId(feedback.getId()));
+            feedbackResponse.setImage(feedback.getImage());
             feedbackResponses.add(feedbackResponse);
         }
         house.setFeedbacks(feedbackResponses);
