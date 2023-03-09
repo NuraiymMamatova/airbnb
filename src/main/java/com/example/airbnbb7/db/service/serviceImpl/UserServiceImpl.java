@@ -173,16 +173,16 @@ public class UserServiceImpl implements UserService {
                     return profileBookingHouseResponse;
                 }
                 case "On moderation" -> {
-                    for (House house : userRepository.findById(userId).get().getAnnouncements()) {
-                        if (house.getHousesStatus().equals(HousesStatus.ON_MODERATION)) {
-                            profileResponse.addProfileHouseResponse(houseResponseConverter.view(house));
+                        for (House house : userRepository.findById(userId).get().getAnnouncements()) {
+                            if (house.getHousesStatus().equals(HousesStatus.ON_MODERATION)) {
+                                profileResponse.addProfileHouseResponse(houseResponseConverter.view(house));
+                            }
                         }
+                        profileResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileResponse.getProfileHouseResponses()));
+                        int sizePage = (int) Math.ceil((double) profileResponse.getOnModerationSize() / size);
+                        profileResponse.setPageSize((long) sizePage);
+                        return profileResponse;
                     }
-                    profileResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileResponse.getProfileHouseResponses()));
-                    int sizePage = (int) Math.ceil((double) profileResponse.getOnModerationSize() / size);
-                    profileResponse.setPageSize((long) sizePage);
-                    return profileResponse;
-                }
                 default -> {
                     return profileResponse;
                 }
