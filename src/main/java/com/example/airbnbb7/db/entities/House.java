@@ -26,7 +26,7 @@ import static javax.persistence.FetchType.LAZY;
 public class House {
 
     @Id
-    @SequenceGenerator(name = "house_gen", sequenceName = "house_seq", allocationSize = 1, initialValue = 6)
+    @SequenceGenerator(name = "house_gen", sequenceName = "house_seq", allocationSize = 1, initialValue = 21)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "house_gen")
     private Long id;
 
