@@ -231,6 +231,7 @@ public class UserServiceImpl implements UserService {
                 List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getBooking(userId);
                 houseResponseForAdminUsers.forEach(h -> {
                     House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+                    h.setImages(house.getImages());
                     h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
                     h.setHouseRating(rating.getRating(house.getFeedbacks()));
                 });
@@ -239,6 +240,7 @@ public class UserServiceImpl implements UserService {
                 List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getUserByAnnouncement(userId);
                 houseResponseForAdminUsers.forEach(h -> {
                     House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+                    h.setImages(house.getImages());
                     h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
                     h.setHouseRating(rating.getRating(house.getFeedbacks()));
                 });
