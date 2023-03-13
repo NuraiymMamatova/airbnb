@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -27,11 +28,10 @@ public class HouseApi {
 
     private final HouseService houseService;
 
-
     @PostMapping
     @Operation(summary = "Save house", description = "Save house and location")
     @PreAuthorize("hasAuthority('USER')")
-    public SimpleResponse saveHouse(@RequestBody HouseRequest houseRequest, Authentication authentication) {
+    public SimpleResponse saveHouse(@RequestBody HouseRequest houseRequest, Authentication authentication) throws IOException {
         return houseService.save(houseRequest, authentication);
     }
 
@@ -39,7 +39,7 @@ public class HouseApi {
     @Operation(summary = "Update House", description = "Update house by id")
     @PreAuthorize("hasAuthority('USER')")
     public SimpleResponse updateHouse(@PathVariable Long id,
-                                      @RequestBody HouseRequest houseRequest, Authentication authentication) {
+                                      @RequestBody HouseRequest houseRequest, Authentication authentication) throws IOException {
         return houseService.updateHouse(id, authentication, houseRequest);
     }
 
@@ -64,8 +64,10 @@ public class HouseApi {
                                                  @RequestParam(required = false) String homeType,
                                                  @RequestParam(required = false) String price,
                                                  @RequestParam Long page,
-                                                 @RequestParam Long pageSize) {
-        return houseService.getAllPagination(search, region, popularOrTheLatest, homeType, price, page, pageSize);
+                                                 @RequestParam Long pageSize,
+                                                 @RequestParam(required = false, defaultValue = "0") double userLatitude,
+                                                 @RequestParam(required = false, defaultValue = "0") double userLongitude) throws IOException {
+        return houseService.getAllPagination(search, region, popularOrTheLatest, homeType, price, page, pageSize, userLatitude, userLongitude);
     }
 
     @GetMapping("/popularAndLatest")
@@ -113,8 +115,14 @@ public class HouseApi {
     public List<HouseResponseSortedPagination> getAllHousing(@RequestParam(required = false) String housesBooked,
                                                              @RequestParam(required = false) String popularOrTheLatest,
                                                              @RequestParam(required = false) String houseType,
-                                                             @RequestParam(required = false) String price) {
+                                                             @RequestParam(required = false) String price) throws IOException {
         return houseService.getAllHousing(housesBooked, houseType, price, popularOrTheLatest);
+    }
+
+    @GetMapping("/searchNearby")
+    @Operation(summary = "Houses search nearby", description = "Any user can go through to view the houses")
+    public List<HouseResponseSortedPagination> searchNearby(@RequestParam double userLatitude, @RequestParam double userLongitude) throws IOException {
+        return houseService.searchNearby(userLatitude, userLongitude);
     }
 
 }

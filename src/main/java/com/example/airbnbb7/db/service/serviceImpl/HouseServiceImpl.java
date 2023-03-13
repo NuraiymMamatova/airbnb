@@ -17,12 +17,22 @@ import com.example.airbnbb7.exceptions.BadRequestException;
 import com.example.airbnbb7.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
+
+import static com.example.airbnbb7.db.enums.HousesStatus.ACCEPT;
 
 @Service
 @RequiredArgsConstructor
@@ -71,13 +81,22 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public SimpleResponse updateHouse(Long id, Authentication authentication, HouseRequest houseRequest) {
+    public SimpleResponse updateHouse(Long id, Authentication authentication, HouseRequest houseRequest) throws IOException {
         if (authentication != null) {
             User user = (User) authentication.getPrincipal();
             House house = houseRepository.findById(id).orElseThrow(() -> new NotFoundException("House id not found"));
             if (house.getOwner().getId() == user.getId()) {
                 house.setHousesStatus(HousesStatus.ON_MODERATION);
-                houseRequestConverter.update(house, houseRequest);
+                if (houseRequest.getLocation() != null) {
+                    if (getCoordinates(houseRequest.getLocation().getAddress() + ", " + houseRequest.getLocation().getTownOrProvince())[0] != 0) {
+                        houseRequestConverter.update(house, houseRequest);
+                    } else {
+                        log.error("Invalid location. ");
+                        throw new BadRequestException("Invalid location. Is not correct town/province or address. Example : address write like 'Киевская 132' or 'ул. Киевская 132' or 'Kiev 132' or 'str. Kiev 132' - town/province like 'Bishkek'");
+                    }
+                } else {
+                    houseRequestConverter.update(house, houseRequest);
+                }
                 houseRepository.save(house);
             } else {
                 log.error("can't delete {} announcement because it's not {} announcement", house.getId(), user.getAnnouncements());
@@ -91,26 +110,32 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public ApplicationResponse getAllPagination(String search, String region, String popularOrTheLatest, String homeType, String price, Long page, Long pageSize) {
+    public ApplicationResponse getAllPagination(String search, String region, String popularOrTheLatest, String homeType, String price, Long page, Long pageSize, double userLatitude, double userLongitude) throws IOException {
         ApplicationResponse applicationResponse = new ApplicationResponse();
         applicationResponse.setPage(page);
+        double[] coordinates = new double[2];
+        if (userLongitude == 0 && userLatitude == 0) {
+            coordinates[0] = 1234;
+        } else {
+            coordinates[0] = userLatitude;
+            coordinates[1] = userLongitude;
+        }
         if (search != null) {
             List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>(getAllPagination(page, pageSize, houseRepository.searchByQuery(search)));
-            int sizePage = (int) Math.ceil((double) sortPrice(region, popularOrTheLatest, homeType, price).size() / pageSize);
+            int sizePage = (int) Math.ceil((double) sortPrice(region, popularOrTheLatest, homeType, price, coordinates).size() / pageSize);
             applicationResponse.setPageSize((long) sizePage);
             houseResponseSortedPaginations.forEach(h -> {
                 House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
                 Location location = house.getLocation();
-                h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(),
-                        location.getAddress(), location.getRegion()));
+                h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(), location.getAddress(), location.getRegion()));
                 h.setImages(house.getImages());
                 h.setHouseRating(rating.getRating(house.getFeedbacks()));
             });
             applicationResponse.setPaginationList(houseResponseSortedPaginations);
             return applicationResponse;
         } else {
-            applicationResponse.setPaginationList(getAllPagination(page, pageSize, sortPrice(region, popularOrTheLatest, homeType, price)));
-            int sizePage = (int) Math.ceil((double) sortPrice(region, popularOrTheLatest, homeType, price).size() / pageSize);
+            applicationResponse.setPaginationList(getAllPagination(page, pageSize, sortPrice(region, popularOrTheLatest, homeType, price, coordinates)));
+            int sizePage = (int) Math.ceil((double) sortPrice(region, popularOrTheLatest, homeType, price, coordinates).size() / pageSize);
             applicationResponse.setPageSize((long) sizePage);
             applicationResponse.setCountOfRegion(countOfRegion);
             log.info("show application");
@@ -119,26 +144,30 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public SimpleResponse save(HouseRequest houseRequest, Authentication authentication) {
+    public SimpleResponse save(HouseRequest houseRequest, Authentication authentication) throws IOException {
         if (authentication != null) {
             User user = (User) authentication.getPrincipal();
             House house = new House(houseRequest.getPrice(), houseRequest.getTitle(), houseRequest.getDescriptionOfListing(), houseRequest.getMaxOfGuests(), houseRequest.getImages(), houseRequest.getHouseType());
             if (houseRequest.getLocation() != null) {
                 Location location = new Location(houseRequest.getLocation().getAddress(), houseRequest.getLocation().getTownOrProvince(), houseRequest.getLocation().getRegion());
-                location.setHouse(house);
-                house.setLocation(location);
-                house.setDateHouseCreated(LocalDate.now());
-                house.setHousesStatus(HousesStatus.ON_MODERATION);
-                house.setOwner(user);
-                houseRepository.save(house);
+                if (getCoordinates(location.getAddress() + ", " + location.getTownOrProvince())[0] != 0) {
+                    location.setHouse(house);
+                    house.setLocation(location);
+                    house.setDateHouseCreated(LocalDate.now());
+                    house.setHousesStatus(HousesStatus.ON_MODERATION);
+                    house.setHousesBooked(HousesBooked.NOT_BOOKED);
+                    house.setBookings(0L);
+                    house.setOwner(user);
+                    houseRepository.save(house);
 
-                HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(), house.getTitle(),
-                        house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType());
-                houseResponse.setOwner(new UserResponse(house.getOwner().getId(), house.getOwner().getName(),
-                        house.getOwner().getEmail(), house.getOwner().getImage()));
-                houseResponse.setLocation(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(),
-                        house.getLocation().getAddress(), house.getLocation().getRegion()));
-                houseResponse.setImages(house.getImages());
+                    HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(), house.getTitle(), house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType());
+                    houseResponse.setOwner(new UserResponse(house.getOwner().getId(), house.getOwner().getName(), house.getOwner().getEmail(), house.getOwner().getImage()));
+                    houseResponse.setLocation(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
+                    houseResponse.setImages(house.getImages());
+                } else {
+                    log.error("Invalid location.");
+                    throw new BadRequestException("Invalid location. Is not correct town/province or address. Example : address write like 'Киевская 132' or 'ул. Киевская 132' or 'Kiev 132' or 'str. Kiev 132' - town/province like 'Bishkek'");
+                }
             } else {
                 log.error("Location {} cannot be null", house.getId());
                 throw new BadRequestException("Location cannot be null!");
@@ -184,128 +213,6 @@ public class HouseServiceImpl implements HouseService {
         }
         log.info("show house");
         return houseResponses.stream().limit(7).toList();
-    }
-
-    private List<HouseResponseSortedPagination> sortRegion(String region) {
-        if (region == null) region = "All";
-        List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>();
-        List<HouseResponseSortedPagination> houseResponses = new ArrayList<>();
-        for (HouseResponseSortedPagination houses : houseRepository.getAllResponse()) {
-            for (House house : houseRepository.findAll()) {
-                if (house.getId() == houses.getId()) {
-                    HouseResponseSortedPagination houseResponseSortedPagination = new HouseResponseSortedPagination(house.getId(), house.getPrice(), house.getTitle(),
-                            house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType(), house.isFavorite());
-                    houseResponseSortedPagination.setLocationResponse(new LocationResponse(house.getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
-                    houseResponseSortedPagination.setImages(house.getImages());
-                    houseResponseSortedPagination.setHouseRating(rating.getRating(house.getFeedbacks()));
-                    houseResponseSortedPaginations.add(houseResponseSortedPagination);
-                }
-            }
-        }
-        if (region.equals("All")) {
-            houseResponses.addAll(houseResponseSortedPaginations);
-            log.info("show house by sort region");
-            return houseResponses;
-        }
-        for (HouseResponseSortedPagination house : houseResponseSortedPaginations) {
-            if (house.getLocationResponse().getRegion().equals(region)) {
-                houseResponses.add(house);
-                this.countOfRegion = (long) houseResponses.size();
-            }
-        }
-        log.info("show house by sort region");
-        return houseResponses;
-    }
-
-    private List<HouseResponseSortedPagination> sortPopularOrTheLatest(String region, String popularOrTheLatest) {
-        List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>(sortRegion(region));
-        List<HouseResponseSortedPagination> houses = new ArrayList<>();
-        if (popularOrTheLatest == null) popularOrTheLatest = "All";
-        if (popularOrTheLatest.equals("All")) return sortRegion(region);
-        if (popularOrTheLatest.equals("Popular")) {
-            for (House house : houseRepository.getPopular()) {
-                for (HouseResponseSortedPagination houseSorted : houseResponseSortedPaginations) {
-                    if (house.getId() == houseSorted.getId()) {
-                        houses.add(houseSorted);
-                    }
-                }
-            }
-            houses.sort(Comparator.comparing(HouseResponseSortedPagination::getHouseRating).reversed());
-            log.info("show house by sort popular");
-            return houses;
-        } else if (popularOrTheLatest.equals("The latest")) {
-            List<House> houseList = new ArrayList<>();
-            for (House house : houseRepository.findAll()) {
-                for (HouseResponseSortedPagination houseSorted : houseResponseSortedPaginations) {
-                    if (house.getId() == houseSorted.getId()) {
-                        houseList.add(house);
-                    }
-                }
-            }
-            try {
-                houseList.sort(Comparator.comparing(House::getDateHouseCreated).reversed());
-            } catch (Exception e) {
-
-            }
-            for (House house : houseList) {
-                HouseResponseSortedPagination houseResponseSortedPagination = new HouseResponseSortedPagination(house.getId(), house.getPrice(), house.getTitle(),
-                        house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType(), house.isFavorite());
-                houseResponseSortedPagination.setLocationResponse(new LocationResponse(house.getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
-                houseResponseSortedPagination.setImages(house.getImages());
-                houseResponseSortedPagination.setHouseRating(rating.getRating(house.getFeedbacks()));
-                houses.add(houseResponseSortedPagination);
-            }
-        }
-        log.info("show house by sort popular");
-        return houses;
-    }
-
-    private List<HouseResponseSortedPagination> sortHomeType(String region, String popularOrTheLastest, String homeType) {
-        List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>();
-        if (homeType == null) homeType = "All";
-        if (homeType.equals("All")) return sortPopularOrTheLatest(region, popularOrTheLastest);
-        if (homeType.equals("Apartment")) {
-            for (HouseResponseSortedPagination house : sortPopularOrTheLatest(region, popularOrTheLastest)) {
-                if (house.getHouseType().equals(HouseType.APARTMENT)) {
-                    houseResponseSortedPaginations.add(house);
-                }
-            }
-        } else if (homeType.equals("House")) {
-            for (HouseResponseSortedPagination house : sortPopularOrTheLatest(region, popularOrTheLastest)) {
-                if (house.getHouseType().equals(HouseType.HOUSE)) {
-                    houseResponseSortedPaginations.add(house);
-                }
-            }
-        }
-        log.info("show house by sort type house");
-        return houseResponseSortedPaginations;
-    }
-
-    private List<HouseResponseSortedPagination> sortPrice(String region, String popularOrTheLastest, String homeType, String price) {
-        List<HouseResponseSortedPagination> houseResponseSortedPaginations = new LinkedList<>(sortHomeType(region, popularOrTheLastest, homeType));
-        if (price == null) price = "All";
-        if (price.equals("All")) return houseResponseSortedPaginations;
-        if (price.equals("Low to high")) {
-            houseResponseSortedPaginations.sort(Comparator.comparing(HouseResponseSortedPagination::getPrice));
-        } else if (price.equals("High to low")) {
-            houseResponseSortedPaginations.sort(Comparator.comparing(HouseResponseSortedPagination::getPrice).reversed());
-        }
-        log.info("show house by sort price");
-        return houseResponseSortedPaginations;
-    }
-
-    private List<HouseResponseSortedPagination> getAllPagination(Long page, Long size, List<HouseResponseSortedPagination> houseResponseSortedPaginations) {
-        int startItem = (int) ((page - 1) * size);
-        List<HouseResponseSortedPagination> list;
-
-        if (houseResponseSortedPaginations.size() < startItem) {
-            list = Collections.emptyList();
-        } else {
-            int toIndex = (int) Math.min(startItem + size, houseResponseSortedPaginations.size());
-            list = houseResponseSortedPaginations.subList(startItem, toIndex);
-        }
-        log.info("show all house");
-        return list;
     }
 
     @Override
@@ -376,7 +283,7 @@ public class HouseServiceImpl implements HouseService {
         House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
         switch (housesStatus) {
             case ACCEPT -> {
-                house.setHousesStatus(HousesStatus.ACCEPT);
+                house.setHousesStatus(ACCEPT);
                 houseRepository.save(house);
                 emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s accepted :)", house.getTitle()), "Moderation successfully passed!");
                 log.info("successfully  accepted house id {}", house.getId());
@@ -430,6 +337,206 @@ public class HouseServiceImpl implements HouseService {
         return new ApplicationResponseForAdmin(getProfileHouseResponse(page, pageSize, houseResponseForAdmins), page, sizePage);
     }
 
+    @Override
+    public List<HouseResponseSortedPagination> getAllHousing(String stringHousesBooked, String houseType, String price, String popularOrTheLatest) throws IOException {
+        List<House> allHouses = houseRepository.findAll();
+        List<HouseResponseSortedPagination> sortHouses = new ArrayList<>();
+        HousesBooked housesBookedEnum = null;
+        if (stringHousesBooked != null) {
+            if (stringHousesBooked.equalsIgnoreCase("Booked")) {
+                housesBookedEnum = HousesBooked.BOOKED;
+            } else if (stringHousesBooked.equalsIgnoreCase("Not booked")) {
+                housesBookedEnum = HousesBooked.NOT_BOOKED;
+            }
+        }
+        for (HouseResponseSortedPagination houseResponse : sortPrice(null, popularOrTheLatest, houseType, price, null)) {
+            for (House entityHouse : allHouses) {
+                if (stringHousesBooked != null) {
+                    if (entityHouse.getId() == houseResponse.getId() && entityHouse.getHousesBooked().equals(housesBookedEnum) && entityHouse.getHousesStatus().equals(HousesStatus.ACCEPT)) {
+                        houseResponse.setImages(entityHouse.getImages());
+                        houseResponse.setLocationResponse(locationRepository.findLocationByHouseId(entityHouse.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+                        houseResponse.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(entityHouse.getId())));
+                        sortHouses.add(houseResponse);
+                    }
+                } else if (entityHouse.getId() == houseResponse.getId() && entityHouse.getHousesStatus().equals(ACCEPT)) {
+                    houseResponse.setImages(entityHouse.getImages());
+                    houseResponse.setLocationResponse(locationRepository.findLocationByHouseId(entityHouse.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+                    houseResponse.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(entityHouse.getId())));
+                    sortHouses.add(houseResponse);
+                }
+            }
+        }
+        log.info("show house by sort");
+        return sortHouses;
+    }
+
+    @Override
+    public List<HouseResponseSortedPagination> searchNearby(double userLatitude, double userLongitude) throws IOException {
+        List<HouseResponseSortedPagination> nearbyHouses = new ArrayList<>();
+        int radius = 0;
+        String region = "";
+        while (nearbyHouses.isEmpty()) {
+            if (radius == 0) {
+                radius = 5;
+            } else if (radius == 5) {
+                radius = 20;
+            } else {
+                radius += 10;
+            }
+            if (radius <= 500) {
+                for (HouseResponseSortedPagination house : houseRepository.getAllResponse()) {
+                    LocationResponse locationResponse = locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("Location is not found!"));
+                    double[] coordinates = getCoordinates(locationResponse.getAddress() + ", " + locationResponse.getTownOrProvince());
+                    double distance = distance(userLatitude, userLongitude, coordinates[0], coordinates[1]);
+                    if (distance <= radius && nearbyHouses.isEmpty()) {
+                        region = locationResponse.getRegion();
+                    }
+                    if (distance <= radius && locationResponse.getRegion().equals(region)) {
+                        house.setImages(houseRepository.findImagesByHouseId(house.getId()));
+                        house.setLocationResponse(locationResponse);
+                        nearbyHouses.add(house);
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+        log.info("Search nearby is worked");
+        return nearbyHouses;
+    }
+
+    private List<HouseResponseSortedPagination> sortRegion(String region, double[] coordinates) throws IOException {
+        if (region == null) region = "All";
+        Set<HouseResponseSortedPagination> houseResponseSortedPaginations = new LinkedHashSet<>();
+        List<HouseResponseSortedPagination> houseResponses = new LinkedList<>();
+        if (coordinates[0] == 0 && coordinates[1] == 0) {
+            for (HouseResponseSortedPagination houses : houseRepository.getAllResponse()) {
+                for (House house : houseRepository.findAllAnnouncements()) {
+                    if (house.getId() == houses.getId()) {
+                        houseResponseSortedPaginations.add(convertHouseToHouseResponseSortedPagination(house));
+                    }
+                }
+            }
+        } else {
+            for (HouseResponseSortedPagination houseResponseSortedPagination : houseRepository.getAllResponse()) {
+                houseResponseSortedPagination.setLocationResponse(locationRepository.findLocationByHouseId(houseResponseSortedPagination.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+                houseResponseSortedPagination.setImages(houseRepository.findImagesByHouseId(houseResponseSortedPagination.getId()));
+                houseResponseSortedPaginations.add(houseResponseSortedPagination);
+            }
+            houseResponseSortedPaginations = getAllNearbyHouses(houseResponseSortedPaginations, searchNearby(coordinates[0], coordinates[1]));
+        }
+        if (region.equals("All")) {
+            log.info("show house by sort region");
+            return houseResponseSortedPaginations.stream().toList();
+        }
+        for (HouseResponseSortedPagination house : houseResponseSortedPaginations) {
+            if (house.getLocationResponse().getRegion().equals(region)) {
+                houseResponses.add(house);
+                this.countOfRegion = (long) houseResponses.size();
+            }
+        }
+        String finalRegion = region;
+        this.countOfRegion = houseResponseSortedPaginations.stream().filter(x -> x.getLocationResponse().getRegion().equals(finalRegion)).count();
+        log.info("show house by sort region");
+        return houseResponseSortedPaginations.stream().filter(x -> x.getLocationResponse().getRegion().equals(finalRegion)).toList();
+    }
+
+    private List<HouseResponseSortedPagination> sortPopularOrTheLatest(String region, String popularOrTheLatest, double[] coordinates) throws IOException {
+        List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>(sortRegion(region, coordinates));
+        List<HouseResponseSortedPagination> houses = new ArrayList<>();
+        if (popularOrTheLatest == null) popularOrTheLatest = "All";
+        if (popularOrTheLatest.equals("All")) return houseResponseSortedPaginations;
+        if (popularOrTheLatest.equals("Popular")) {
+            for (House house : houseRepository.getPopular()) {
+                for (HouseResponseSortedPagination houseSorted : houseResponseSortedPaginations) {
+                    if (house.getId() == houseSorted.getId()) {
+                        houses.add(houseSorted);
+                    }
+                }
+            }
+            houses.sort(Comparator.comparing(HouseResponseSortedPagination::getHouseRating).reversed());
+            log.info("show house by sort popular");
+            return houses;
+        } else if (popularOrTheLatest.equals("The latest")) {
+            List<House> houseList = new ArrayList<>();
+            for (House house : houseRepository.findAllAnnouncements()) {
+                for (HouseResponseSortedPagination houseSorted : houseResponseSortedPaginations) {
+                    if (house.getId() == houseSorted.getId()) {
+                        houseList.add(house);
+                    }
+                }
+            }
+            try {
+                houseList.sort(Comparator.comparing(House::getDateHouseCreated).reversed());
+            } catch (Exception e) {
+
+            }
+            for (House house : houseList) {
+                houses.add(convertHouseToHouseResponseSortedPagination(house));
+            }
+        }
+        log.info("show house by sort popular");
+        return houses;
+    }
+
+    private HouseResponseSortedPagination convertHouseToHouseResponseSortedPagination(House house) {
+        HouseResponseSortedPagination houseResponseSortedPagination = houseRepository.findHouseById(house.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+        houseResponseSortedPagination.setLocationResponse(locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
+        houseResponseSortedPagination.setImages(house.getImages());
+        houseResponseSortedPagination.setHouseRating(rating.getRating(house.getFeedbacks()));
+        log.info("convertHouseToHouseResponseSortedPagination method used in search nearby");
+        return houseResponseSortedPagination;
+    }
+
+    private List<HouseResponseSortedPagination> sortHomeType(String region, String popularOrTheLastest, String homeType, double[] coordinates) throws IOException {
+        List<HouseResponseSortedPagination> houseResponseSortedPaginations = new ArrayList<>();
+        List<HouseResponseSortedPagination> popularOrTheLatest = sortPopularOrTheLatest(region, popularOrTheLastest, coordinates);
+        if (homeType == null) homeType = "All";
+        if (homeType.equals("All"))
+            return popularOrTheLatest;
+        if (homeType.equals("Apartment")) {
+            for (HouseResponseSortedPagination house : popularOrTheLatest) {
+                if (house.getHouseType().equals(HouseType.APARTMENT)) {
+                    houseResponseSortedPaginations.add(house);
+                }
+            }
+        } else if (homeType.equals("House")) {
+            for (HouseResponseSortedPagination house : popularOrTheLatest) {
+                if (house.getHouseType().equals(HouseType.HOUSE)) {
+                    houseResponseSortedPaginations.add(house);
+                }
+            }
+        }
+        log.info("show house by sort type house");
+        return houseResponseSortedPaginations;
+    }
+
+    private List<HouseResponseSortedPagination> sortPrice(String region, String popularOrTheLastest, String homeType, String price, double[] coordinates) throws IOException {
+        List<HouseResponseSortedPagination> houseResponseSortedPaginations = new LinkedList<>(sortHomeType(region, popularOrTheLastest, homeType, coordinates));
+        if (price == null) price = "All";
+        if (price.equals("All")) return houseResponseSortedPaginations;
+        if (price.equals("Low to high")) {
+            houseResponseSortedPaginations.sort(Comparator.comparing(HouseResponseSortedPagination::getPrice));
+        } else if (price.equals("High to low")) {
+            houseResponseSortedPaginations.sort(Comparator.comparing(HouseResponseSortedPagination::getPrice).reversed());
+        }
+        log.info("show house by sort price");
+        return houseResponseSortedPaginations;
+    }
+
+    private List<HouseResponseSortedPagination> getAllPagination(Long page, Long size, List<HouseResponseSortedPagination> houseResponseSortedPaginations) {
+        int startItem = (int) ((page - 1) * size);
+        List<HouseResponseSortedPagination> list;
+        if (houseResponseSortedPaginations.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = (int) Math.min(startItem + size, houseResponseSortedPaginations.size());
+            list = houseResponseSortedPaginations.subList(startItem, toIndex);
+        }
+        log.info("show all house");
+        return list;
+    }
+
     private List<HouseResponseForAdmin> getProfileHouseResponse(Long page, Long size, List<HouseResponseForAdmin> profileHouseResponses) {
         int startItem = (int) ((page - 1) * size);
         List<HouseResponseForAdmin> list;
@@ -444,37 +551,60 @@ public class HouseServiceImpl implements HouseService {
         return list;
     }
 
-    @Override
-    public List<HouseResponseSortedPagination> getAllHousing(String stringHousesBooked, String houseType, String price, String popularOrTheLatest) {
-        List<House> allHouses = houseRepository.findAll();
-        List<HouseResponseSortedPagination> sortHouses = new ArrayList<>();
-        HousesBooked housesBookedEnum = null;
-        if (stringHousesBooked != null) {
-            if (stringHousesBooked.equalsIgnoreCase("Booked")) {
-                housesBookedEnum = HousesBooked.BOOKED;
-            } else if (stringHousesBooked.equalsIgnoreCase("Not booked")) {
-                housesBookedEnum = HousesBooked.NOT_BOOKED;
-            }
-        }
-        for (HouseResponseSortedPagination houseResponse : sortPrice(null, popularOrTheLatest, houseType, price)) {
-            for (House entityHouse : allHouses) {
-                if (stringHousesBooked != null) {
-                    if (entityHouse.getId() == houseResponse.getId() && entityHouse.getHousesBooked().equals(housesBookedEnum) && entityHouse.getHousesStatus().equals(HousesStatus.ACCEPT)) {
-                        houseResponse.setImages(entityHouse.getImages());
-                        houseResponse.setLocationResponse(locationRepository.findLocationByHouseId(entityHouse.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
-                        houseResponse.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(entityHouse.getId())));
-                        sortHouses.add(houseResponse);
-                    }
-                } else if (entityHouse.getId() == houseResponse.getId() && entityHouse.getHousesStatus().equals(HousesStatus.ACCEPT)) {
-                    houseResponse.setImages(entityHouse.getImages());
-                    houseResponse.setLocationResponse(locationRepository.findLocationByHouseId(entityHouse.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
-                    houseResponse.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(entityHouse.getId())));
-                    sortHouses.add(houseResponse);
+    private Set<HouseResponseSortedPagination> getAllNearbyHouses(Set<HouseResponseSortedPagination> houseResponseSortedPaginations, List<HouseResponseSortedPagination> nearbyHouses) {
+        Set<HouseResponseSortedPagination> houseResponseSortedPaginations1 = new LinkedHashSet<>();
+        for (HouseResponseSortedPagination sortedPagination : houseResponseSortedPaginations) {
+            for (HouseResponseSortedPagination nearbyHouse : nearbyHouses) {
+                if (sortedPagination.getId() == nearbyHouse.getId()) {
+                    houseResponseSortedPaginations1.add(sortedPagination);
                 }
             }
         }
-        log.info("show house by sort");
-        return sortHouses;
+        for (HouseResponseSortedPagination sortedPagination : houseResponseSortedPaginations) {
+            for (HouseResponseSortedPagination nearbyHouse : nearbyHouses) {
+                if (sortedPagination.getId() != nearbyHouse.getId()) {
+                    houseResponseSortedPaginations1.add(sortedPagination);
+                }
+            }
+        }
+        log.info("Get all nearby houses get all pagination with search nearby");
+        return new LinkedHashSet<>(houseResponseSortedPaginations1);
+    }
+
+    private double[] getCoordinates(String address) throws IOException {
+        double latitude = 0;
+        double longitude = 0;
+
+        String urlString = "https://nominatim.openstreetmap.org/search?q=" + URLEncoder.encode(address, StandardCharsets.UTF_8) + "&format=json&addressdetails=1&limit=1";
+        URL url = new URL(urlString);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+        StringBuilder jsonBuilder = new StringBuilder();
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            jsonBuilder.append(line);
+        }
+        reader.close();
+
+        String jsonString = jsonBuilder.toString();
+        JSONArray jsonArray = new JSONArray(jsonString);
+        if (jsonArray.length() > 0) {
+            JSONObject json = jsonArray.getJSONObject(0);
+            latitude = json.getDouble("lat");
+            longitude = json.getDouble("lon");
+        }
+        log.info("get coordinates for search nearby ");
+        return new double[]{latitude, longitude};
+    }
+
+    private double distance(double userLatitude, double userLongitude, double houseLatitude, double houseLongitude) {
+        double earthRadius = 6371;
+        double dLat = Math.toRadians(houseLatitude - userLatitude);
+        double dLon = Math.toRadians(houseLongitude - userLongitude);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(userLatitude)) * Math.cos(Math.toRadians(houseLatitude)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        log.info("get distance for search nearby");
+        return earthRadius * c;
     }
 
 }
