@@ -22,7 +22,7 @@ import static javax.persistence.CascadeType.*;
 public class User implements UserDetails {
 
     @Id
-    @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 1, initialValue = 3)
+    @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 1, initialValue = 7)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_gen")
     private Long id;
 
@@ -39,7 +39,7 @@ public class User implements UserDetails {
     @OneToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "owner")
     private List<House> announcements;
 
-    @ManyToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "users")
+    @OneToMany(cascade = {REFRESH, DETACH, MERGE, REMOVE}, mappedBy = "users")
     private List<Booking> bookings;
 
     @ManyToMany(targetEntity = Role.class, cascade = {REFRESH, DETACH, MERGE, PERSIST}, mappedBy = "users", fetch = FetchType.EAGER)
@@ -51,6 +51,11 @@ public class User implements UserDetails {
     public void addRole(Role role) {
         if (roles == null) roles = new ArrayList<>();
         roles.add(role);
+    }
+
+    public void addBooking(Booking booking) {
+        if (bookings == null) bookings = new ArrayList<>();
+        bookings.add(booking);
     }
 
     @Override
