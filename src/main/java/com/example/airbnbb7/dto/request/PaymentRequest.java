@@ -1,4 +1,4 @@
-package com.example.airbnbb7.payment;
+package com.example.airbnbb7.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentDto {
+public class PaymentRequest {
 
     private Long amount;
 

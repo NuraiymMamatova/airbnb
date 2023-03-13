@@ -1,7 +1,8 @@
-package com.example.airbnbb7.payment;
+package com.example.airbnbb7.db.service.serviceImpl;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
-import com.example.airbnbb7.payment.service.PaymentService;
+import com.example.airbnbb7.db.service.PaymentService;
+import com.example.airbnbb7.dto.request.PaymentRequest;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
@@ -14,12 +15,12 @@ import java.util.Map;
 
 @Service
 @Slf4j
-public class StripeServiceImpl implements PaymentService {
+public class PaymentServiceImpl implements PaymentService {
 
     @Value("${STRIPE_SECRET_KEY}")
     private String secretKey;
 
-    public SimpleResponse chargePayments(PaymentDto paymentDto) {
+    public SimpleResponse chargePayments(PaymentRequest paymentDto) {
         try {
             Stripe.apiKey = secretKey;
             int amount = Math.round(paymentDto.getAmount() * 100);
