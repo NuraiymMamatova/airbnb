@@ -13,8 +13,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class BookingRequest {
 
-    private Double price;
-
     private LocalDate checkIn;
 
     private LocalDate checkOut;
