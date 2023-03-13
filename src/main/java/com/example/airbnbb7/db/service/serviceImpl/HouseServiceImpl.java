@@ -405,6 +405,20 @@ public class HouseServiceImpl implements HouseService {
         return nearbyHouses;
     }
 
+    public SimpleResponse deleteImageById(Long imageId, Authentication authentication) {
+        if (authentication != null) {
+            User user = (User) authentication.getPrincipal();
+            if (user.getId() == houseRepository.getUserIdByImageId(imageId)) {
+                houseRepository.deleteImageById(imageId);
+            } else {
+                throw new BadCredentialsException("You can't delete this image because it's ");
+            }
+        } else {
+            throw new BadRequestException("Authentication cannot be null!");
+        }
+        return new SimpleResponse("Image successfully deleted!");
+    }
+
     private List<HouseResponseSortedPagination> sortRegion(String region, double[] coordinates) throws IOException {
         if (region == null) region = "All";
         Set<HouseResponseSortedPagination> houseResponseSortedPaginations = new LinkedHashSet<>();

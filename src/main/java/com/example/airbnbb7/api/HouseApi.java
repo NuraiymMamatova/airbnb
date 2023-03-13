@@ -125,4 +125,10 @@ public class HouseApi {
         return houseService.searchNearby(userLatitude, userLongitude);
     }
 
+    @DeleteMapping("/delete_image/{imageId}")
+    @Operation(summary = "Delete image by id.", description = "Only owner can delete image")
+    public SimpleResponse deleteImage(@PathVariable Long imageId, Authentication authentication) {
+        return houseService.deleteImageById(imageId, authentication);
+    }
+
 }

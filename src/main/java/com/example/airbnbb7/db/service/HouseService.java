@@ -36,4 +36,6 @@ public interface HouseService {
 
     List<HouseResponseSortedPagination> getAllHousing(String housesBooked, String houseType, String price, String popularOrTheLatest) throws IOException;
 
+    SimpleResponse deleteImageById(Long imageId, Authentication authentication);
+
 }
