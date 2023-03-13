@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
                     return profileResponse;
                 }
                 case "My announcement" -> {
-                    ProfileResponse profileBookingHouseResponse = star(sortHousesAsDesired, sortHousesByApartments, sortHousesByHouses, sortingHousesByValue, sortingHousesByRating, userId);
+                    ProfileResponse profileBookingHouseResponse = star(sortHousesByApartments, sortHousesByHouses, sortHousesAsDesired, sortingHousesByValue, sortingHousesByRating, userId);
                     profileBookingHouseResponse.setBookingsSize(profileResponse.getBookingsSize());
                     profileBookingHouseResponse.setOnModerationSize(profileResponse.getOnModerationSize());
                     profileBookingHouseResponse.setMyAnnouncementSize(profileResponse.getMyAnnouncementSize());
@@ -231,6 +231,7 @@ public class UserServiceImpl implements UserService {
                 List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getBooking(userId);
                 houseResponseForAdminUsers.forEach(h -> {
                     House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+                    h.setImages(house.getImages());
                     h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
                     h.setHouseRating(rating.getRating(house.getFeedbacks()));
                 });
@@ -239,6 +240,7 @@ public class UserServiceImpl implements UserService {
                 List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getUserByAnnouncement(userId);
                 houseResponseForAdminUsers.forEach(h -> {
                     House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
+                    h.setImages(house.getImages());
                     h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
                     h.setHouseRating(rating.getRating(house.getFeedbacks()));
                 });
