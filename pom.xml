@@ -102,7 +102,6 @@
             <version>v1.0.25</version>
         </dependency>
         </dependencies>
-
     <build>
         <plugins>
             <plugin>
