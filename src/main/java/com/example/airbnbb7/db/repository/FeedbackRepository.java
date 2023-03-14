@@ -4,8 +4,10 @@ import com.example.airbnbb7.db.entities.Feedback;
 import com.example.airbnbb7.dto.response.FeedbackResponse;
 import com.example.airbnbb7.dto.response.UserResponseForFeedback;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,5 +22,10 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
     @Query("select new com.example.airbnbb7.dto.response.FeedbackResponse(f.id, f.text, f.rating, f.createdFeedback, f.like, f.dislike) from Feedback f where f.id = :feedbackId")
     FeedbackResponse findFeedbackByFeedbackId(Long feedbackId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from feedback_image where image_id = :imageId", nativeQuery = true)
+    void deleteImageById(Long imageId);
 
 }

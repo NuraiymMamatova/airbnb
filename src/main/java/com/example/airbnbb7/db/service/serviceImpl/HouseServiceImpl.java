@@ -411,12 +411,12 @@ public class HouseServiceImpl implements HouseService {
             if (user.getId() == houseRepository.getUserIdByImageId(imageId)) {
                 houseRepository.deleteImageById(imageId);
             } else {
-                throw new BadCredentialsException("You can't delete this image because it's ");
+                throw new BadCredentialsException("You can't delete this image because it's not your house!");
             }
         } else {
             throw new BadRequestException("Authentication cannot be null!");
         }
-        return new SimpleResponse("Image successfully deleted!");
+        return new SimpleResponse("House image successfully deleted!");
     }
 
     private List<HouseResponseSortedPagination> sortRegion(String region, double[] coordinates) throws IOException {

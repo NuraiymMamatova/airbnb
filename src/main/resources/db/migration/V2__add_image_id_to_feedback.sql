@@ -1,0 +1,1 @@
+alter table feedback_image add column image_id serial primary key ;
