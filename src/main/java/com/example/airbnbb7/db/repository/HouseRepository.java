@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,10 +38,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
     Optional<HouseResponseSortedPagination> findHouseById(Long houseId);
 
     @Query(value = "select images from house_images where house_id = :houseId", nativeQuery = true)
-    LinkedList<String> findImagesByHouseId(Long houseId);
-
-    @Query(value = "select image_id from house_images where house_id = :houseId", nativeQuery = true)
-    LinkedList<Long> findImagesIdByHouseId(Long houseId);
+    List<String> findImagesByHouseId(Long houseId);
 
     @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id," +
             "h.price," +
@@ -79,12 +75,9 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "and h.housesStatus = 2")
     List<HouseResponseSortedPagination> searchByQuery(@Param("search") String search);
 
-    @Query(value = "select owner_id from houses where id = (select house_id from house_images where image_id = :imageId limit 1)", nativeQuery = true)
-    Long getUserIdByImageId(Long imageId);
-
     @Modifying
     @Transactional
-    @Query(value = "delete from house_images where image_id = :imageId", nativeQuery = true)
-    void deleteImageById(Long imageId);
+    @Query(value = "delete from house_images where images = :url", nativeQuery = true)
+    void deleteImageByUrl(String url);
 
 }

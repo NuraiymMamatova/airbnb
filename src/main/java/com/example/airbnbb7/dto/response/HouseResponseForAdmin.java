@@ -4,7 +4,7 @@ import com.example.airbnbb7.db.enums.HouseType;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.List;
 
 @Component
 @Getter
@@ -22,7 +22,7 @@ public class HouseResponseForAdmin {
 
     private String descriptionOfListing;
 
-    private Map<Long, String> images;
+    private List<String> images;
 
     private Long maxOfGuests;
 

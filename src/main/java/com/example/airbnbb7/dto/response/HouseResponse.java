@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -28,7 +28,7 @@ public class HouseResponse {
 
     private String descriptionOfListing;
 
-    private Map<Long, String> images;
+    private List<String> images;
 
     private Long maxOfGuests;
 

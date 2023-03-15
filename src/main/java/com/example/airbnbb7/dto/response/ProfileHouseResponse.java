@@ -8,7 +8,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.Map;
+import java.util.List;
 
 @Component
 @Getter
@@ -25,7 +25,7 @@ public class ProfileHouseResponse {
 
     private String descriptionOfListing;
 
-    private Map<Long, String> images;
+    private List<String> images;
 
     private Long maxOfGuests;
 
