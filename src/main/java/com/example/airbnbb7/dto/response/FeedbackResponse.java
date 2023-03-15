@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Map;
 
 @Component
 @AllArgsConstructor
@@ -24,7 +24,7 @@ public class FeedbackResponse {
 
     private LocalDate createdFeedback;
 
-    private List<String> image;
+    private Map<Long, String> image;
 
     private Long like;
 

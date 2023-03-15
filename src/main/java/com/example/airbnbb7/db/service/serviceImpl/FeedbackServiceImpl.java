@@ -53,7 +53,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             Feedback feedback = feedbackRepository.findById(feedbackId).orElseThrow(() -> new NotFoundException("Feedback not found!"));
             if (feedback.getUser().getId() == user.getId()) {
                 feedbackRepository.delete(feedbackRepository.findById(feedbackId).orElseThrow(() -> new NotFoundException("Feedback not found!")));
-               log.info("feedback by user {} successfully deleted ", feedback.getUser());
+                log.info("feedback by user {} successfully deleted ", feedback.getUser());
                 return new SimpleResponse("Feedback successfully deleted!");
             }
             log.warn("You can't delete other people's comments");
@@ -126,5 +126,19 @@ public class FeedbackServiceImpl implements FeedbackService {
             }
             log.info("successfully disliked");
         }
+    }
+
+    public SimpleResponse deleteImageById(Long imageId, Authentication authentication) {
+        if (authentication != null) {
+            User user = (User) authentication.getPrincipal();
+            if (user.getId() == houseRepository.getUserIdByImageId(imageId)) {
+                feedbackRepository.deleteImageById(imageId);
+            } else {
+                throw new org.springframework.security.authentication.BadCredentialsException("You can't delete this image because it's not your feedback!");
+            }
+        } else {
+            throw new BadRequestException("Authentication cannot be null!");
+        }
+        return new SimpleResponse("Feedback image successfully deleted!");
     }
 }

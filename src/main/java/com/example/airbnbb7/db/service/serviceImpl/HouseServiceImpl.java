@@ -32,7 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.example.airbnbb7.db.enums.HousesStatus.ACCEPT;
+import static com.example.airbnbb7.db.enums.HousesStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -128,7 +128,7 @@ public class HouseServiceImpl implements HouseService {
                 House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
                 Location location = house.getLocation();
                 h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(), location.getAddress(), location.getRegion()));
-                h.setImages(house.getImages());
+                h.setImages(getImagesAndIdByHouseId(house.getId()));
                 h.setHouseRating(rating.getRating(house.getFeedbacks()));
             });
             applicationResponse.setPaginationList(houseResponseSortedPaginations);
@@ -163,7 +163,7 @@ public class HouseServiceImpl implements HouseService {
                     HouseResponse houseResponse = new HouseResponse(house.getId(), house.getPrice(), house.getTitle(), house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType());
                     houseResponse.setOwner(new UserResponse(house.getOwner().getId(), house.getOwner().getName(), house.getOwner().getEmail(), house.getOwner().getImage()));
                     houseResponse.setLocation(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
-                    houseResponse.setImages(house.getImages());
+                    houseResponse.setImages(getImagesAndIdByHouseId(house.getId()));
                 } else {
                     log.error("Invalid location.");
                     throw new BadRequestException("Invalid location. Is not correct town/province or address. Example : address write like 'Киевская 132' or 'ул. Киевская 132' or 'Kiev 132' or 'str. Kiev 132' - town/province like 'Bishkek'");
@@ -187,7 +187,7 @@ public class HouseServiceImpl implements HouseService {
             List<AccommodationResponse> houseResponses = houseRepository.getPopularHouse();
             for (AccommodationResponse accommodationResponse : houseResponses) {
                 accommodationResponse.setLocationResponse(locationRepository.findLocationByHouseId(accommodationResponse.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
-                accommodationResponse.setImages(houseRepository.findImagesByHouseId(accommodationResponse.getId()));
+                accommodationResponse.setImages(getImagesAndIdByHouseId(accommodationResponse.getId()));
                 accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
             }
             houseResponses.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
@@ -198,7 +198,7 @@ public class HouseServiceImpl implements HouseService {
             List<AccommodationResponse> popularApartmentByCountOfBookedUser = houseRepository.getPopularApartment();
             for (AccommodationResponse accommodationResponse : popularApartmentByCountOfBookedUser) {
                 accommodationResponse.setLocationResponse(locationRepository.findLocationByHouseId(accommodationResponse.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
-                accommodationResponse.setImages(houseRepository.findImagesByHouseId(accommodationResponse.getId()));
+                accommodationResponse.setImages(getImagesAndIdByHouseId(accommodationResponse.getId()));
                 accommodationResponse.setRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(accommodationResponse.getId())));
             }
             popularApartmentByCountOfBookedUser.sort(Comparator.comparing(AccommodationResponse::getRating).reversed());
@@ -208,7 +208,7 @@ public class HouseServiceImpl implements HouseService {
         List<AccommodationResponse> houseResponses = houseRepository.getLatestAccommodation();
         for (AccommodationResponse houseResponse : houseResponses) {
             House house = houseRepository.findById(houseResponse.getId()).orElseThrow(() -> new NotFoundException("House Id not found"));
-            houseResponse.setImages(house.getImages());
+            houseResponse.setImages(getImagesAndIdByHouseId(house.getId()));
             houseResponse.setLocationResponse(locationRepository.convertToResponse(house.getLocation()));
         }
         log.info("show house");
@@ -223,14 +223,20 @@ public class HouseServiceImpl implements HouseService {
         if (authentication != null) {
             user = (User) authentication.getPrincipal();
         }
-        house.setImages(houseRepository.findImagesByHouseId(houseId));
+        house.setImages(getImagesAndIdByHouseId(house.getId()));
         house.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
         List<FeedbackResponse> feedbackResponses = new ArrayList<>();
         List<Feedback> feedbacks = feedbackRepository.getAllFeedbackByHouseId(houseId);
         for (Feedback feedback : feedbacks) {
             FeedbackResponse feedbackResponse = feedbackRepository.findFeedbackByFeedbackId(feedback.getId());
             feedbackResponse.setOwner(feedbackRepository.findOwnerFeedbackByFeedbackId(feedback.getId()));
-            feedbackResponse.setImage(feedback.getImage());
+            Map<Long, String> imagesAndIdentity = new HashMap<>();
+            List<String> images = feedbackRepository.findImagesByFeedbackId(feedback.getId());
+            List<Long> identity = feedbackRepository.findImagesIdByFeedbackId(feedback.getId());
+            for (int i = 0; i < images.size(); i++) {
+                imagesAndIdentity.put(identity.get(i), images.get(i));
+            }
+            feedbackResponse.setImage(imagesAndIdentity);
             feedbackResponses.add(feedbackResponse);
         }
         house.setFeedbacks(feedbackResponses);
@@ -246,7 +252,7 @@ public class HouseServiceImpl implements HouseService {
             }
             if (userResponse.getId() == user.getId()) {
                 AnnouncementResponseForVendor houseResponseForVendor = houseRepository.findHouseByIdForVendor(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
-                houseResponseForVendor.setImages(houseRepository.findImagesByHouseId(houseId));
+                houseResponseForVendor.setImages(getImagesAndIdByHouseId(house.getId()));
                 List<BookingResponse> bookingResponses = new ArrayList<>();
                 for (BookingResponse booking : bookingRepository.getBookingsByHouseId(houseId)) {
                     booking.setOwner(userRepository.findUserById(bookingRepository.getUserIdByBookingId(booking.getId())));
@@ -264,7 +270,7 @@ public class HouseServiceImpl implements HouseService {
                 House hous = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
                 hous.setWatchedOrNot(true);
                 houseRepository.save(hous);
-                announcementResponseForAdmin.setImages(houseRepository.findImagesByHouseId(houseId));
+                announcementResponseForAdmin.setImages(getImagesAndIdByHouseId(house.getId()));
                 announcementResponseForAdmin.setLocation(locationRepository.findLocationByHouseId(houseId).orElseThrow(() -> new NotFoundException("Location not found!")));
                 announcementResponseForAdmin.setFeedbacks(feedbackResponses);
                 announcementResponseForAdmin.setOwner(userResponse);
@@ -279,45 +285,55 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public SimpleResponse changeStatusOfHouse(Long houseId, String message, HousesStatus housesStatus) {
+    public SimpleResponse changeStatusOfHouse(Long houseId, String message, String housesStatus) {
         House house = houseRepository.findById(houseId).orElseThrow(() -> new NotFoundException("House not found!"));
-        switch (housesStatus) {
-            case ACCEPT -> {
-                house.setHousesStatus(ACCEPT);
-                houseRepository.save(house);
-                emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s accepted :)", house.getTitle()), "Moderation successfully passed!");
-                log.info("successfully  accepted house id {}", house.getId());
-                return new SimpleResponse("Accepted :)");
+        if (housesStatus != null) {
+            HousesStatus houseStatus = null;
+            if (housesStatus.contentEquals("Accept")) houseStatus = ACCEPT;
+            else if (housesStatus.contentEquals("Reject")) houseStatus = REJECT;
+            else if (housesStatus.contentEquals("Blocked") || housesStatus.contentEquals("Not blocked"))
+                houseStatus = BLOCKED;
+            if (houseStatus == null) {
+                throw new BadRequestException("No such status!");
             }
-            case REJECT -> {
-                house.setHousesStatus(HousesStatus.REJECT);
-                houseRepository.save(house);
-                if (message != null) {
-                    emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s rejected :(", house.getTitle()), message);
-                } else {
-                    log.error("Message {} cannot be null", message.toString());
-                    throw new BadRequestException("Message cannot be null!");
-                }
-                log.info("successfully sent house id {}", house.getId());
-                return new SimpleResponse("Successfully sent :)");
-            }
-            case BLOCKED -> {
-                if (house.getHousesStatus().equals(HousesStatus.BLOCKED)) {
-                    house.setHousesStatus(HousesStatus.ON_MODERATION);
+            switch (houseStatus) {
+                case ACCEPT -> {
+                    house.setHousesStatus(ACCEPT);
                     houseRepository.save(house);
-                    emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s unblocked :)", house.getTitle()), "House unblocked :)");
-                    log.info("successfully unblocked house id {}", house.getId());
-                    return new SimpleResponse("Unblocked :)");
-                } else {
-                    house.setHousesStatus(HousesStatus.BLOCKED);
+                    emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s accepted :)", house.getTitle()), "Moderation successfully passed!");
+                    log.info("successfully  accepted house id {}", house.getId());
+                    return new SimpleResponse("Accepted :)");
+                }
+                case REJECT -> {
+                    house.setHousesStatus(HousesStatus.REJECT);
                     houseRepository.save(house);
-                    emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s blocked :(", house.getTitle()), "House blocked :(");
-                    log.info("successfully blocked house id {}", house.getId());
-                    return new SimpleResponse("Blocked :)");
+                    if (message != null) {
+                        emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s rejected :(", house.getTitle()), message);
+                    } else {
+                        log.error("Message cannot be null");
+                        throw new BadRequestException("Message cannot be null!");
+                    }
+                    log.info("successfully sent house id {}", house.getId());
+                    return new SimpleResponse("Successfully sent :)");
+                }
+                case BLOCKED -> {
+                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)) {
+                        house.setHousesStatus(HousesStatus.ON_MODERATION);
+                        houseRepository.save(house);
+                        emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s unblocked :)", house.getTitle()), "House unblocked :)");
+                        log.info("successfully unblocked house id {}", house.getId());
+                        return new SimpleResponse("Unblocked :)");
+                    } else {
+                        house.setHousesStatus(HousesStatus.BLOCKED);
+                        houseRepository.save(house);
+                        emailService.sendMessage(house.getOwner().getEmail(), String.format("House with title %s blocked :(", house.getTitle()), "House blocked :(");
+                        log.info("successfully blocked house id {}", house.getId());
+                        return new SimpleResponse("Blocked :)");
+                    }
                 }
             }
+            log.info("show house id {}", house.getId());
         }
-        log.info("show house id {}", house.getId());
         return new SimpleResponse();
     }
 
@@ -328,7 +344,7 @@ public class HouseServiceImpl implements HouseService {
         houseResponseForAdmins.forEach(h -> {
             House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
             Location location = house.getLocation();
-            h.setImages(house.getImages());
+            h.setImages(getImagesAndIdByHouseId(house.getId()));
             h.setLocationResponse(new LocationResponse(location.getId(), location.getTownOrProvince(),
                     location.getAddress(), location.getRegion()));
             h.setHouseRating(rating.getRating(house.getFeedbacks()));
@@ -353,13 +369,13 @@ public class HouseServiceImpl implements HouseService {
             for (House entityHouse : allHouses) {
                 if (stringHousesBooked != null) {
                     if (entityHouse.getId() == houseResponse.getId() && entityHouse.getHousesBooked().equals(housesBookedEnum) && entityHouse.getHousesStatus().equals(HousesStatus.ACCEPT)) {
-                        houseResponse.setImages(entityHouse.getImages());
+                        houseResponse.setImages(getImagesAndIdByHouseId(entityHouse.getId()));
                         houseResponse.setLocationResponse(locationRepository.findLocationByHouseId(entityHouse.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
                         houseResponse.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(entityHouse.getId())));
                         sortHouses.add(houseResponse);
                     }
                 } else if (entityHouse.getId() == houseResponse.getId() && entityHouse.getHousesStatus().equals(ACCEPT)) {
-                    houseResponse.setImages(entityHouse.getImages());
+                    houseResponse.setImages(getImagesAndIdByHouseId(entityHouse.getId()));
                     houseResponse.setLocationResponse(locationRepository.findLocationByHouseId(entityHouse.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
                     houseResponse.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(entityHouse.getId())));
                     sortHouses.add(houseResponse);
@@ -392,7 +408,7 @@ public class HouseServiceImpl implements HouseService {
                         region = locationResponse.getRegion();
                     }
                     if (distance <= radius && locationResponse.getRegion().equals(region)) {
-                        house.setImages(houseRepository.findImagesByHouseId(house.getId()));
+                        house.setImages(getImagesAndIdByHouseId(house.getId()));
                         house.setLocationResponse(locationResponse);
                         nearbyHouses.add(house);
                     }
@@ -403,6 +419,20 @@ public class HouseServiceImpl implements HouseService {
         }
         log.info("Search nearby is worked");
         return nearbyHouses;
+    }
+
+    public SimpleResponse deleteImageById(Long imageId, Authentication authentication) {
+        if (authentication != null) {
+            User user = (User) authentication.getPrincipal();
+            if (user.getId() == houseRepository.getUserIdByImageId(imageId)) {
+                houseRepository.deleteImageById(imageId);
+            } else {
+                throw new BadCredentialsException("You can't delete this image because it's not your house!");
+            }
+        } else {
+            throw new BadRequestException("Authentication cannot be null!");
+        }
+        return new SimpleResponse("House image successfully deleted!");
     }
 
     private List<HouseResponseSortedPagination> sortRegion(String region, double[] coordinates) throws IOException {
@@ -420,7 +450,7 @@ public class HouseServiceImpl implements HouseService {
         } else {
             for (HouseResponseSortedPagination houseResponseSortedPagination : houseRepository.getAllResponse()) {
                 houseResponseSortedPagination.setLocationResponse(locationRepository.findLocationByHouseId(houseResponseSortedPagination.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
-                houseResponseSortedPagination.setImages(houseRepository.findImagesByHouseId(houseResponseSortedPagination.getId()));
+                houseResponseSortedPagination.setImages(getImagesAndIdByHouseId(houseResponseSortedPagination.getId()));
                 houseResponseSortedPaginations.add(houseResponseSortedPagination);
             }
             houseResponseSortedPaginations = getAllNearbyHouses(houseResponseSortedPaginations, searchNearby(coordinates[0], coordinates[1]));
@@ -482,7 +512,7 @@ public class HouseServiceImpl implements HouseService {
     private HouseResponseSortedPagination convertHouseToHouseResponseSortedPagination(House house) {
         HouseResponseSortedPagination houseResponseSortedPagination = houseRepository.findHouseById(house.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
         houseResponseSortedPagination.setLocationResponse(locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("Location not found!")));
-        houseResponseSortedPagination.setImages(house.getImages());
+        houseResponseSortedPagination.setImages(getImagesAndIdByHouseId(house.getId()));
         houseResponseSortedPagination.setHouseRating(rating.getRating(house.getFeedbacks()));
         log.info("convertHouseToHouseResponseSortedPagination method used in search nearby");
         return houseResponseSortedPagination;
@@ -605,6 +635,16 @@ public class HouseServiceImpl implements HouseService {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         log.info("get distance for search nearby");
         return earthRadius * c;
+    }
+
+    public Map<Long, String> getImagesAndIdByHouseId(Long houseId) {
+        Map<Long, String> imagesAndIdentity = new HashMap<>();
+        List<String> images = houseRepository.findImagesByHouseId(houseId);
+        List<Long> identity = houseRepository.findImagesIdByHouseId(houseId);
+        for (int i = 0; i < images.size(); i++) {
+            imagesAndIdentity.put(identity.get(i), images.get(i));
+        }
+        return imagesAndIdentity;
     }
 
 }

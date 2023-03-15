@@ -1,7 +1,6 @@
 package com.example.airbnbb7.api;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
-import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.dto.request.HouseRequest;
@@ -86,11 +85,11 @@ public class HouseApi {
     @Operation(summary = "Change status of house", description = """
             Only admin can change house status
             House status:
-            #BLOCKED(for unblock also used this enum)
-            #REJECT
-            #ACCEPT""")
+              Blocked(for unblock also write 'Blocked'),
+              Reject,
+              Accept""")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public SimpleResponse changeStatusOfHouse(@PathVariable Long houseId, @RequestParam(required = false) String message, @RequestParam() HousesStatus housesStatus) {
+    public SimpleResponse changeStatusOfHouse(@PathVariable Long houseId, @RequestParam(required = false) String message, @RequestParam String housesStatus) {
         return houseService.changeStatusOfHouse(houseId, message, housesStatus);
     }
 
@@ -123,6 +122,12 @@ public class HouseApi {
     @Operation(summary = "Houses search nearby", description = "Any user can go through to view the houses")
     public List<HouseResponseSortedPagination> searchNearby(@RequestParam double userLatitude, @RequestParam double userLongitude) throws IOException {
         return houseService.searchNearby(userLatitude, userLongitude);
+    }
+
+    @DeleteMapping("/delete_image/{imageId}")
+    @Operation(summary = "Delete image by id", description = "Only owner can delete image")
+    public SimpleResponse deleteImage(@PathVariable Long imageId, Authentication authentication) {
+        return houseService.deleteImageById(imageId, authentication);
     }
 
 }
