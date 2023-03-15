@@ -1,0 +1,1 @@
+alter table feedbacks alter column text type text;
