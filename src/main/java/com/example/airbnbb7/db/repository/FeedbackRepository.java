@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
 import java.util.List;
 
 @Repository
@@ -26,13 +25,10 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "delete from feedback_image where image_id = :imageId", nativeQuery = true)
-    void deleteImageById(Long imageId);
+    @Query(value = "delete from feedback_image where image = :url", nativeQuery = true)
+    void deleteImageByUrl(String url);
 
     @Query(value = "select image from feedback_image  where feedback_id = :feedbackId", nativeQuery = true)
-    LinkedList<String> findImagesByFeedbackId(Long feedbackId);
-
-    @Query(value = "select image_id from feedback_image  where feedback_id = :feedbackId", nativeQuery = true)
-    LinkedList<Long> findImagesIdByFeedbackId(Long feedbackId);
+    List<String> findImagesByFeedbackId(Long feedbackId);
 
 }

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public interface HouseService {
@@ -36,8 +35,6 @@ public interface HouseService {
 
     List<HouseResponseSortedPagination> getAllHousing(String housesBooked, String houseType, String price, String popularOrTheLatest) throws IOException;
 
-    SimpleResponse deleteImageById(Long imageId, Authentication authentication);
-
-    Map<Long, String> getImagesAndIdByHouseId(Long houseId);
+    SimpleResponse deleteImageById(String url, Long id, String houseOrFeedback);
 
 }

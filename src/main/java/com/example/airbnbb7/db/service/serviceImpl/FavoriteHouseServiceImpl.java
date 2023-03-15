@@ -7,7 +7,6 @@ import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.repository.*;
 import com.example.airbnbb7.db.service.FavoriteHouseService;
-import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.response.HouseResponseSortedPagination;
 import com.example.airbnbb7.exceptions.BadCredentialsException;
 import com.example.airbnbb7.exceptions.BadRequestException;
@@ -37,8 +36,6 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
     private final LocationRepository locationRepository;
 
     private final FeedbackRepository feedbackRepository;
-
-    private final HouseService houseService;
 
     @Override
     public SimpleResponse saveFavoriteHouse(Long houseId, Authentication authentication) {
@@ -87,7 +84,7 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
                 HouseResponseSortedPagination houseResponseSortedPagination =
                         new HouseResponseSortedPagination(house.getId(), house.getPrice(), house.getTitle(),
                                 house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType(), house.isFavorite());
-                houseResponseSortedPagination.setImages(houseService.getImagesAndIdByHouseId(house.getId()));
+                houseResponseSortedPagination.setImages(houseRepository.findImagesByHouseId(house.getId()));
                 houseResponseSortedPagination.setLocationResponse(locationRepository.convertToResponse(house.getLocation()));
                 houseResponseSortedPagination.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())));
                 houseResponseSortedPaginationList.add(houseResponseSortedPagination);
