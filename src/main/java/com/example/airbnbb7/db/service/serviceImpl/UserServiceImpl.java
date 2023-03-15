@@ -10,8 +10,9 @@ import com.example.airbnbb7.db.entities.Role;
 import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.*;
-import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.db.service.EmailService;
+import com.example.airbnbb7.db.service.HouseService;
+import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
 import com.example.airbnbb7.dto.response.*;
@@ -67,6 +68,8 @@ public class UserServiceImpl implements UserService {
     private final HouseRepository houseRepository;
 
     private final EmailService emailService;
+
+    private final HouseService houseService;
 
     @PostConstruct
     void init() throws IOException {
@@ -173,16 +176,18 @@ public class UserServiceImpl implements UserService {
                     return profileBookingHouseResponse;
                 }
                 case "On moderation" -> {
-                        for (House house : userRepository.findById(userId).get().getAnnouncements()) {
-                            if (house.getHousesStatus().equals(HousesStatus.ON_MODERATION)) {
-                                profileResponse.addProfileHouseResponse(houseResponseConverter.view(house));
-                            }
+                    for (House house : userRepository.findById(userId).get().getAnnouncements()) {
+                        if (house.getHousesStatus().equals(HousesStatus.ON_MODERATION)) {
+                            profileResponse.addProfileHouseResponse(houseResponseConverter.view(house));
                         }
-                        profileResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileResponse.getProfileHouseResponses()));
-                        int sizePage = (int) Math.ceil((double) profileResponse.getOnModerationSize() / size);
-                        profileResponse.setPageSize((long) sizePage);
-                        return profileResponse;
                     }
+                    if (profileResponse.getProfileHouseResponses() == null)
+                        throw new NotFoundException("On moderation is null");
+                    profileResponse.setProfileHouseResponses(getProfileHouseResponse(page, size, profileResponse.getProfileHouseResponses()));
+                    int sizePage = (int) Math.ceil((double) profileResponse.getOnModerationSize() / size);
+                    profileResponse.setPageSize((long) sizePage);
+                    return profileResponse;
+                }
                 default -> {
                     return profileResponse;
                 }
@@ -202,7 +207,7 @@ public class UserServiceImpl implements UserService {
                 userAdminResponses.add(user);
             }
         }
-    log.info("users successfully show");
+        log.info("users successfully show");
         return userAdminResponses;
 
     }
@@ -231,7 +236,7 @@ public class UserServiceImpl implements UserService {
                 List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getBooking(userId);
                 houseResponseForAdminUsers.forEach(h -> {
                     House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
-                    h.setImages(house.getImages());
+                    h.setImages(houseService.getImagesAndIdByHouseId(house.getId()));
                     h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
                     h.setHouseRating(rating.getRating(house.getFeedbacks()));
                 });
@@ -240,13 +245,13 @@ public class UserServiceImpl implements UserService {
                 List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getUserByAnnouncement(userId);
                 houseResponseForAdminUsers.forEach(h -> {
                     House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
-                    h.setImages(house.getImages());
+                    h.setImages(houseService.getImagesAndIdByHouseId(house.getId()));
                     h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
                     h.setHouseRating(rating.getRating(house.getFeedbacks()));
                 });
                 profileAdminResponse.setHouseResponseForAdminUsers(houseResponseForAdminUsers);
             }
-            log.info("Shoe admin profile" );
+            log.info("Shoe admin profile");
             return profileAdminResponse;
         }
         throw new BadRequestException("Invalid request!!!");
@@ -340,7 +345,7 @@ public class UserServiceImpl implements UserService {
         switch (sortingHousesByRating) {
             case "One" -> {
                 for (ProfileHouseResponse house : profileResponse1.getProfileHouseResponses()) {
-                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) > 0 && rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 1) {
+                    if (rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) >= 0 && rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())) <= 1) {
                         profileResponse.addProfileHouseResponse(house);
                     }
                 }

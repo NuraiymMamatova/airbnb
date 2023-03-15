@@ -1,7 +1,6 @@
 package com.example.airbnbb7.db.service;
 
 import com.example.airbnbb7.db.customClass.SimpleResponse;
-import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.dto.request.HouseRequest;
 import com.example.airbnbb7.dto.response.AccommodationResponse;
 import com.example.airbnbb7.dto.response.ApplicationResponse;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public interface HouseService {
@@ -30,10 +30,14 @@ public interface HouseService {
 
     List<HouseResponseSortedPagination> searchNearby(double userLatitude, double userLongitude) throws IOException;
 
-    SimpleResponse changeStatusOfHouse(Long houseId, String message, HousesStatus housesStatus);
+    SimpleResponse changeStatusOfHouse(Long houseId, String message, String housesStatus);
 
     ApplicationResponseForAdmin getAllStatusOfTheWholeHouseOnModeration(Long page, Long pageSize);
 
     List<HouseResponseSortedPagination> getAllHousing(String housesBooked, String houseType, String price, String popularOrTheLatest) throws IOException;
+
+    SimpleResponse deleteImageById(Long imageId, Authentication authentication);
+
+    Map<Long, String> getImagesAndIdByHouseId(Long houseId);
 
 }

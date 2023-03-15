@@ -14,4 +14,7 @@ public interface FeedbackService {
     SimpleResponse deleteFeedback(Authentication authentication, Long feedbackId);
 
     SimpleResponse updateFeedback(Authentication authentication, Long feedbackId, FeedbackRequestForUpdate feedbackRequest, boolean like, boolean dislike);
+
+    SimpleResponse deleteImageById(Long imageId, Authentication authentication);
+
 }

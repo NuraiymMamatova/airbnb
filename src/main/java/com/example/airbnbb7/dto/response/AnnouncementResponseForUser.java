@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -24,7 +25,7 @@ public class AnnouncementResponseForUser implements MasterInterface {
 
     private String descriptionOfListing;
 
-    private List<String> images;
+    private Map<Long, String> images;
 
     private Long maxOfGuests;
 

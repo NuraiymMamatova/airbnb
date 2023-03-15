@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +40,8 @@ public class Rating {
         if (ratings.size() != 0) {
             sum = sum / ratings.size();
         }
-        String.format("%.1f", sum);
-        return sum;
+        DecimalFormat df = new DecimalFormat("#.#");
+        return Double.parseDouble(df.format(sum));
     }
 
     public Rating getRatingCount(List<Feedback> feedbacks) {
