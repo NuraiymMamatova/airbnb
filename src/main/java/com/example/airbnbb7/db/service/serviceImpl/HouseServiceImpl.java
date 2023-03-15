@@ -439,7 +439,7 @@ public class HouseServiceImpl implements HouseService {
         if (region == null) region = "All";
         Set<HouseResponseSortedPagination> houseResponseSortedPaginations = new LinkedHashSet<>();
         List<HouseResponseSortedPagination> houseResponses = new LinkedList<>();
-        if (coordinates[0] == 0 && coordinates[1] == 0) {
+        if (coordinates[0] == 1234 && coordinates[1] == 0) {
             for (HouseResponseSortedPagination houses : houseRepository.getAllResponse()) {
                 for (House house : houseRepository.findAllAnnouncements()) {
                     if (house.getId() == houses.getId()) {
