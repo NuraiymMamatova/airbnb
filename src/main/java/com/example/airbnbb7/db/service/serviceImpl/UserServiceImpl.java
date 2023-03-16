@@ -216,6 +216,7 @@ public class UserServiceImpl implements UserService {
             List<House> houseList = new ArrayList<>();
             for (Long id : houseRepository.getAllHouseIdByUserId(userId)) {
                 houseList.add(houseRepository.findById(id).orElseThrow(() -> new NotFoundException("House id not found")));
+                favoriteHouseRepository.deleteAllByHouseId(id);
             }
             houseRepository.deleteAll(houseList);
             roleRepository.deleteRoleByUserId(userId);
