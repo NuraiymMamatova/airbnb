@@ -236,6 +236,9 @@ public class UserServiceImpl implements UserService {
                     h.setImages(houseRepository.findImagesByHouseId(house.getId()));
                     h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
                     h.setHouseRating(rating.getRating(house.getFeedbacks()));
+                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)) {
+                        h.setBlocked(true);
+                    }
                 });
                 profileAdminResponse.setHouseResponseForAdminUsers(houseResponseForAdminUsers);
             } else if (bookingOrAnnouncement != null && bookingOrAnnouncement.equals("My announcement")) {
@@ -245,6 +248,9 @@ public class UserServiceImpl implements UserService {
                     h.setImages(houseRepository.findImagesByHouseId(house.getId()));
                     h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
                     h.setHouseRating(rating.getRating(house.getFeedbacks()));
+                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)) {
+                        h.setBlocked(true);
+                    }
                 });
                 profileAdminResponse.setHouseResponseForAdminUsers(houseResponseForAdminUsers);
             }
