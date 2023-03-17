@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class ProfileAdminResponse implements MasterInterface {
+
     private Long id;
 
     private String profileName;

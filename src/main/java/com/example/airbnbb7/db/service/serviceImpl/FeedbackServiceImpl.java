@@ -128,17 +128,4 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
     }
 
-    public SimpleResponse deleteImageById(Long imageId, Authentication authentication) {
-        if (authentication != null) {
-            User user = (User) authentication.getPrincipal();
-            if (user.getId() == houseRepository.getUserIdByImageId(imageId)) {
-                feedbackRepository.deleteImageById(imageId);
-            } else {
-                throw new org.springframework.security.authentication.BadCredentialsException("You can't delete this image because it's not your feedback!");
-            }
-        } else {
-            throw new BadRequestException("Authentication cannot be null!");
-        }
-        return new SimpleResponse("Feedback image successfully deleted!");
-    }
 }

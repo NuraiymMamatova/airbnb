@@ -3,14 +3,16 @@ package com.example.airbnbb7.converter.response;
 import com.example.airbnbb7.db.customClass.Rating;
 import com.example.airbnbb7.db.entities.House;
 import com.example.airbnbb7.db.repository.FeedbackRepository;
+import com.example.airbnbb7.db.repository.HouseRepository;
 import com.example.airbnbb7.db.repository.LocationRepository;
 import com.example.airbnbb7.db.repository.UserRepository;
-import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.dto.response.ProfileHouseResponse;
 import com.example.airbnbb7.exceptions.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class HouseResponseConverter {
 
     private final LocationRepository locationRepository;
@@ -21,16 +23,7 @@ public class HouseResponseConverter {
 
     private final Rating rating;
 
-    private final HouseService houseService;
-
-    public HouseResponseConverter(LocationRepository locationRepository, UserRepository userRepository, FeedbackRepository feedbackRepository, Rating rating,
-                                  HouseService houseService) {
-        this.locationRepository = locationRepository;
-        this.userRepository = userRepository;
-        this.feedbackRepository = feedbackRepository;
-        this.rating = rating;
-        this.houseService = houseService;
-    }
+    private final HouseRepository houseRepository;
 
     public ProfileHouseResponse view(House house) {
         if (house == null) {
@@ -41,7 +34,7 @@ public class HouseResponseConverter {
         houseResponse.setPrice(house.getPrice());
         houseResponse.setTitle(house.getTitle());
         houseResponse.setDescriptionOfListing(house.getDescriptionOfListing());
-        houseResponse.setImages(houseService.getImagesAndIdByHouseId(house.getId()));
+        houseResponse.setImages(houseRepository.findImagesByHouseId(houseResponse.getId()));
         houseResponse.setMaxOfGuests(house.getMaxOfGuests());
         houseResponse.setHouseType(house.getHouseType());
         houseResponse.setLocation(locationRepository.findLocationByHouseId(house.getId()).orElseThrow(() -> new NotFoundException("House not found")));

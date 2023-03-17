@@ -11,7 +11,6 @@ import com.example.airbnbb7.db.entities.User;
 import com.example.airbnbb7.db.enums.HousesStatus;
 import com.example.airbnbb7.db.repository.*;
 import com.example.airbnbb7.db.service.EmailService;
-import com.example.airbnbb7.db.service.HouseService;
 import com.example.airbnbb7.db.service.MasterInterface;
 import com.example.airbnbb7.db.service.UserService;
 import com.example.airbnbb7.dto.request.UserRequest;
@@ -68,8 +67,6 @@ public class UserServiceImpl implements UserService {
     private final HouseRepository houseRepository;
 
     private final EmailService emailService;
-
-    private final HouseService houseService;
 
     @PostConstruct
     void init() throws IOException {
@@ -219,6 +216,7 @@ public class UserServiceImpl implements UserService {
             List<House> houseList = new ArrayList<>();
             for (Long id : houseRepository.getAllHouseIdByUserId(userId)) {
                 houseList.add(houseRepository.findById(id).orElseThrow(() -> new NotFoundException("House id not found")));
+                favoriteHouseRepository.deleteAllByHouseId(id);
             }
             houseRepository.deleteAll(houseList);
             roleRepository.deleteRoleByUserId(userId);
@@ -236,18 +234,24 @@ public class UserServiceImpl implements UserService {
                 List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getBooking(userId);
                 houseResponseForAdminUsers.forEach(h -> {
                     House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
-                    h.setImages(houseService.getImagesAndIdByHouseId(house.getId()));
+                    h.setImages(houseRepository.findImagesByHouseId(house.getId()));
                     h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
                     h.setHouseRating(rating.getRating(house.getFeedbacks()));
+                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)) {
+                        h.setBlocked(true);
+                    }
                 });
                 profileAdminResponse.setHouseResponseForAdminUsers(houseResponseForAdminUsers);
             } else if (bookingOrAnnouncement != null && bookingOrAnnouncement.equals("My announcement")) {
                 List<HouseResponseForAdminUsers> houseResponseForAdminUsers = userRepository.getUserByAnnouncement(userId);
                 houseResponseForAdminUsers.forEach(h -> {
                     House house = houseRepository.findById(h.getId()).orElseThrow(() -> new NotFoundException("House not found!"));
-                    h.setImages(houseService.getImagesAndIdByHouseId(house.getId()));
+                    h.setImages(houseRepository.findImagesByHouseId(house.getId()));
                     h.setLocationResponse(new LocationResponse(house.getLocation().getId(), house.getLocation().getTownOrProvince(), house.getLocation().getAddress(), house.getLocation().getRegion()));
                     h.setHouseRating(rating.getRating(house.getFeedbacks()));
+                    if (house.getHousesStatus().equals(HousesStatus.BLOCKED)) {
+                        h.setBlocked(true);
+                    }
                 });
                 profileAdminResponse.setHouseResponseForAdminUsers(houseResponseForAdminUsers);
             }

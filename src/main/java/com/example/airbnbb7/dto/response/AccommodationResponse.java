@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.List;
 
 @Component
 @Getter
@@ -21,7 +21,7 @@ public class AccommodationResponse {
 
     private double rating;
 
-    private Map<Long, String> images;
+    private List<String> images;
 
     private String description;
 

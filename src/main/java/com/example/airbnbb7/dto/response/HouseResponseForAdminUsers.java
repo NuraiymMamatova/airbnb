@@ -4,7 +4,7 @@ import com.example.airbnbb7.db.enums.HouseType;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.List;
 
 @Component
 @Getter
@@ -22,7 +22,7 @@ public class HouseResponseForAdminUsers {
 
     private String descriptionOfListing;
 
-    private Map<Long, String> images;
+    private List<String> images;
 
     private Long maxOfGuests;
 
@@ -32,6 +32,8 @@ public class HouseResponseForAdminUsers {
 
     private double houseRating;
 
+    private boolean isBlocked;
+
     public HouseResponseForAdminUsers(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
         this.id = id;
         this.price = price;
@@ -39,5 +41,15 @@ public class HouseResponseForAdminUsers {
         this.descriptionOfListing = descriptionOfListing;
         this.maxOfGuests = maxOfGuests;
         this.houseType = houseType;
+    }
+
+    public HouseResponseForAdminUsers(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType, boolean isBlocked) {
+        this.id = id;
+        this.price = price;
+        this.title = title;
+        this.descriptionOfListing = descriptionOfListing;
+        this.maxOfGuests = maxOfGuests;
+        this.houseType = houseType;
+        this.isBlocked = isBlocked;
     }
 }

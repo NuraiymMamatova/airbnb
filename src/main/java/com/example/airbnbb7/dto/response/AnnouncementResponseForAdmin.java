@@ -9,7 +9,6 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
@@ -23,13 +22,15 @@ public class AnnouncementResponseForAdmin implements MasterInterface {
 
     private String descriptionOfListing;
 
-    private Map<Long, String> images;
+    private List<String> images;
 
     private Long maxOfGuests;
 
     private Rating rating;
 
     private HouseType houseType;
+
+    private boolean isBlocked;
 
     private LocationResponse location;
 
@@ -43,5 +44,14 @@ public class AnnouncementResponseForAdmin implements MasterInterface {
         this.descriptionOfListing = descriptionOfListing;
         this.maxOfGuests = maxOfGuests;
         this.houseType = houseType;
+    }
+
+    public AnnouncementResponseForAdmin(Long id, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType, boolean isBlocked) {
+        this.id = id;
+        this.title = title;
+        this.descriptionOfListing = descriptionOfListing;
+        this.maxOfGuests = maxOfGuests;
+        this.houseType = houseType;
+        this.isBlocked = isBlocked;
     }
 }

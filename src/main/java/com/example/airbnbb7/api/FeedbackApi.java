@@ -41,10 +41,4 @@ public class FeedbackApi {
         return feedbackService.updateFeedback(authentication, feedbackId, feedbackRequest, like, dislike);
     }
 
-    @DeleteMapping("/delete_image/{imageId}")
-    @Operation(summary = "Delete image by id", description = "Only owner can delete image")
-    public SimpleResponse deleteImage(@PathVariable Long imageId, Authentication authentication) {
-        return feedbackService.deleteImageById(imageId, authentication);
-    }
-
 }
