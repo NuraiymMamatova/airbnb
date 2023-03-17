@@ -30,6 +30,8 @@ public class AnnouncementResponseForAdmin implements MasterInterface {
 
     private HouseType houseType;
 
+    private boolean isBlocked;
+
     private LocationResponse location;
 
     private UserResponse owner;
@@ -42,5 +44,14 @@ public class AnnouncementResponseForAdmin implements MasterInterface {
         this.descriptionOfListing = descriptionOfListing;
         this.maxOfGuests = maxOfGuests;
         this.houseType = houseType;
+    }
+
+    public AnnouncementResponseForAdmin(Long id, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType, boolean isBlocked) {
+        this.id = id;
+        this.title = title;
+        this.descriptionOfListing = descriptionOfListing;
+        this.maxOfGuests = maxOfGuests;
+        this.houseType = houseType;
+        this.isBlocked = isBlocked;
     }
 }

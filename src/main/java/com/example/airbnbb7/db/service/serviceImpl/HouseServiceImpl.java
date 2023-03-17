@@ -269,6 +269,9 @@ public class HouseServiceImpl implements HouseService {
                 announcementResponseForAdmin.setFeedbacks(feedbackResponses);
                 announcementResponseForAdmin.setOwner(userResponse);
                 announcementResponseForAdmin.setRating(rating.getRatingCount(feedbacks));
+                if (hous.getHousesStatus().equals(HousesStatus.BLOCKED)) {
+                    announcementResponseForAdmin.setBlocked(true);
+                }
                 log.info("announcement for admin");
                 return announcementResponseForAdmin;
             }

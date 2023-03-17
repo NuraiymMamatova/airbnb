@@ -32,6 +32,8 @@ public class HouseResponseForAdminUsers {
 
     private double houseRating;
 
+    private boolean isBlocked;
+
     public HouseResponseForAdminUsers(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
         this.id = id;
         this.price = price;
@@ -39,5 +41,15 @@ public class HouseResponseForAdminUsers {
         this.descriptionOfListing = descriptionOfListing;
         this.maxOfGuests = maxOfGuests;
         this.houseType = houseType;
+    }
+
+    public HouseResponseForAdminUsers(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType, boolean isBlocked) {
+        this.id = id;
+        this.price = price;
+        this.title = title;
+        this.descriptionOfListing = descriptionOfListing;
+        this.maxOfGuests = maxOfGuests;
+        this.houseType = houseType;
+        this.isBlocked = isBlocked;
     }
 }
