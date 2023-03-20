@@ -30,6 +30,10 @@ public class FeedbackResponse {
 
     private Long dislike;
 
+    private boolean isLiked;
+
+    private boolean isDisliked;
+
     private UserResponseForFeedback owner;
 
     public FeedbackResponse(Long id, String text, int rating, LocalDate createdFeedback, Long like, Long dislike) {
