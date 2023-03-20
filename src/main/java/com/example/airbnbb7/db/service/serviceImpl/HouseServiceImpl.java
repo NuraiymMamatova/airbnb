@@ -231,6 +231,10 @@ public class HouseServiceImpl implements HouseService {
             FeedbackResponse feedbackResponse = feedbackRepository.findFeedbackByFeedbackId(feedback.getId());
             feedbackResponse.setOwner(feedbackRepository.findOwnerFeedbackByFeedbackId(feedback.getId()));
             feedbackResponse.setImage(feedbackRepository.findImagesByFeedbackId(feedback.getId()));
+            if (user != null) {
+                if (feedback.getLikes().containsKey(user.getId())) feedbackResponse.setLiked(true);
+                else if (feedback.getDislikes().containsKey(user.getId())) feedbackResponse.setDisliked(true);
+            }
             feedbackResponses.add(feedbackResponse);
         }
         house.setFeedbacks(feedbackResponses);
@@ -362,7 +366,7 @@ public class HouseServiceImpl implements HouseService {
                 housesBookedEnum = HousesBooked.NOT_BOOKED;
             }
         }
-        for (HouseResponseSortedPagination houseResponse : sortPrice(null, popularOrTheLatest, houseType, price, null)) {
+        for (HouseResponseSortedPagination houseResponse : sortPrice(null, popularOrTheLatest, houseType, price, new double[]{1234, 0})) {
             for (House entityHouse : allHouses) {
                 if (stringHousesBooked != null) {
                     if (entityHouse.getId() == houseResponse.getId() && entityHouse.getHousesBooked().equals(housesBookedEnum) && entityHouse.getHousesStatus().equals(HousesStatus.ACCEPT)) {
