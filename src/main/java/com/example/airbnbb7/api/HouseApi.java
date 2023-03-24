@@ -65,8 +65,9 @@ public class HouseApi {
                                                  @RequestParam Long page,
                                                  @RequestParam Long pageSize,
                                                  @RequestParam(required = false, defaultValue = "0") double userLatitude,
-                                                 @RequestParam(required = false, defaultValue = "0") double userLongitude) throws IOException {
-        return houseService.getAllPagination(search, region, popularOrTheLatest, homeType, price, page, pageSize, userLatitude, userLongitude);
+                                                 @RequestParam(required = false, defaultValue = "0") double userLongitude,
+                                                 Authentication authentication) throws IOException {
+        return houseService.getAllPagination(search, region, popularOrTheLatest, homeType, price, page, pageSize, userLatitude, userLongitude, authentication);
     }
 
     @GetMapping("/popularAndLatest")

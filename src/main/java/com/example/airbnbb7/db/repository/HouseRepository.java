@@ -34,7 +34,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
     @Query("select new com.example.airbnbb7.dto.response.AnnouncementResponseForAdmin(h.id, h.title, h.descriptionOfListing, h.maxOfGuests, h.houseType) from House h where h.id = :houseId")
     Optional<AnnouncementResponseForAdmin> findHouseByIdForAdmin(Long houseId);
 
-    @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id, h.price, h.title,h.descriptionOfListing, h.maxOfGuests, h.houseType, h.isFavorite) from House h where h.id = :houseId")
+    @Query("select new com.example.airbnbb7.dto.response.HouseResponseSortedPagination(h.id, h.price, h.title,h.descriptionOfListing, h.maxOfGuests, h.houseType) from House h where h.id = :houseId")
     Optional<HouseResponseSortedPagination> findHouseById(Long houseId);
 
     @Query(value = "select images from house_images where house_id = :houseId", nativeQuery = true)
@@ -45,7 +45,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.title," +
             "h.descriptionOfListing," +
             "h.maxOfGuests," +
-            "h.houseType,h.isFavorite) from House h where h.housesStatus = 2")
+            "h.houseType) from House h where h.housesStatus = 2")
     List<HouseResponseSortedPagination> getAllResponse();
 
     @Query("select h from House h where h.housesStatus = 2")
@@ -69,7 +69,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "h.title," +
             "h.descriptionOfListing," +
             "h.maxOfGuests," +
-            "h.houseType,h.isFavorite) from House h where upper(h.title) like upper(concat('%',:search, '%')) and h.housesStatus = 2 or upper(h.location.region) like  " +
+            "h.houseType) from House h where upper(h.title) like upper(concat('%',:search, '%')) and h.housesStatus = 2 or upper(h.location.region) like  " +
             "upper(concat('%',:search,'%')) and h.housesStatus = 2 or upper( h.location.townOrProvince) " +
             "like upper( concat('%',:search,'%')) and h.housesStatus = 2 or upper( h.location.address) like upper( concat('%',:search,'%')) " +
             "and h.housesStatus = 2")
