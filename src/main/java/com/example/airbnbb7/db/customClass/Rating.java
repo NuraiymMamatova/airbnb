@@ -29,23 +29,25 @@ public class Rating {
     private int five;
 
     public double getRating(List<Feedback> feedbacks) {
+        if (feedbacks == null) return 0;
         List<Integer> ratings = new ArrayList<>();
-        for (Feedback feedback : feedbacks) {
-            ratings.add(feedback.getRating());
-        }
-        double sum = 0;
-        for (Integer rating : ratings) {
-            sum += rating;
-        }
-        if (ratings.size() != 0) {
-            sum = sum / ratings.size();
-        }
-        DecimalFormat df = new DecimalFormat("#.#");
-        return Double.parseDouble(df.format(sum));
+            for (Feedback feedback : feedbacks) {
+                ratings.add(feedback.getRating());
+            }
+            double sum = 0;
+            for (Integer rating : ratings) {
+                sum += rating;
+            }
+            if (ratings.size() != 0) {
+                sum = sum / ratings.size();
+            }
+            DecimalFormat df = new DecimalFormat("#.#");
+            return Double.parseDouble(df.format(sum));
     }
 
     public Rating getRatingCount(List<Feedback> feedbacks) {
         Rating rating = new Rating();
+        if (feedbacks == null) return rating;
         int countOfPeople = 0;
         for (Feedback feedback : feedbacks) {
             switch (feedback.getRating()) {

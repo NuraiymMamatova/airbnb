@@ -42,7 +42,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             log.warn("You can't leave feedback for your house by id {} ", house.getId());
             return new SimpleResponse("You can't leave feedback for your house!");
         }
-        log.warn("Authentication {} can not be null!", authentication.getPrincipal());
+        log.warn("Authentication can not be null!");
         throw new BadRequestException("Authentication can not be null!");
     }
 

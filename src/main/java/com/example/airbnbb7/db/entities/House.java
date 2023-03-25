@@ -56,8 +56,6 @@ public class House {
 
     private LocalDate dateHouseCreated;
 
-    private boolean isFavorite = false;
-
     @OneToOne(cascade = ALL, fetch = EAGER, mappedBy = "house")
     private Location location;
 
@@ -80,14 +78,6 @@ public class House {
         this.maxOfGuests = maxOfGuests;
         this.houseType = houseType;
 
-    }
-
-    public boolean isFavorite() {
-        return isFavorite;
-    }
-
-    public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
     }
 
     public void addBooking(Booking booking) {

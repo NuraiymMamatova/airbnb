@@ -46,14 +46,12 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
                 FavoriteHouse findFavoriteHouse = favoriteHouseRepository.getFavoriteHouseByHouseIdByUserId(house.getId(), user.getId());
                 if (findFavoriteHouse == null) {
                     FavoriteHouse favoriteHouse = new FavoriteHouse();
-                    house.setFavorite(true);
                     favoriteHouse.setAddedHouseToFavorites(LocalDate.now());
                     favoriteHouse.setHouse(house);
                     favoriteHouse.setUser(user);
                     log.info("successfully save favorite house");
                     favoriteHouseRepository.save(favoriteHouse);
                 } else {
-                    house.setFavorite(false);
                     favoriteHouseRepository.delete(findFavoriteHouse);
                     log.info("House id {} successfully deleted from favorite", house.getId());
                     return new SimpleResponse("House successfully deleted from favorite!");
@@ -81,9 +79,10 @@ public class FavoriteHouseServiceImpl implements FavoriteHouseService {
             }
             List<HouseResponseSortedPagination> houseResponseSortedPaginationList = new ArrayList<>();
             for (House house : houses) {
+                boolean isFavorite = favoriteHouseRepository.getFavoriteHouseByHouseIdByUserId(house.getId(), user.getId()) != null;
                 HouseResponseSortedPagination houseResponseSortedPagination =
                         new HouseResponseSortedPagination(house.getId(), house.getPrice(), house.getTitle(),
-                                house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType(), house.isFavorite());
+                                house.getDescriptionOfListing(), house.getMaxOfGuests(), house.getHouseType(), isFavorite);
                 houseResponseSortedPagination.setImages(houseRepository.findImagesByHouseId(house.getId()));
                 houseResponseSortedPagination.setLocationResponse(locationRepository.convertToResponse(house.getLocation()));
                 houseResponseSortedPagination.setHouseRating(rating.getRating(feedbackRepository.getAllFeedbackByHouseId(house.getId())));

@@ -21,7 +21,7 @@ public interface HouseService {
 
     SimpleResponse updateHouse(Long id, Authentication authentication, HouseRequest houseRequest) throws IOException;
 
-    ApplicationResponse getAllPagination(String search, String region, String popularOrTheLatest, String homeType, String price, Long page, Long pageSize, double userLatitude, double userLongitude) throws IOException;
+    ApplicationResponse getAllPagination(String search, String region, String popularOrTheLatest, String homeType, String price, Long page, Long pageSize, double userLatitude, double userLongitude, Authentication authentication) throws IOException;
 
     List<AccommodationResponse> getLatestAccommodation(boolean popularHouse, boolean popularApartments);
 

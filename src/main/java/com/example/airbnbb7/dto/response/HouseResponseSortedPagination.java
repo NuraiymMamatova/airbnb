@@ -44,5 +44,14 @@ public class HouseResponseSortedPagination {
         this.isFavorite = isFavorite;
     }
 
+    public HouseResponseSortedPagination(Long id, Double price, String title, String descriptionOfListing, Long maxOfGuests, HouseType houseType) {
+        this.id = id;
+        this.price = price;
+        this.title = title;
+        this.descriptionOfListing = descriptionOfListing;
+        this.maxOfGuests = maxOfGuests;
+        this.houseType = houseType;
+    }
+
 
 }
